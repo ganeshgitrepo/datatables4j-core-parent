@@ -1,7 +1,9 @@
 package org.datatables4j.configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,18 +72,19 @@ public class ConfigGenerator {
 		MainConf mainConf = new MainConf();
 		
 		// Columns configuration
-		AoColumns aoColumns = new AoColumns();
+//		AoColumns aoColumns = new AoColumns();
 		Map<String, Object> tmp = null;
+		List<Map<String, Object>> aoColumnsContent = new ArrayList<Map<String, Object>>(); 
 		for (HtmlColumn column : table.getLastHeaderRow().getColumns()) {
 			tmp = new HashMap<String, Object>();
 			tmp.put(DTConstants.DT_SORTABLE, column.getSortable());
 			if(column.getProperty() != null){
 				tmp.put(DTConstants.DT_DATA, column.getProperty());				
 			}
-			aoColumns.getContent().add(tmp);
+			aoColumnsContent.add(tmp);
 //			aoColumns.addValue("bSortable", column.getSortable());
 		}
-		mainConf.put(DTConstants.DT_AOCOLUMNS, aoColumns.getContent());
+		mainConf.put(DTConstants.DT_AOCOLUMNS, aoColumnsContent);
 			
 		if (table.getAutoWidth() != null) {
 			mainConf.put(DTConstants.DT_AUTO_WIDTH, table.getAutoWidth());

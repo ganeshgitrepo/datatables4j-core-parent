@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -43,7 +45,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected String id;
 	protected String cssStyle;
 	protected String cssClass;
-	protected String rowId;
+	protected String rowIdBase;
+	protected String rowIdPrefix;
+	protected String rowIdSufix;
 
 	// Basic features
 	protected Boolean autoWidth;
@@ -69,7 +73,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Object currentObject;
 	protected String loadingType;
 
-	protected int processDoStartTag(){
+	protected int processDoStartTag() throws JspException{
+		
+		// Just used to identify the first row (header)
+		rowNumber = 1;
+		
 		if("AJAX".equals(this.loadingType)){
 			this.table = new HtmlTable(id);
 			this.table.setDatasourceUrl(url);
@@ -85,26 +93,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			// Body management
 			if (iterator.hasNext()) {
 				Object object = iterator.next();
+				pageContext.setAttribute(row, object);
+				this.setCurrentObject(object);
 
-				if (this.rowId != null) {
-					try {
-						this.table.addRow(String.valueOf(PropertyUtils.getNestedProperty(object,
-								this.rowId)));
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				String rowId = this.getRowId();
+				if (StringUtils.isNotBlank(rowId)) {
+						this.table.addRow(rowId);
 				} else {
 					this.table.addRow();
 				}
-				pageContext.setAttribute(row, object);
-				this.setCurrentObject(object);
+				
 				return EVAL_BODY_BUFFERED;
 			} else {
 				return SKIP_BODY;
@@ -115,6 +113,41 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		return SKIP_BODY;
 	}
 	
+	protected int processDoAfterBody() throws JspException {
+		
+		if ("DOM".equals(this.loadingType)) {
+
+			BodyContent body = getBodyContent();
+			try {
+				body.writeOut(getPreviousOut());
+			} catch (IOException e) {
+				throw new JspTagException("IterationTag: " + e.getMessage());
+			}
+
+			// clear up so the next time the body content is empty
+			body.clearBody();
+
+			if (iterator.hasNext()) {
+				Object object = iterator.next();
+				this.setCurrentObject(object);
+				pageContext.setAttribute(row, object);
+
+				String rowId = this.getRowId();
+				if (StringUtils.isNotBlank(rowId)) {
+						this.table.addRow(rowId);
+				} else {
+					this.table.addRow();
+				}
+				
+				this.rowNumber++;
+				// System.out.println(rowNumber);
+				return EVAL_BODY_AGAIN;
+			} else {
+				return EVAL_PAGE;
+			}
+		}
+		return EVAL_PAGE;
+	}
 	protected int processDoEndTag() throws JspException {
 
 		// Update the HtmlTable object configuration with the attributes
@@ -235,6 +268,33 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.table.setExtraConf(extraConf);
 	}
 	
+	private String getRowId() throws JspException{
+		
+		StringBuffer rowId = new StringBuffer();
+		if(this.rowIdPrefix != null){
+			rowId.append(this.rowIdPrefix);
+		}
+		if(this.rowIdBase != null){
+			try {
+				rowId.append(PropertyUtils.getNestedProperty(this.currentObject, this.rowIdBase));
+			} catch (IllegalAccessException e) {
+				logger.error("Unable to get the value for rowIdBase");
+				throw new JspException();
+			} catch (InvocationTargetException e) {
+				logger.error("Unable to get the value for rowIdBase");
+				throw new JspException();
+			} catch (NoSuchMethodException e) {
+				logger.error("Unable to get the value for rowIdBase");
+				throw new JspException();
+			}
+		}
+		if(this.rowIdSufix != null){
+			rowId.append(this.rowIdSufix);
+		}
+		
+		return rowId.toString();
+	}
+	
 	public HtmlTable getTable() {
 		return this.table;
 	}
@@ -279,12 +339,28 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.cssClass = cssClass;
 	}
 
-	public String getRowId() {
-		return this.rowId;
+	public String getRowIdBase() {
+		return this.rowIdBase;
 	}
 
-	public void setRowId(String rowId) {
-		this.rowId = rowId;
+	public void setRowIdBase(String rowIdBase) {
+		this.rowIdBase = rowIdBase;
+	}
+	
+	public String getRowIdPrefix() {
+		return this.rowIdPrefix;
+	}
+
+	public void setRowIdPrefix(String rowIdPrefix) {
+		this.rowIdPrefix = rowIdPrefix;
+	}
+	
+	public String getRowIdSufix() {
+		return this.rowIdSufix;
+	}
+
+	public void setRowIdSufix(String rowIdSufix) {
+		this.rowIdSufix = rowIdSufix;
 	}
 
 	public Boolean getAutoWidth() {

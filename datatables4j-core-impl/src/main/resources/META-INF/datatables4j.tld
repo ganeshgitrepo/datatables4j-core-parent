@@ -36,7 +36,15 @@
          <name>cssClass</name>
       </attribute>
       <attribute>
-         <name>rowId</name>
+         <name>rowIdBase</name>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>rowIdPrefix</name>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>rowIdSufix</name>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
