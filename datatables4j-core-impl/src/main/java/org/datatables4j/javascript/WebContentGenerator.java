@@ -1,16 +1,22 @@
 package org.datatables4j.javascript;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.PageContext;
 
+import org.datatables4j.compressor.YuiCompressor;
 import org.datatables4j.configuration.ConfigGenerator;
+import org.datatables4j.configuration.MainConf;
 import org.datatables4j.datasource.JerseyDataProvider;
 import org.datatables4j.exception.DataNotFoundException;
 import org.datatables4j.model.ExtraFile;
 import org.datatables4j.model.HtmlTable;
-import org.datatables4j.model.InternalModule;
+import org.datatables4j.model.JavascriptFile;
+import org.datatables4j.module.InternalModuleLoader;
 import org.datatables4j.util.JsConstants;
 import org.datatables4j.util.RequestHelper;
-import org.datatables4j.util.Utils;
+import org.datatables4j.util.ResourceUtils;
+import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +25,10 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Thibault Duchateau
  */
-public class JavascriptGenerator {
+public class WebContentGenerator {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(JavascriptGenerator.class);
+	private static Logger logger = LoggerFactory.getLogger(WebContentGenerator.class);
 
 	/**
 	 * 
@@ -41,9 +47,11 @@ public class JavascriptGenerator {
 	 *         JSP.
 	 * @throws DataNotFoundException
 	 *             if the web service URL is wrong (only for AJAX datasource)
+	 * @throws IOException 
+	 * @throws EvaluatorException 
 	 */
-	public static String getScript(PageContext pageContext, HtmlTable table)
-			throws DataNotFoundException {
+	public static String getJavascript(PageContext pageContext, HtmlTable table)
+			throws DataNotFoundException, EvaluatorException, IOException {
 
 //		String filepath = pageContext.getServletContext().getRealPath("js/datatables.extraFile.js");
 //		System.out.println("*********** TEST = "
@@ -58,21 +66,18 @@ public class JavascriptGenerator {
 
 		JavascriptFile jsFile = new JavascriptFile();
 		configGenerator = new ConfigGenerator();
-
-		// Extra features activation (as internal modules)
-		StringBuffer extraConf = new StringBuffer();
-		for (InternalModule internalModule : table.getInternalModules()) {
-			extraConf.append(Utils.getFileContentFromClasspath("modules/"
-					+ internalModule.getName() + "/js/" + internalModule.getName() + ".min.js"));
-		}
-
-		jsFile.appendToBeforeAll(extraConf.toString());
-		logger.debug("ExtraConf : {}", extraConf);
+		MainConf mainConf = configGenerator.generateConfig(table);
 
 		jsFile.appendToBeforeAll("var oTable_");
 		jsFile.appendToBeforeAll(table.getId());
 		jsFile.appendToBeforeAll(";");
 		logger.debug("BeforeAll : {}", jsFile.getBeforeAll());
+
+		// Internal module management
+		InternalModuleLoader.loadModules(jsFile, table, mainConf);
+
+		// Extra files management
+		extraFileManagement(jsFile, table);
 
 		// DataTables configuration
 		// AJAX table
@@ -81,50 +86,42 @@ public class JavascriptGenerator {
 		jsFile.appendToDataTablesConf("=$('#");
 		jsFile.appendToDataTablesConf(table.getId());
 		jsFile.appendToDataTablesConf("').dataTable(");
-
+				
 		if (table.getDatasourceUrl() != null) {
 			String baseUrl = RequestHelper.getBaseUrl(pageContext);
 			String webServiceUrl = baseUrl + table.getDatasourceUrl();
 			JerseyDataProvider provider = new JerseyDataProvider();
 
 			jsFile.appendToDataTablesConf(
-					configGenerator.getConfig(table,provider.getData(webServiceUrl)));
+					configGenerator.getConfig(mainConf,provider.getData(webServiceUrl)));
 		}
 		// DOM Table
 		else {
-			jsFile.appendToDataTablesConf(configGenerator.getConfig(table));
+			jsFile.appendToDataTablesConf(configGenerator.getConfig(mainConf));
 		}
-
+		
 		jsFile.appendToDataTablesConf(");");
 		logger.debug("DataTablesConf : {}", jsFile.getDataTablesConf());
-
-		// Extra features custom configuration
-		// Module FixedHeader
-		if (table.getInternalModules().contains(new InternalModule("fixedheader"))) {
-			jsFile.appendToBeforeEndDocumentReady("new FixedHeader(oTable_");
-			jsFile.appendToBeforeEndDocumentReady(table.getId());
-			jsFile.appendToBeforeEndDocumentReady(");");
-		}
-
-		// Extra files management
-		extraFileManagement(jsFile, table);
-
+		
 		logger.debug("datatables4j.js : {}", jsFile.toString());
-		return jsFile.toString();
+		
+		String output = YuiCompressor.getCompressedJavascript(jsFile.toString());
+		logger.debug("datatables4j.js : {}", output);
+		return output;
 	}
-
+	
 	private static void extraFileManagement(JavascriptFile jsFile, HtmlTable table) {
 
 		for (ExtraFile file : table.getExtraFiles()) {
 			if (JsConstants.BEFOREALL.equals(file.getInclude())) {
-				jsFile.appendToBeforeAll(Utils.getFileContentFromClasspath(file.getSrc()));
+				jsFile.appendToBeforeAll(ResourceUtils.getFileContentFromClasspath(file.getSrc()));
 			} else if (JsConstants.AFTERALL.equals(file.getInclude())) {
-				jsFile.appendToAfterAll(Utils.getFileContentFromClasspath(file.getSrc()));
+				jsFile.appendToAfterAll(ResourceUtils.getFileContentFromClasspath(file.getSrc()));
 			} else if (JsConstants.AFTERSTARTDOCUMENTEREADY.equals(file.getInclude())) {
-				jsFile.appendToAfterStartDocumentReady(Utils.getFileContentFromClasspath(file
+				jsFile.appendToAfterStartDocumentReady(ResourceUtils.getFileContentFromClasspath(file
 						.getSrc()));
 			} else if (JsConstants.BEFOREENDDOCUMENTREADY.equals(file.getInclude())) {
-				jsFile.appendToBeforeEndDocumentReady(Utils.getFileContentFromClasspath(file
+				jsFile.appendToBeforeEndDocumentReady(ResourceUtils.getFileContentFromClasspath(file
 						.getSrc()));
 			}
 		}

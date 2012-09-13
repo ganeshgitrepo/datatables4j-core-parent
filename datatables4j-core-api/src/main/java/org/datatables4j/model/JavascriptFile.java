@@ -1,13 +1,6 @@
-package org.datatables4j.javascript;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+package org.datatables4j.model;
 
 public class JavascriptFile {
-
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(JavascriptFile.class);
 		
 	private StringBuffer beforeAll = new StringBuffer();
 	private StringBuffer afterStartDocumentReady = new StringBuffer();

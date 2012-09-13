@@ -1,6 +1,6 @@
 package org.datatables4j.model;
 
-public class ExternalModule {
+public class ExternalModule  {
 
 	private String name;
 	private String initCode;

@@ -12,9 +12,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Utils {
+public class ResourceUtils {
 
-	private static Logger logger = LoggerFactory.getLogger(Utils.class);
+	private static Logger logger = LoggerFactory.getLogger(ResourceUtils.class);
 	
 	public static InputStream getFileFromWebapp(PageContext pageContext, String pathToFile){
 		String filePath = pageContext.getServletContext().getRealPath(pathToFile);

@@ -2,12 +2,8 @@ package org.datatables4j.tag;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
@@ -17,9 +13,10 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.datatables4j.exception.DataNotFoundException;
-import org.datatables4j.javascript.JavascriptGenerator;
+import org.datatables4j.javascript.WebContentGenerator;
 import org.datatables4j.model.HtmlTable;
-import org.datatables4j.model.InternalModule;
+import org.datatables4j.module.ui.FixedHeaderModule;
+import org.datatables4j.module.ui.ScrollerModule;
 import org.datatables4j.util.RequestHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +63,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean scroller = false;
 	protected String scrollY;
 
+	// Awesome features
+	protected String export;
+	
 	// Internal common attributes
 	protected int rowNumber;
 	protected HtmlTable table = new HtmlTable();
@@ -156,17 +156,18 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		// Check if extra features must be activated
 		checkExtraAttributes();
 
+		checkExport();
+		
 		try {
 			// HTML
 			pageContext.getOut().write(this.table.toHtml());
 			pageContext.getOut().write("</ br>");
 
-			// JAVASCRIPT
 			String baseUrl = RequestHelper.getBaseUrl(pageContext);
 
 			try {
 				// JS script generation according to the JSP tags configuration
-				String js = JavascriptGenerator.getScript(pageContext, this.table);
+				String js = WebContentGenerator.getJavascript(pageContext, this.table);
 
 				// Store the JS as servlet context attribute
 				pageContext.getServletContext().setAttribute("jsToLoad", js);
@@ -182,6 +183,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				// TODO Afficher des logs
 				// TODO Afficher un message sous forme d'alerte Javascript
 				// (et/ou console ?)
+				throw new JspException(e);
 			}
 
 		} catch (IOException e) {
@@ -243,29 +245,32 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 * 
 	 */
 	private void checkExtraAttributes() {
-		// TODO
-		Map<String, Object> extraConf = new HashMap<String, Object>();
-		List<InternalModule> internalModules = new ArrayList<InternalModule>();
 
-		InternalModule module = null;
 		if (this.fixedHeader) {
 			logger.info("Internal module detected : fixedHeader");
-			module = new InternalModule("fixedheader");
-			internalModules.add(module);
+			this.table.registerModule(new FixedHeaderModule());
 		}
-
-		if (this.scroller) {
+		
+		if(this.scroller){
 			logger.info("Internal module detected : scroller");
-			module = new InternalModule("scroller");
-			internalModules.add(module);
+			this.table.registerModule(new ScrollerModule());
 		}
-
-		table.setInternalModules(internalModules);
-
-		extraConf.put("fixedHeader", this.fixedHeader);
-		extraConf.put("scroller", this.scroller);
-
-		this.table.setExtraConf(extraConf);
+	}
+	
+	
+	/**
+	 * TODO il faut :
+	 * 1) ajouter des boutons correspondant aux differents types d'export dispo
+	 * 2) proposer une URL d'export
+	 * 3) appeler la bonne classe de génération
+	 */
+	private void checkExport(){
+		
+		if(StringUtils.isNotBlank(this.export)){
+			
+			String[] exportTypes = this.export.split(",");
+			// Ajouter le ou les lien(s) d'export
+		}
 	}
 	
 	private String getRowId() throws JspException{
@@ -465,6 +470,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setScrollY(String scrollY) {
 		this.scrollY = scrollY;
+	}
+	
+	public String getExport() {
+		return export;
+	}
+
+	public void setExport(String export) {
+		this.export = export;
 	}
 	
 	public String getLoadingType(){

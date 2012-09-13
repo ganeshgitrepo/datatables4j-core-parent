@@ -32,10 +32,10 @@ public class HtmlTable {
 	private List<HtmlRow> body = new LinkedList<HtmlRow>();
 	private List<HtmlRow> foot = new LinkedList<HtmlRow>();
 	private Map<String, String> attributes = new HashMap<String, String>();
-	private Map<String, Object> extraConf = new HashMap<String, Object>();
 	private String datasourceUrl;
 	private List<ExternalModule> externalModules;
-	private List<InternalModule> internalModules;
+//	private List<InternalModule> internalModules;
+	private List<Module> modules = new ArrayList<Module>();
 	private List<ExtraFile> extraFiles = new ArrayList<ExtraFile>();
 	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();;
 	
@@ -130,6 +130,10 @@ public class HtmlTable {
 		tmpRetval.append("</table>");
 		System.out.println("tmpRetval.toString() = " + tmpRetval.toString());
 		return tmpRetval.toString();
+	}
+	
+	public void registerModule(Module module){
+		this.modules.add(module);
 	}
 
 	public String getCssStyle() {
@@ -230,14 +234,6 @@ public class HtmlTable {
 		this.stateSave = stateSave;
 	}
 
-	public Map<String, Object> getExtraConf() {
-		return extraConf;
-	}
-
-	public void setExtraConf(Map<String, Object> extraConf) {
-		this.extraConf = extraConf;
-	}
-
 	public String getDatasourceUrl() {
 		return datasourceUrl;
 	}
@@ -254,13 +250,13 @@ public class HtmlTable {
 		this.externalModules = externalModules;
 	}
 
-	public List<InternalModule> getInternalModules() {
-		return internalModules;
-	}
-
-	public void setInternalModules(List<InternalModule> internalModules) {
-		this.internalModules = internalModules;
-	}
+//	public List<InternalModule> getInternalModules() {
+//		return internalModules;
+//	}
+//
+//	public void setInternalModules(List<InternalModule> internalModules) {
+//		this.internalModules = internalModules;
+//	}
 
 	public String getScrollY() {
 		return scrollY;
@@ -284,5 +280,13 @@ public class HtmlTable {
 
 	public void setExtraConfs(List<ExtraConf> extraConfs) {
 		this.extraConfs = extraConfs;
+	}
+
+	public List<Module> getModules() {
+		return modules;
+	}
+
+	public void setModules(List<Module> modules) {
+		this.modules = modules;
 	}
 }

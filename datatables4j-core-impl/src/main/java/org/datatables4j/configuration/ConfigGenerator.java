@@ -10,10 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.datatables4j.constants.DTConstants;
 import org.datatables4j.model.HtmlColumn;
 import org.datatables4j.model.HtmlTable;
-import org.datatables4j.model.InternalModule;
-import org.datatables4j.util.DTConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,19 +22,19 @@ public class ConfigGenerator {
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 	
-	public String getConfig(HtmlTable table) {
-		Map<String, Object> config = this.generateConfig(table);
-		return this.convertConfigToJson(config);
+	public String getConfig(MainConf mainConf) {
+//		Map<String, Object> config = this.generateConfig(table);
+		return this.convertConfigToJson(mainConf);
 	}
 
-	public String getConfig(HtmlTable table, Map<String, Object> data) {
+	public String getConfig(MainConf mainConf, Map<String, Object> data) {
 
-		Map<String, Object> config = this.generateConfig(table);
-		config.putAll(data);
-		return this.convertConfigToJson(config);
+//		Map<String, Object> config = this.generateConfig(table);
+		mainConf.putAll(data);
+		return this.convertConfigToJson(mainConf);
 	}
 
-	private String convertConfigToJson(Map<String, Object> config){
+	public String convertConfigToJson(Map<String, Object> config){
 		
 		logger.debug("Converting configuration to JSON ...");
 		ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +63,7 @@ public class ConfigGenerator {
 	}
 	
 	
-	private Map<String, Object> generateConfig(HtmlTable table) {
+	public MainConf generateConfig(HtmlTable table) {
 
 		logger.debug("Generating DataTables configuration ..");
 		
@@ -116,17 +115,7 @@ public class ConfigGenerator {
 		if (table.getStateSave() != null) {
 			mainConf.put(DTConstants.DT_STATE_SAVE, table.getStateSave());
 		}
-
-		// sDom
-		if(table.getInternalModules().contains(new InternalModule("scroller"))){
-			mainConf.put(DTConstants.DT_DOM, "lfrtipS");
-			if(table.getScrollY() != null){
-				mainConf.put(DTConstants.DT_SCROLLY, table.getScrollY());				
-			}
-		}
-		else{
-			mainConf.put(DTConstants.DT_DOM, "lfrtip");			
-		}
+		mainConf.put(DTConstants.DT_DOM, "lfrtip");
 		
 		logger.debug("DataTables configuration generated");
 		

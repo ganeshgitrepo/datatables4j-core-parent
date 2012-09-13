@@ -1,4 +1,4 @@
-package org.datatables4j.util;
+package org.datatables4j.constants;
 
 
 public class DTConstants {
