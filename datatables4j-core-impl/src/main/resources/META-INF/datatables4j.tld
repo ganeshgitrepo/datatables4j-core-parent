@@ -57,19 +57,15 @@
          <rtexprvalue>true</rtexprvalue>
          <description>String which is appended to the rowIdBase attribute, in order to build row id. (HTML id attribute)</description>
       </attribute>
-      <attribute>
-         <name>autoWidth</name>
-         <type>java.lang.Boolean</type>
-         <description>(true|false) Enable or disable automatic column width calculation. (Default : true, see http://datatables.net/ref#bAutoWidth)</description>
-      </attribute>
+      
       <attribute>
          <name>deferRender</name>
          <description>(true|false)  Defer the creation of the table elements for each row until they are needed for a draw. (Default : false, see http://datatables.net/ref#bDeferRender)</description>
       </attribute>
-      <attribute>
-         <name>filterable</name>
-         <description></description>
-      </attribute>
+      
+      <!-- ---------------------------------------- -->
+      <!--              Basic features              -->
+      <!-- ---------------------------------------- -->
       <attribute>
          <name>info</name>
          <description>(true|false) Enable or disable the table information display. This shows information about the data that is currently visible on the page, including information about filtered data if that action is being performed. (Default : true, see http://datatables.net/ref#bInfo)</description>
@@ -87,12 +83,22 @@
          <description>(two_button|full_numbers) Choice between the two different built-in pagination interaction methods ('two_button' or 'full_numbers') which present different page controls to the end user. (Default : two_button, see http://datatables.net/ref#sPaginationType)</description>
       </attribute>
       <attribute>
-         <name>processing</name>
-         <description>(true|false) Enable or disable the display of a 'processing' indicator when the table is being processed (e.g. a sort). This is particularly useful for tables with large amounts of data where it can take a noticeable amount of time to sort the entries. (Default : false, see http://datatables.net/ref#bProcessing)</description>
+         <name>filter</name>
+         <description></description>
       </attribute>
       <attribute>
          <name>sort</name>
          <description>(true|false) Enable or disable sorting of columns. Sorting of individual columns can be disabled by the "sortable" attribute of column tag. (Default : true, see http://datatables.net/ref#bSort)</description>
+      </attribute>
+      <attribute>
+         <name>autoWidth</name>
+         <type>java.lang.Boolean</type>
+         <description>(true|false) Enable or disable automatic column width calculation. (Default : true, see http://datatables.net/ref#bAutoWidth)</description>
+      </attribute>
+     
+      <attribute>
+         <name>processing</name>
+         <description>(true|false) Enable or disable the display of a 'processing' indicator when the table is being processed (e.g. a sort). This is particularly useful for tables with large amounts of data where it can take a noticeable amount of time to sort the entries. (Default : false, see http://datatables.net/ref#bProcessing)</description>
       </attribute>
       <attribute>
          <name>stateSave</name>
@@ -103,11 +109,17 @@
          <description>Comma-separated list of format in which to export the table. Available for now : CSV</description>
       </attribute>
       
-      <!-- Extra features -->
+      <!-- ---------------------------------------- -->
+      <!--              Extra features              -->
+      <!-- ---------------------------------------- -->
+      
+      <!-- FixedHeader -->
       <attribute>
          <name>fixedHeader</name>
          <description>(true|false) Enable or disable the DataTables FixedHeader plugin. (Default : false) (See : http://datatables.net/extras/fixedheader/)</description>
       </attribute>
+      
+      <!-- Scroller -->
       <attribute>
          <name>scroller</name>
          <description>(true|false) Enable or disable the DataTables Scroller plugin. (Default : false) (See : http://datatables.net/extras/scroller/)</description>
@@ -115,6 +127,24 @@
       <attribute>
          <name>scrollY</name>
          <description>Table's height to display in scrolling mode.</description>
+      </attribute>
+      
+      <!-- ColReorder -->
+      <attribute>
+         <name>colReorder</name>
+         <description></description>
+      </attribute>
+      
+      <!-- TableTools -->
+      <attribute>
+         <name>tableTools</name>
+         <description></description>
+      </attribute>
+      
+      <!-- Colvis -->
+      <attribute>
+         <name>colReorder</name>
+         <description></description>
       </attribute>
    </tag>
   
@@ -124,24 +154,35 @@
       <body-content>JSP</body-content>
       <attribute>
          <name>title</name>
+         <description></description>
       </attribute>
       <attribute>
          <name>property</name>
-      </attribute>
-      <attribute>
-         <name>cssStyle</name>
-      </attribute>
-      <attribute>
-         <name>cssCellStyle</name>
-      </attribute>
-      <attribute>
-         <name>cssClass</name>
-      </attribute>
-      <attribute>
-         <name>cssCellClass</name>
+         <description></description>
       </attribute>
       <attribute>
          <name>sortable</name>
+         <description></description>
+      </attribute>
+      <attribute>
+         <name>filterable</name>
+         <description></description>
+      </attribute>
+      <attribute>
+         <name>cssStyle</name>
+         <description></description>
+      </attribute>
+      <attribute>
+         <name>cssCellStyle</name>
+         <description></description>
+      </attribute>
+      <attribute>
+         <name>cssClass</name>
+         <description></description>
+      </attribute>
+      <attribute>
+         <name>cssCellClass</name>
+         <description></description>
       </attribute>
    </tag>
 
@@ -154,10 +195,11 @@
          <name>src</name>
          <required>true</required>
          <rtexprvalue>true</rtexprvalue>
+         <description></description>
       </attribute>
       <attribute>
-         <name>include</name>
-         <description>Define when the extra file must be include</description>
+         <name>place</name>
+         <description>(BEFOREALL|AFTERSTARTDOCUMENTREADY|BEFORENDDOCUMENTREADY|AFTERALL) Define where the extra file must be include.</description>
       </attribute>
    </tag>
 </taglib>
