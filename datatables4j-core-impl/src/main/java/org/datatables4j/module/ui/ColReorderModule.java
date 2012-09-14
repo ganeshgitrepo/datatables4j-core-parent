@@ -1,23 +1,25 @@
 package org.datatables4j.module.ui;
 
+import org.datatables4j.constants.DTConstants;
 import org.datatables4j.model.HtmlTable;
 import org.datatables4j.model.JsResource;
 import org.datatables4j.model.Module;
+import org.datatables4j.model.ModuleConf;
 
 /**
- * Java implementation of the DataTables FixedHeader plugin.
+ * Java implementation of the DataTables ColReorder plugin.
  * 
- * @see <a href="http://datatables.net/extras/fixedheader/">Reference</a>
+ * @see <a href="http://datatables.net/extras/colreorder/">Reference</a>
  * @author Thibault Duchateau
  */
-public class FixedHeaderModule extends Module {
+public class ColReorderModule extends Module {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getModuleName() {
-		return "FixedHeader";
+		return "ColReorder";
 	}
 
 	/**
@@ -25,7 +27,7 @@ public class FixedHeaderModule extends Module {
 	 */
 	@Override
 	public String getModuleVersion() {
-		return "2.0.6";
+		return "1.0.6";
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class FixedHeaderModule extends Module {
 	 */
 	@Override
 	public void setup(HtmlTable table) {
-		beforeEndDocumentReady = "new FixedHeader(oTable_" + table.getId() + ");";
-		addJsResource(new JsResource("datatables.fixedheader.min.js"));
-	}
+		addJsResource(new JsResource("colreorder.min.js"));
+		addModuleConf(new ModuleConf(DTConstants.DT_DOM, "R", ModuleConf.Mode.PREPEND));
+	}	
 }

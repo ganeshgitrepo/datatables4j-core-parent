@@ -14,15 +14,12 @@ import org.datatables4j.model.ModuleConf;
  */
 public class ScrollerModule extends Module {
 
-	private String name = "Scroller";
-	private String version = "1.1.0";
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getModuleName() {
-		return this.name;
+		return "Scroller";
 	}
 
 	/**
@@ -30,7 +27,7 @@ public class ScrollerModule extends Module {
 	 */
 	@Override
 	public String getModuleVersion() {
-		return this.version;
+		return "1.1.0";
 	}
 
 	/**
