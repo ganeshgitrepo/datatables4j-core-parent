@@ -8,38 +8,60 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.datatables4j.model.WebResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Servlet implementation class TestJavascript
  */
-@WebServlet(urlPatterns = {"/datatablesController/datatables4j.js"}, name = "datatablesController")
+@WebServlet(urlPatterns = {"/datatablesController/"}, name = "datatablesController")
 public class DataTablesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	// Logger
 	private static Logger logger = LoggerFactory.getLogger(DataTablesServlet.class);
-	
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		// Keep in mind that all of those classes are from SLF4J package!
 		logger.debug("DataTables servlet captured GET request");
+
+		// Get web resources from servlet context
+		WebResources webResources = (WebResources) getServletContext().getAttribute("webResources");
 		
-		// Set header properties
+		// Common response header
 		response.setHeader("Cache-Control","no-cache");
-		response.setContentType("application/javascript");
 		
-		logger.debug("Serving datatables4j.js ...");
+		// Get requested file name
+		String fileToServe = request.getParameter("file");
+		logger.debug("fileToServe = {}", fileToServe);
+		String fileContent = null;
 		
-		// Write the Javascript DataTables configuration in the response
-        response.getWriter().write(getServletContext().getAttribute("jsToLoad").toString());
-        
-        // Clear the servlet context
-        getServletContext().removeAttribute("jsToLoad");
-        
-        logger.debug("Servlet context cleaned");
+		// Depending on its type, different content is served
+		if(fileToServe.endsWith("js")){
+			
+			// Set header properties
+			response.setContentType("application/javascript");
+			
+			// Write the content in the response
+			fileContent = webResources.getJavascripts().get(fileToServe).getContent();
+		}
+		else if(fileToServe.endsWith("css")){
+			
+			// Set header properties
+			response.setContentType("text/css");
+			
+			// Write the content in the response
+			fileContent = webResources.getStylesheets().get(fileToServe).getContent();
+		}
+		
+		logger.debug("fileContent = {}", fileContent);
+		// Write the content in the response
+		response.getWriter().write(fileContent);
+		
+//		response.flushBuffer();
 	}
 }

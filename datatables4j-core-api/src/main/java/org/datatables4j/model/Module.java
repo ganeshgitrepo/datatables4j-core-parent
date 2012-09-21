@@ -93,6 +93,10 @@ public abstract class Module {
 		this.jsResources.add(resource);
 	}
 
+	public void addCssResource(CssResource resource) {
+		this.cssResources.add(resource);
+	}
+	
 	public void addModuleConf(ModuleConf moduleConf) {
 		this.moduleConfs.add(moduleConf);
 	}

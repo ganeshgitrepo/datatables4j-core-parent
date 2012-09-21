@@ -5,6 +5,11 @@ import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO
+ * @author tduchate
+ *
+ */
 public class YuiCompressorErrorReporter implements ErrorReporter {
 	
 	// Logger

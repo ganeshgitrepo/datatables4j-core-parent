@@ -17,19 +17,25 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-
-public class JerseyDataProvider {
+/**
+ * Jersey implementation of DataProvider for AJAX table.
+ * 
+ * @author Thibault Duchateau
+ */
+public class JerseyDataProvider implements DataProvider {
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(JerseyDataProvider.class);
 		
+	/**
+	 * TODO
+	 */
 	public Map<String, Object> getData(String wsUrl) throws DataNotFoundException {
 
 		logger.debug("Retrieving data with JerseyDataProvider");
 		
 		Client client = Client.create();
 
-		// TODO ENLEVER URL EN DUR
 		WebResource webResource = client.resource(wsUrl);
 		
 		logger.debug("Web service call ...");
@@ -41,6 +47,7 @@ public class JerseyDataProvider {
 		
 		String output = response.getEntity(String.class);
 
+		// Jackson object mapper
 		ObjectMapper mapper = new ObjectMapper();
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -54,14 +61,11 @@ public class JerseyDataProvider {
 			map.put(DTConstants.DT_DS_DATA, df);
 			
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataNotFoundException(e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataNotFoundException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataNotFoundException(e);
 		}
 
 		return map;

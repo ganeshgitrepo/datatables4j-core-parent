@@ -1,18 +1,26 @@
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
-   "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
-<taglib xmlns="http://java.sun.com/JSP/TagLibraryDescriptor">
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" 
+"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_1_2.xsd"
+   version="1.2">
    <tlib-version>0.0.0-SNAPSHOT</tlib-version>
    <jsp-version>1.2</jsp-version>
    <short-name>datatables</short-name>
    <uri>http://github.com/tduchateau/DataTables4j</uri>
    <display-name>DataTables4j</display-name>
    <description>Set of tags for manipulating HTML table with DataTables.</description>
+
+   <!-- ====================================== -->
+   <!-- Table -->
+   <!-- ====================================== -->
    <tag>
       <name>table</name>
       <tag-class>org.datatables4j.tag.TableTag</tag-class>
       <tei-class>org.datatables4j.tag.IterationTEI</tei-class>
       <body-content>JSP</body-content>
-      <description>Generate a HTML table thanks to the awesome DataTables JQuery plugin.</description>
+      <description>Generate a HTML table thanks to the awesome
+         DataTables JQuery plugin.</description>
       <attribute>
          <name>id</name>
          <required>true</required>
@@ -22,65 +30,96 @@
          <name>data</name>
          <rtexprvalue>true</rtexprvalue>
          <type>java.lang.Object</type>
-         <description>Collection of data used to populate the table. (Either data or url attribute is required)</description>
+         <description>Collection of data used to populate the table.
+            (Either data or url attribute is required)</description>
       </attribute>
       <attribute>
          <name>url</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>Web service URL used to populate the table. (Either data or url attribute is required)</description>
+         <description>Web service URL used to populate the table.
+            (Either data or url attribute is required)</description>
       </attribute>
       <attribute>
          <name>row</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>Name of the object representing the current row. If data must be displayed without any decoration, use property attribute on column tag.</description>
+         <description>Name of the object representing the current row.
+            If data must be displayed without any decoration, use
+            property attribute on column tag.</description>
+      </attribute>
+      <attribute>
+         <name>cdn</name>
+         <description>(true|false) Enable the DataTables source files to be loaded
+            from the Microsoft CDN (Content Delivery Framework)
+            preventing you from hosting the files yourself. (Default : false)</description>
       </attribute>
       <attribute>
          <name>cssStyle</name>
-         <description>CSS style applied on the HTML table. (HTML style attribute)</description>
+         <description>CSS style applied on the HTML table. (HTML style
+            attribute)</description>
       </attribute>
       <attribute>
          <name>cssClass</name>
-         <description>CSS class(es) applied on the HTML table. (HTML class attribute)</description>
+         <description>CSS class(es) applied on the HTML table. (HTML
+            class attribute)</description>
       </attribute>
       <attribute>
          <name>rowIdBase</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>Useful if you want each row has a DOM id. This attribute is evaluated as a property of the current iterated bean. (Only if DOM datasource)</description>
+         <description>Useful if you want each row has a DOM id. This
+            attribute is evaluated as a property of the current iterated
+            bean. (Only if DOM datasource)</description>
       </attribute>
       <attribute>
          <name>rowIdPrefix</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>String which is prepended to the rowIdBase attribute, in order to build row id. (HTML id attribute)</description>
+         <description>String which is prepended to the rowIdBase
+            attribute, in order to build row id. (HTML id attribute)</description>
       </attribute>
       <attribute>
          <name>rowIdSufix</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>String which is appended to the rowIdBase attribute, in order to build row id. (HTML id attribute)</description>
+         <description>String which is appended to the rowIdBase
+            attribute, in order to build row id. (HTML id attribute)</description>
       </attribute>
-      
+
       <attribute>
          <name>deferRender</name>
-         <description>(true|false)  Defer the creation of the table elements for each row until they are needed for a draw. (Default : false, see http://datatables.net/ref#bDeferRender)</description>
+         <description>(true|false) Defer the creation of the table
+            elements for each row until they are needed for a draw.
+            (Default : false, see
+            http://datatables.net/ref#bDeferRender)</description>
       </attribute>
-      
-      <!-- ---------------------------------------- -->
-      <!--              Basic features              -->
-      <!-- ---------------------------------------- -->
+
+      <!-- ====================================== -->
+      <!-- Basic features -->
+      <!-- ====================================== -->
       <attribute>
          <name>info</name>
-         <description>(true|false) Enable or disable the table information display. This shows information about the data that is currently visible on the page, including information about filtered data if that action is being performed. (Default : true, see http://datatables.net/ref#bInfo)</description>
+         <description>(true|false) Enable or disable the table
+            information display. This shows information about the data
+            that is currently visible on the page, including information
+            about filtered data if that action is being performed.
+            (Default : true, see http://datatables.net/ref#bInfo)</description>
       </attribute>
       <attribute>
          <name>paginate</name>
-         <description>(true|false) Enable or disable pagination. (Default : true, see http://datatables.net/ref#bPaginate)</description>
+         <description>(true|false) Enable or disable pagination.
+            (Default : true, see http://datatables.net/ref#bPaginate)</description>
       </attribute>
       <attribute>
          <name>lengthPaginate</name>
-         <description>(true|false) If paginate is enabled, allows the end user to select the size of a formatted page from a select menu (sizes are 10, 25, 50 and 100). (Default : true, see http://datatables.net/ref#bLengthChange)</description>
+         <description>(true|false) If paginate is enabled, allows the
+            end user to select the size of a formatted page from a
+            select menu (sizes are 10, 25, 50 and 100). (Default : true,
+            see http://datatables.net/ref#bLengthChange)</description>
       </attribute>
       <attribute>
          <name>paginationType</name>
-         <description>(two_button|full_numbers) Choice between the two different built-in pagination interaction methods ('two_button' or 'full_numbers') which present different page controls to the end user. (Default : two_button, see http://datatables.net/ref#sPaginationType)</description>
+         <description>(two_button|full_numbers) Choice between the two
+            different built-in pagination interaction methods
+            ('two_button' or 'full_numbers') which present different
+            page controls to the end user. (Default : two_button, see
+            http://datatables.net/ref#sPaginationType)</description>
       </attribute>
       <attribute>
          <name>filter</name>
@@ -88,66 +127,95 @@
       </attribute>
       <attribute>
          <name>sort</name>
-         <description>(true|false) Enable or disable sorting of columns. Sorting of individual columns can be disabled by the "sortable" attribute of column tag. (Default : true, see http://datatables.net/ref#bSort)</description>
+         <description>(true|false) Enable or disable sorting of columns.
+            Sorting of individual columns can be disabled by the
+            "sortable" attribute of column tag. (Default : true, see
+            http://datatables.net/ref#bSort)</description>
       </attribute>
       <attribute>
          <name>autoWidth</name>
          <type>java.lang.Boolean</type>
-         <description>(true|false) Enable or disable automatic column width calculation. (Default : true, see http://datatables.net/ref#bAutoWidth)</description>
+         <description>(true|false) Enable or disable automatic column
+            width calculation. (Default : true, see
+            http://datatables.net/ref#bAutoWidth)</description>
       </attribute>
-     
+
       <attribute>
          <name>processing</name>
-         <description>(true|false) Enable or disable the display of a 'processing' indicator when the table is being processed (e.g. a sort). This is particularly useful for tables with large amounts of data where it can take a noticeable amount of time to sort the entries. (Default : false, see http://datatables.net/ref#bProcessing)</description>
+         <description>(true|false) Enable or disable the display of a
+            'processing' indicator when the table is being processed
+            (e.g. a sort). This is particularly useful for tables with
+            large amounts of data where it can take a noticeable amount
+            of time to sort the entries. (Default : false, see
+            http://datatables.net/ref#bProcessing)</description>
       </attribute>
       <attribute>
          <name>stateSave</name>
-         <description>(true|false) Enable or disable state saving. When enabled a cookie will be used to save table display information such as pagination information, display length, filtering and sorting. As such when the end user reloads the page the display display will match what thy had previously set up. (Default : false, see http://datatables.net/ref#bStateSave)</description>
+         <description>(true|false) Enable or disable state saving. When
+            enabled a cookie will be used to save table display
+            information such as pagination information, display length,
+            filtering and sorting. As such when the end user reloads the
+            page the display display will match what thy had previously
+            set up. (Default : false, see
+            http://datatables.net/ref#bStateSave)</description>
       </attribute>
       <attribute>
          <name>export</name>
-         <description>Comma-separated list of format in which to export the table. Available for now : CSV</description>
+         <description>Comma-separated list of format in which to export
+            the table. Available for now : CSV</description>
       </attribute>
-      
-      <!-- ---------------------------------------- -->
-      <!--              Extra features              -->
-      <!-- ---------------------------------------- -->
-      
+
+      <!-- ====================================== -->
+      <!-- Extra features -->
+      <!-- ====================================== -->
+
       <!-- FixedHeader -->
       <attribute>
          <name>fixedHeader</name>
-         <description>(true|false) Enable or disable the DataTables FixedHeader plugin. (Default : false) (See : http://datatables.net/extras/fixedheader/)</description>
+         <description>(true|false) Enable or disable the DataTables
+            FixedHeader plugin. (Default : false) (See :
+            http://datatables.net/extras/fixedheader/)</description>
       </attribute>
-      
+      <attribute>
+         <name>fixedPosition</name>
+         <description>(top|bottom|left|right) Respectively fix the
+            header, footer, left column, right column. (Default : top)</description>
+      </attribute>
+
       <!-- Scroller -->
       <attribute>
          <name>scroller</name>
-         <description>(true|false) Enable or disable the DataTables Scroller plugin. (Default : false) (See : http://datatables.net/extras/scroller/)</description>
+         <description>(true|false) Enable or disable the DataTables
+            Scroller plugin. (Default : false) (See :
+            http://datatables.net/extras/scroller/)</description>
       </attribute>
       <attribute>
          <name>scrollY</name>
          <description>Table's height to display in scrolling mode.</description>
       </attribute>
-      
+
       <!-- ColReorder -->
       <attribute>
          <name>colReorder</name>
          <description></description>
       </attribute>
-      
+
       <!-- TableTools -->
       <attribute>
          <name>tableTools</name>
          <description></description>
       </attribute>
-      
+
       <!-- Colvis -->
       <attribute>
          <name>colReorder</name>
          <description></description>
       </attribute>
    </tag>
-  
+
+   <!-- ====================================== -->
+   <!-- Extra features -->
+   <!-- ====================================== -->
    <tag>
       <name>column</name>
       <tag-class>org.datatables4j.tag.ColumnTag</tag-class>
@@ -186,6 +254,9 @@
       </attribute>
    </tag>
 
+   <!-- ====================================== -->
+   <!-- Extra file -->
+   <!-- ====================================== -->
    <tag>
       <description></description>
       <name>extraFile</name>
@@ -198,8 +269,47 @@
          <description></description>
       </attribute>
       <attribute>
-         <name>place</name>
-         <description>(BEFOREALL|AFTERSTARTDOCUMENTREADY|BEFORENDDOCUMENTREADY|AFTERALL) Define where the extra file must be include.</description>
+         <name>insert</name>
+         <description>(BEFOREALL|AFTERSTARTDOCUMENTREADY|BEFORENDDOCUMENTREADY|AFTERALL)
+            Define where the extra file must be inserted. (Default :
+            BEFOREALL)</description>
+      </attribute>
+   </tag>
+
+   <!-- ====================================== -->
+   <!-- Extra conf -->
+   <!-- ====================================== -->
+   <tag>
+      <description></description>
+      <name>extraConf</name>
+      <tag-class>org.datatables4j.tag.ExtraConfTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <name>src</name>
+         <required>true</required>
+         <rtexprvalue>true</rtexprvalue>
+         <description></description>
+      </attribute>
+   </tag>
+
+   <!-- ====================================== -->
+   <!-- Prop -->
+   <!-- ====================================== -->
+   <tag>
+      <description>Allow to override properties usually defined in the
+         DataTables4j properties file.</description>
+      <name>prop</name>
+      <tag-class>org.datatables4j.tag.PropTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <name>name</name>
+         <required>true</required>
+         <description>Property's name to override.</description>
+      </attribute>
+      <attribute>
+         <name>value</name>
+         <required>true</required>
+         <description>Property's value to override.</description>
       </attribute>
    </tag>
 </taglib>

@@ -22,6 +22,10 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	protected String cssCellClass;
 	protected Boolean sortable = true;
 	
+	/**
+	 * 
+	 * @return
+	 */
 	protected int processDoStartTag(){
 		TableTag parent = (TableTag) getParent();
 		if (parent.getLoadingType() == "AJAX") {
@@ -62,6 +66,10 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 		return SKIP_BODY;
 	}
 	
+	/**
+	 * TODO
+	 * @return
+	 */
 	protected int processDoEndTag(){
 		TableTag parent = (TableTag) getParent();
 		if (parent.getLoadingType() == "AJAX") {
@@ -86,6 +94,11 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 		return SKIP_PAGE;
 	}
 	
+	/**
+	 * TODO
+	 * @param isHeader
+	 * @param content
+	 */
 	protected void addColumn(Boolean isHeader, String content){
 		
 		HtmlColumn column = new HtmlColumn(isHeader, content);

@@ -1,10 +1,15 @@
 package org.datatables4j.exception;
 
-public class DataNotFoundException extends Throwable {
+/**
+ * Raised if there's something wrong in the datatables4j configuration file (datatables4j(-default).properties).
+ * 
+ * @author Thibault Duchateau
+ */
+public class BadConfigurationException extends Exception {
 
-	private static final long serialVersionUID = 7240738976355836256L;
+	private static final long serialVersionUID = 3243845798907773547L;
 
-	public DataNotFoundException() {
+	public BadConfigurationException() {
 	};
 
 	/**
@@ -13,7 +18,7 @@ public class DataNotFoundException extends Throwable {
 	 * @param message
 	 *            Le message détaillant exception
 	 */
-	public DataNotFoundException(String message) {
+	public BadConfigurationException(String message) {
 		super(message);
 	}
 
@@ -23,7 +28,7 @@ public class DataNotFoundException extends Throwable {
 	 * @param cause
 	 *            L'exception à l'origine de cette exception
 	 */
-	public DataNotFoundException(Throwable cause) {
+	public BadConfigurationException(Throwable cause) {
 		super(cause);
 	}
 
@@ -35,7 +40,7 @@ public class DataNotFoundException extends Throwable {
 	 * @param cause
 	 *            L'exception à l'origine de cette exception
 	 */
-	public DataNotFoundException(String message, Throwable cause) {
+	public BadConfigurationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

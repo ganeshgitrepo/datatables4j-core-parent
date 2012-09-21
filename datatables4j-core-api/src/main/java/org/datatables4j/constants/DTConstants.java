@@ -1,6 +1,10 @@
 package org.datatables4j.constants;
 
-
+/**
+ * DataTables internal constants.
+ * 
+ * @author Thibault Duchateau
+ */
 public class DTConstants {
 
 	// Features

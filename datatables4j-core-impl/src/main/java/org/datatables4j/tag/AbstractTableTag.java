@@ -1,20 +1,30 @@
 package org.datatables4j.tag;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.datatables4j.constants.CdnConstants;
+import org.datatables4j.exception.BadConfigurationException;
+import org.datatables4j.exception.CompressionException;
 import org.datatables4j.exception.DataNotFoundException;
-import org.datatables4j.javascript.WebContentGenerator;
+import org.datatables4j.generator.WebContentGenerator;
+import org.datatables4j.model.CssResource;
 import org.datatables4j.model.HtmlTable;
+import org.datatables4j.model.JsResource;
+import org.datatables4j.model.WebResources;
+import org.datatables4j.module.ui.ColReorderModule;
 import org.datatables4j.module.ui.FixedHeaderModule;
 import org.datatables4j.module.ui.ScrollerModule;
 import org.datatables4j.util.RequestHelper;
@@ -48,20 +58,24 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	// Basic features
 	protected Boolean autoWidth;
-	protected Boolean deferRender;
-	protected Boolean filterable;
+	protected Boolean filter;
 	protected Boolean info;
 	protected Boolean paginate;
 	protected String lengthPaginate;
-	protected Boolean processing;
 	protected String paginationType;
 	protected Boolean sort;
-	protected Boolean stateSave;
 
+	// Advanced features
+	protected Boolean deferRender;
+	protected Boolean stateSave;
+	protected Boolean processing;
+	
 	// Extra features
 	protected Boolean fixedHeader = false;
+	protected String fixedPosition;
 	protected Boolean scroller = false;
-	protected String scrollY;
+	protected String scrollY = "300px";
+	protected Boolean colReorder = false;
 
 	// Awesome features
 	protected String export;
@@ -72,7 +86,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Iterator<Object> iterator;
 	protected Object currentObject;
 	protected String loadingType;
-
+	protected Boolean cdn = true;
+	
+	/**
+	 * TODO
+	 * @return
+	 * @throws JspException
+	 */
 	protected int processDoStartTag() throws JspException{
 		
 		// Just used to identify the first row (header)
@@ -93,7 +113,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			// Body management
 			if (iterator.hasNext()) {
 				Object object = iterator.next();
-				pageContext.setAttribute(row, object);
+				if(row != null){
+					pageContext.setAttribute(row, object);					
+				}
 				this.setCurrentObject(object);
 
 				String rowId = this.getRowId();
@@ -113,24 +135,31 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		return SKIP_BODY;
 	}
 	
+	/**
+	 * TODO
+	 * @return
+	 * @throws JspException
+	 */
 	protected int processDoAfterBody() throws JspException {
 		
-		if ("DOM".equals(this.loadingType)) {
+		if ("DOM".equals(this.loadingType) && iterator.hasNext()) {
 
-			BodyContent body = getBodyContent();
-			try {
-				body.writeOut(getPreviousOut());
-			} catch (IOException e) {
-				throw new JspTagException("IterationTag: " + e.getMessage());
-			}
+//			BodyContent body = getBodyContent();
+//			try {
+//				body.writeOut(getPreviousOut());
+//			} catch (IOException e) {
+//				throw new JspTagException("IterationTag: " + e.getMessage());
+//			}
+//
+//			// clear up so the next time the body content is empty
+//			body.clearBody();
 
-			// clear up so the next time the body content is empty
-			body.clearBody();
-
-			if (iterator.hasNext()) {
+//			if (iterator.hasNext()) {
 				Object object = iterator.next();
 				this.setCurrentObject(object);
-				pageContext.setAttribute(row, object);
+				if(row != null){
+					pageContext.setAttribute(row, object);					
+				}
 
 				String rowId = this.getRowId();
 				if (StringUtils.isNotBlank(rowId)) {
@@ -140,62 +169,115 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				}
 				
 				this.rowNumber++;
+				
 				// System.out.println(rowNumber);
 				return EVAL_BODY_AGAIN;
-			} else {
-				return EVAL_PAGE;
-			}
+//			} else {
+//				return EVAL_PAGE;
+//			}
 		}
-		return EVAL_PAGE;
+		else{
+			
+			return SKIP_BODY;			
+		}
 	}
+	
+	/**
+	 * TODO
+	 * @return
+	 * @throws JspException
+	 */
 	protected int processDoEndTag() throws JspException {
-
+		
+		String baseUrl = RequestHelper.getBaseUrl(pageContext);
+		
 		// Update the HtmlTable object configuration with the attributes
 		updateCommonConfiguration();
 
 		// Check if extra features must be activated
-		checkExtraAttributes();
+		registerModules();
 
+		// Check if the table is being exported
 		checkExport();
 		
 		try {
-			// HTML
-			pageContext.getOut().write(this.table.toHtml());
-			pageContext.getOut().write("</ br>");
-
-			String baseUrl = RequestHelper.getBaseUrl(pageContext);
-
-			try {
-				// JS script generation according to the JSP tags configuration
-				String js = WebContentGenerator.getJavascript(pageContext, this.table);
-
-				// Store the JS as servlet context attribute
-				pageContext.getServletContext().setAttribute("jsToLoad", js);
-
-				// <script> HTML tag generation
-				pageContext.getOut().write(
-						"<script src=\"" + baseUrl + "/datatablesController/datatables4j.js"
-								+ "\"></script>");
-
-			} catch (DataNotFoundException e) {
-				e.printStackTrace();
-				logger.error("Something went wront with the datatables tag");
-				// TODO Afficher des logs
-				// TODO Afficher un message sous forme d'alerte Javascript
-				// (et/ou console ?)
-				throw new JspException(e);
+			//
+			WebContentGenerator contentGenerator = new WebContentGenerator();
+			
+			// JS script generation according to the JSP tags configuration
+			WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
+	
+			// Store web resources as servlet attribute
+			pageContext.getServletContext().setAttribute("webResources", webResources);
+			
+			// <link> HTML tag generation
+			if(this.isCdnEnable()){
+				pageContext.getOut().println("<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");				
 			}
-
-		} catch (IOException e) {
+			for(Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()){
+				pageContext.getOut().println(
+						"<link href=\"" + baseUrl + "/datatablesController/?file=" + entry.getKey() + "\" rel=\"stylesheet\">");
+			}
+						
+			// HTML generation
+			pageContext.getOut().println(this.table.toHtml());
+						
+			// <script> HTML tag generation
+			if(this.isCdnEnable()){
+				pageContext.getOut().println("<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
+			}
+			for(Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()){
+				pageContext.getOut().println(
+						"<script src=\"" + baseUrl + "/datatablesController/?file=" + entry.getKey() + "\"></script>");
+			}
+		} 
+		catch (IOException e) {
 			logger.error("Something went wront with the datatables tag");
 			throw new JspException(e);
+		} 
+		catch (CompressionException e) {
+			logger.error("Something went wront with the compressor.");
+			throw new JspException(e);
+		} 
+		catch (BadConfigurationException e) {
+			logger.error("Something went wront with the DataTables4j configuration. Please check your datatables4j.properties file");
+			throw new JspException(e);
+		} 
+		catch (DataNotFoundException e) {
+			logger.error("Something went wront with the data provider.");
+			throw new JspException(e);
 		}
-
+		
 		return EVAL_PAGE;
 	}
 
+	private boolean dumpFile(String paramString, Writer paramOutputStream)
+	  {
+	    byte[] arrayOfByte = new byte[4096];
+	    boolean bool = true;
+	    try
+	    {
+	      InputStream in = new ByteArrayInputStream("Ceci est un test".getBytes());
+//	    	FileInputStream localFileInputStream = new FileInputStream(lookupFile(paramString));
+	      paramOutputStream.write(in.toString());
+//	      int i;
+//	      while ((i = in.read(arrayOfByte)) != -1)
+//	        paramOutputStream.write(arrayOfByte, 0, i);
+	      in.close();
+	    }
+	    catch (Exception localException)
+	    {
+	      bool = false;
+	    }
+	    return bool;
+	  }
+	private File lookupFile(String paramString)
+	  {
+	    File localFile = new File(paramString);
+	    return localFile.isAbsolute() ? localFile : new File(this.pageContext.getServletContext().getRealPath("/"), paramString);
+	  }
 	/**
-	 * 
+	 * TOD
 	 */
 	private void updateCommonConfiguration() {
 		if (StringUtils.isNotBlank(this.cssClass)) {
@@ -210,8 +292,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.deferRender != null) {
 			this.table.setDeferRender(this.deferRender);
 		}
-		if (this.filterable != null) {
-			this.table.setFilterable(this.filterable);
+		if (this.filter != null) {
+			this.table.setFilterable(this.filter);
 		}
 		if (this.info != null) {
 			this.table.setInfo(this.info);
@@ -234,17 +316,24 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.stateSave != null) {
 			this.table.setStateSave(this.stateSave);
 		}
+		if(this.cdn != null){
+			this.table.setCdn(this.cdn);
+		}
 
 		// Extra features
 		if (StringUtils.isNotBlank(this.scrollY)) {
 			this.table.setScrollY(this.scrollY);
 		}
+		
+		if (StringUtils.isNotBlank(this.fixedPosition)) {
+			this.table.setFixedPosition(this.fixedPosition);
+		}
 	}
 
 	/**
-	 * 
+	 * TODO
 	 */
-	private void checkExtraAttributes() {
+	private void registerModules() {
 
 		if (this.fixedHeader) {
 			logger.info("Internal module detected : fixedHeader");
@@ -255,6 +344,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			logger.info("Internal module detected : scroller");
 			this.table.registerModule(new ScrollerModule());
 		}
+		
+		if(this.colReorder){
+			logger.info("Internal module detected : colReorder");
+			this.table.registerModule(new ColReorderModule());
+		}
+		
+		//TODO Others modules 
 	}
 	
 	
@@ -273,6 +369,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 	}
 	
+	/**
+	 * TODO
+	 * @return
+	 * @throws JspException
+	 */
 	private String getRowId() throws JspException{
 		
 		StringBuffer rowId = new StringBuffer();
@@ -384,12 +485,12 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.deferRender = deferRender;
 	}
 
-	public Boolean getFilterable() {
-		return filterable;
+	public Boolean getFilter() {
+		return filter;
 	}
 
-	public void setFilterable(Boolean filterable) {
-		this.filterable = filterable;
+	public void setFilter(Boolean filterable) {
+		this.filter = filterable;
 	}
 
 	public Boolean getInfo() {
@@ -464,12 +565,36 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.scroller = scroller;
 	}
 
+	public Boolean getColReorder() {
+		return colReorder;
+	}
+
+	public void setColReorder(Boolean colReorder) {
+		this.colReorder = colReorder;
+	}
+	
 	public String getScrollY() {
 		return scrollY;
 	}
 
 	public void setScrollY(String scrollY) {
 		this.scrollY = scrollY;
+	}
+	
+	public String getFixedPosition() {
+		return fixedPosition;
+	}
+
+	public void setFixedPosition(String fixedPosition) {
+		this.fixedPosition = fixedPosition;
+	}
+	
+	public Boolean isCdnEnable() {
+		return cdn;
+	}
+
+	public void setCdn(Boolean cdn) {
+		this.cdn = cdn;
 	}
 	
 	public String getExport() {
@@ -504,5 +629,15 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			// TODO afficher un message d'erreur
 			// TODO afficher une alerte javascript
 		}
+	}
+	
+	/**
+	 * TODO
+	 */
+	public void release() {
+		// TODO Auto-generated method stub
+		super.release();
+		
+		// TODO
 	}
 }

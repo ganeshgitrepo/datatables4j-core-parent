@@ -1,5 +1,10 @@
 package org.datatables4j.compressor;
 
+/**
+ * TODO
+ * @author tduchate
+ *
+ */
 public class Options {
 	public String charset = "UTF-8";
 	public int lineBreakPos = -1;

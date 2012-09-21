@@ -1,18 +1,15 @@
 package org.datatables4j.configuration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.datatables4j.constants.DTConstants;
 import org.datatables4j.model.HtmlColumn;
 import org.datatables4j.model.HtmlTable;
+import org.datatables4j.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,46 +20,23 @@ public class ConfigGenerator {
 	private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 	
 	public String getConfig(MainConf mainConf) {
-//		Map<String, Object> config = this.generateConfig(table);
-		return this.convertConfigToJson(mainConf);
+		return JsonUtils.convertObjectToJsonString(mainConf);
 	}
 
 	public String getConfig(MainConf mainConf, Map<String, Object> data) {
-
-//		Map<String, Object> config = this.generateConfig(table);
 		mainConf.putAll(data);
-		return this.convertConfigToJson(mainConf);
-	}
-
-	public String convertConfigToJson(Map<String, Object> config){
-		
-		logger.debug("Converting configuration to JSON ...");
-		ObjectMapper mapper = new ObjectMapper();
-		
-		StringBuffer tmpRetval = new StringBuffer();
-		// write JSON to a file
-		try {
-			tmpRetval.append(mapper.writeValueAsString(config));
-			// System.out.println(mapper.writeValueAsString(aoColumns));
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.debug("Convertion OK");
-		logger.debug("Result : {}", tmpRetval);
-		
-		// return tmpRetval.toString();
-		return tmpRetval.toString();
+		return JsonUtils.convertObjectToJsonString(mainConf);
 	}
 	
-	
+	/**
+	 * If no custom config is specified with table attributs, DataTables
+	 * will internally use default one.
+	 * 
+	 * @param table
+	 *            The POJO containing the HTML table.
+	 * @return MainConf The main configuration file associated with the HTML
+	 *         table.
+	 */
 	public MainConf generateConfig(HtmlTable table) {
 
 		logger.debug("Generating DataTables configuration ..");
@@ -71,7 +45,6 @@ public class ConfigGenerator {
 		MainConf mainConf = new MainConf();
 		
 		// Columns configuration
-//		AoColumns aoColumns = new AoColumns();
 		Map<String, Object> tmp = null;
 		List<Map<String, Object>> aoColumnsContent = new ArrayList<Map<String, Object>>(); 
 		for (HtmlColumn column : table.getLastHeaderRow().getColumns()) {
@@ -81,7 +54,6 @@ public class ConfigGenerator {
 				tmp.put(DTConstants.DT_DATA, column.getProperty());				
 			}
 			aoColumnsContent.add(tmp);
-//			aoColumns.addValue("bSortable", column.getSortable());
 		}
 		mainConf.put(DTConstants.DT_AOCOLUMNS, aoColumnsContent);
 			

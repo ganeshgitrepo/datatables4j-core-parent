@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 public class HtmlTable {
 
 	// HTML attributes
@@ -23,28 +22,30 @@ public class HtmlTable {
 	private Boolean processing;
 	private Boolean sort;
 	private Boolean stateSave;
-	
+
 	// Extra features
 	private String scrollY;
-	
+	private String fixedPosition;
+
 	// Internal attributes
+	private HtmlTableProperties properties = new HtmlTableProperties();
 	private List<HtmlRow> head = new LinkedList<HtmlRow>();
 	private List<HtmlRow> body = new LinkedList<HtmlRow>();
 	private List<HtmlRow> foot = new LinkedList<HtmlRow>();
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private String datasourceUrl;
-	private List<ExternalModule> externalModules;
-//	private List<InternalModule> internalModules;
 	private List<Module> modules = new ArrayList<Module>();
 	private List<ExtraFile> extraFiles = new ArrayList<ExtraFile>();
-	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();;
-	
+	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
+	private Boolean cdn;
+
 	public HtmlTable() {
 	};
 
 	public HtmlTable(String id) {
 		this.id = id;
 	}
+
 	public String getId() {
 		return this.id;
 	}
@@ -54,85 +55,86 @@ public class HtmlTable {
 		this.attributes.put("id", id);
 	}
 
-	public HtmlRow addHeaderRow(){
+	public HtmlRow addHeaderRow() {
 		HtmlRow row = new HtmlRow();
 		this.head.add(row);
 		return row;
 	}
-	
-	public HtmlRow addRow(){
+
+	public HtmlRow addRow() {
 		HtmlRow row = new HtmlRow();
 		this.body.add(row);
 		return row;
 	}
-	
-	public HtmlRow addRow(String rowId){
+
+	public HtmlRow addRow(String rowId) {
 		HtmlRow row = new HtmlRow(rowId);
 		this.body.add(row);
 		return row;
 	}
-	
-	public HtmlTable addRows(HtmlRow... rows){
-		for(HtmlRow row : rows){
+
+	public HtmlTable addRows(HtmlRow... rows) {
+		for (HtmlRow row : rows) {
 			this.body.add(row);
 		}
 		return this;
 	}
-	public void addAttribute(String name, String value){
+
+	public void addAttribute(String name, String value) {
 		this.attributes.put(name, value);
 	}
-	
-	public HtmlRow getLastHeaderRow(){
+
+	public HtmlRow getLastHeaderRow() {
 		return ((LinkedList<HtmlRow>) this.head).getLast();
 	}
-	public HtmlRow getLastRow(){
+
+	public HtmlRow getLastRow() {
 		return ((LinkedList<HtmlRow>) this.body).getLast();
 	}
-	
-	
-	public String toHtml(){
+
+	public String toHtml() {
 		StringBuffer tmpRetval = new StringBuffer();
 		tmpRetval.append("<table id=\"");
 		tmpRetval.append(this.id);
 		tmpRetval.append("\"");
-		
-		for(Map.Entry<String, String> entry : this.attributes.entrySet()){
+
+		for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
 			tmpRetval.append(" ");
 			tmpRetval.append(entry.getKey());
 			tmpRetval.append("=\"");
 			tmpRetval.append(entry.getValue());
 			tmpRetval.append("\"");
 		}
-		
+
 		tmpRetval.append(">");
 		tmpRetval.append("<thead>");
-		
-		for(HtmlRow row : this.head){
+
+		for (HtmlRow row : this.head) {
 			tmpRetval.append(row.toHtml());
 		}
 		tmpRetval.append("</thead>");
 		tmpRetval.append("<tbody>");
-		
-		for(HtmlRow row : this.body){
+
+		for (HtmlRow row : this.body) {
 			tmpRetval.append(row.toHtml());
 		}
-		
+
 		tmpRetval.append("</tbody>");
-		
-		if(!this.foot.isEmpty()){
+
+		if (!this.foot.isEmpty()) {
 			tmpRetval.append("<tfoot>");
-			for(HtmlRow row : this.foot){
+			for (HtmlRow row : this.foot) {
 				tmpRetval.append(row.toHtml());
 			}
-			
-			tmpRetval.append("</tfoot>");	
+
+			tmpRetval.append("</tfoot>");
 		}
 		tmpRetval.append("</table>");
-		System.out.println("tmpRetval.toString() = " + tmpRetval.toString());
+
 		return tmpRetval.toString();
 	}
-	
-	public void registerModule(Module module){
+
+	public void registerModule(Module module) {
 		this.modules.add(module);
 	}
 
@@ -242,22 +244,6 @@ public class HtmlTable {
 		this.datasourceUrl = datasourceUrl;
 	}
 
-	public List<ExternalModule> getExternalModules() {
-		return externalModules;
-	}
-
-	public void setExternalModules(List<ExternalModule> externalModules) {
-		this.externalModules = externalModules;
-	}
-
-//	public List<InternalModule> getInternalModules() {
-//		return internalModules;
-//	}
-//
-//	public void setInternalModules(List<InternalModule> internalModules) {
-//		this.internalModules = internalModules;
-//	}
-
 	public String getScrollY() {
 		return scrollY;
 	}
@@ -289,4 +275,29 @@ public class HtmlTable {
 	public void setModules(List<Module> modules) {
 		this.modules = modules;
 	}
+
+	public String getFixedPosition() {
+		return fixedPosition;
+	}
+
+	public void setFixedPosition(String fixedPosition) {
+		this.fixedPosition = fixedPosition;
+	}
+
+	public HtmlTableProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(HtmlTableProperties properties) {
+		this.properties = properties;
+	}
+
+	public Boolean getCdn() {
+		return cdn;
+	}
+
+	public void setCdn(Boolean cdn) {
+		this.cdn = cdn;
+	}
+
 }

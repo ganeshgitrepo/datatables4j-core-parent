@@ -4,51 +4,37 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.datatables4j.model.ExtraFile;
+import org.datatables4j.util.JsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExtraFileTag extends TagSupport {
+	private static final long serialVersionUID = -287813095911386884L;
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(AbstractTableTag.class);
-		
-	private static final long serialVersionUID = -287813095911386884L;
 
-	// Tag attribute
+	// Tag attributes
 	private String src;
-	private String include;
+	private String insert = JsConstants.BEFOREALL;
 	
-	// Internal attribute
-	private Integer counter;
-	
-	@Override
 	public int doStartTag() throws JspException {
-		counter = 0;
-		logger.debug("ExtraFileTag DEBUT doStartTag");
-		logger.debug("********** counter = {}", counter);
-		if(counter == 1){
-			counter++;
-			logger.debug("FIN doStartTag");
-			return SKIP_BODY;
-		}
-		else{
-			logger.debug("ExtraFileTag FIN doStartTag");
-			return EVAL_PAGE;
-		}
+		return SKIP_BODY;
 	}
 	
 	public int doEndTag() throws JspException {
 		
-		logger.debug("ExtraFileTag DEBUT doEndTag");
-		logger.debug("********** counter = {}", counter);
 		AbstractTableTag parent = (AbstractTableTag) getParent();
-		parent.getTable().getExtraFiles().add(new ExtraFile(this.src, this.include));
 		
-		logger.debug("src = {}", src);
-		
-		
-		logger.debug("ExtraFileTag FIN doEndTag");
+		if(parent.isFirstRow()){
+			parent.getTable().getExtraFiles().add(new ExtraFile(getRealSource(this.src), this.insert));
+		}
 		return EVAL_PAGE;
+	}
+	
+	private String getRealSource(String tmpSource){
+		logger.debug("getRealSource = {}", pageContext.getServletContext().getRealPath(tmpSource));
+		return pageContext.getServletContext().getRealPath(tmpSource);
 	}
 	
 	public String getSrc() {
@@ -59,11 +45,11 @@ public class ExtraFileTag extends TagSupport {
 		this.src = src;
 	}
 
-	public String getInclude() {
-		return include;
+	public String getInsert() {
+		return insert;
 	}
 
-	public void setInclude(String include) {
-		this.include = include;
+	public void setInsert(String insert) {
+		this.insert = insert;
 	}
 }
