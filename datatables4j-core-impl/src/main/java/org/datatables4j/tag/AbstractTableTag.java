@@ -1,15 +1,12 @@
 package org.datatables4j.tag;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
@@ -73,6 +70,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	// Extra features
 	protected Boolean fixedHeader = false;
 	protected String fixedPosition;
+	protected Integer fixedOffsetTop;
 	protected Boolean scroller = false;
 	protected String scrollY = "300px";
 	protected Boolean colReorder = false;
@@ -86,7 +84,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Iterator<Object> iterator;
 	protected Object currentObject;
 	protected String loadingType;
-	protected Boolean cdn = true;
+	protected Boolean cdn = false;
 	
 	/**
 	 * TODO
@@ -103,7 +101,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			this.table.setDatasourceUrl(url);
 			this.table.addHeaderRow();
 			this.table.addRow();
-			System.out.println("***************************** FIN AjaxTableTag doStartTag");
 			return EVAL_BODY_BUFFERED;
 		}
 		else if("DOM".equals(this.loadingType)){
@@ -190,6 +187,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected int processDoEndTag() throws JspException {
 		
 		String baseUrl = RequestHelper.getBaseUrl(pageContext);
+		ServletContext context = pageContext.getServletContext();
 		
 		// Update the HtmlTable object configuration with the attributes
 		updateCommonConfiguration();
@@ -206,17 +204,15 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			
 			// JS script generation according to the JSP tags configuration
 			WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
-	
-			// Store web resources as servlet attribute
-			pageContext.getServletContext().setAttribute("webResources", webResources);
-			
+
 			// <link> HTML tag generation
 			if(this.isCdnEnable()){
 				pageContext.getOut().println("<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");				
 			}
 			for(Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()){
+				context.setAttribute(entry.getKey(), entry.getValue());
 				pageContext.getOut().println(
-						"<link href=\"" + baseUrl + "/datatablesController/?file=" + entry.getKey() + "\" rel=\"stylesheet\">");
+						"<link href=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\" rel=\"stylesheet\">");
 			}
 						
 			// HTML generation
@@ -227,9 +223,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				pageContext.getOut().println("<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
 			}
 			for(Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()){
+				System.out.println("Fichier = " + entry.getKey());
+				context.setAttribute(entry.getKey(), entry.getValue());
 				pageContext.getOut().println(
-						"<script src=\"" + baseUrl + "/datatablesController/?file=" + entry.getKey() + "\"></script>");
+						"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\"></script>");
 			}
+			
+			logger.debug("Web content generated");
 		} 
 		catch (IOException e) {
 			logger.error("Something went wront with the datatables tag");
@@ -251,31 +251,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		return EVAL_PAGE;
 	}
 
-	private boolean dumpFile(String paramString, Writer paramOutputStream)
-	  {
-	    byte[] arrayOfByte = new byte[4096];
-	    boolean bool = true;
-	    try
-	    {
-	      InputStream in = new ByteArrayInputStream("Ceci est un test".getBytes());
-//	    	FileInputStream localFileInputStream = new FileInputStream(lookupFile(paramString));
-	      paramOutputStream.write(in.toString());
-//	      int i;
-//	      while ((i = in.read(arrayOfByte)) != -1)
-//	        paramOutputStream.write(arrayOfByte, 0, i);
-	      in.close();
-	    }
-	    catch (Exception localException)
-	    {
-	      bool = false;
-	    }
-	    return bool;
-	  }
-	private File lookupFile(String paramString)
-	  {
-	    File localFile = new File(paramString);
-	    return localFile.isAbsolute() ? localFile : new File(this.pageContext.getServletContext().getRealPath("/"), paramString);
-	  }
+	
 	/**
 	 * TOD
 	 */
@@ -327,6 +303,10 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		
 		if (StringUtils.isNotBlank(this.fixedPosition)) {
 			this.table.setFixedPosition(this.fixedPosition);
+		}
+		
+		if (this.fixedOffsetTop != null) {
+			this.table.setFixedOffsetTop(this.fixedOffsetTop);
 		}
 	}
 
@@ -587,6 +567,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setFixedPosition(String fixedPosition) {
 		this.fixedPosition = fixedPosition;
+	}
+	
+	public Integer getOffsetTop() {
+		return fixedOffsetTop;
+	}
+
+	public void setOffsetTop(Integer fixedOffsetTop) {
+		this.fixedOffsetTop = fixedOffsetTop;
 	}
 	
 	public Boolean isCdnEnable() {

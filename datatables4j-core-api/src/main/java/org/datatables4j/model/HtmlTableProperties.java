@@ -12,7 +12,7 @@ public class HtmlTableProperties {
 	/**
 	 * DataTables properties file.
 	 */
-	private Properties propertiesResource = null;
+	private Properties propertiesResource;
 
 	public final static String DT_DEFAULT_PROPERTIES = "/datatables4j-default.properties";
 	public final static String DT_PROPERTIES = "/datatables4j.properties";

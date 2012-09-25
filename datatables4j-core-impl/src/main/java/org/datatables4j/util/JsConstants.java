@@ -1,5 +1,10 @@
 package org.datatables4j.util;
 
+/**
+ * TODO
+ *
+ * @author Thibault Duchateau
+ */
 public class JsConstants {
 
 	public static final String BEFOREALL = "BEFOREALL";

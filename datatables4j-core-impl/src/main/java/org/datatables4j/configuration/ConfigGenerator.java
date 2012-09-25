@@ -19,11 +19,11 @@ public class ConfigGenerator {
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 	
-	public String getConfig(MainConf mainConf) {
+	public String getConfig(Map<String, Object> mainConf) {
 		return JsonUtils.convertObjectToJsonString(mainConf);
 	}
 
-	public String getConfig(MainConf mainConf, Map<String, Object> data) {
+	public String getConfig(Map<String, Object> mainConf, Map<String, Object> data) {
 		mainConf.putAll(data);
 		return JsonUtils.convertObjectToJsonString(mainConf);
 	}
@@ -37,12 +37,12 @@ public class ConfigGenerator {
 	 * @return MainConf The main configuration file associated with the HTML
 	 *         table.
 	 */
-	public MainConf generateConfig(HtmlTable table) {
+	public Map<String, Object> generateConfig(HtmlTable table) {
 
 		logger.debug("Generating DataTables configuration ..");
 		
 		// Main configuration object
-		MainConf mainConf = new MainConf();
+		Map<String, Object> mainConf = new HashMap<String, Object>();
 		
 		// Columns configuration
 		Map<String, Object> tmp = null;

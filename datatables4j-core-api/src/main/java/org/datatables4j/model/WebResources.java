@@ -2,6 +2,7 @@ package org.datatables4j.model;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 public class WebResources {
 
@@ -24,4 +25,20 @@ public class WebResources {
 		this.stylesheets = stylesheets;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("JS:");
+		for(Entry<String, JsResource> entry : javascripts.entrySet()){
+			buffer.append(entry.getKey());
+			buffer.append(",");
+		}
+		buffer.append("|CSS:");
+		for(Entry<String, CssResource> entry : stylesheets.entrySet()){
+			buffer.append(entry.getKey());
+			buffer.append(",");
+		}
+		return buffer.toString();
+	}
+
+	
 }

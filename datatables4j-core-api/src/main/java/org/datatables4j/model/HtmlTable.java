@@ -26,6 +26,7 @@ public class HtmlTable {
 	// Extra features
 	private String scrollY;
 	private String fixedPosition;
+	private Integer fixedOffsetTop;
 
 	// Internal attributes
 	private HtmlTableProperties properties = new HtmlTableProperties();
@@ -298,6 +299,14 @@ public class HtmlTable {
 
 	public void setCdn(Boolean cdn) {
 		this.cdn = cdn;
+	}
+
+	public Integer getFixedOffsetTop() {
+		return fixedOffsetTop;
+	}
+
+	public void setFixedOffsetTop(Integer fixedOffsetTop) {
+		this.fixedOffsetTop = fixedOffsetTop;
 	}
 
 }

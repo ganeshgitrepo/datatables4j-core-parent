@@ -11,8 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author TDUCHATE
- * 
+ * TODO
+ *
+ * @author Thibault Duchateau
  */
 public class ExtraConfTag extends TagSupport {
 

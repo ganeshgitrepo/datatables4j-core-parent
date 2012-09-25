@@ -3,6 +3,11 @@ package org.datatables4j.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+/**
+ * Allow to override the DataTables4j global properties locally.
+ *
+ * @author Thibault Duchateau
+ */
 public class PropTag extends TagSupport {
 	private static final long serialVersionUID = -3453884184847355817L;
 

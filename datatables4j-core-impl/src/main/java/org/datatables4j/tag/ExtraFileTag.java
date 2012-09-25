@@ -3,11 +3,16 @@ package org.datatables4j.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.datatables4j.constants.InsertMode;
 import org.datatables4j.model.ExtraFile;
-import org.datatables4j.util.JsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO
+ *
+ * @author Thibault Duchateau
+ */
 public class ExtraFileTag extends TagSupport {
 	private static final long serialVersionUID = -287813095911386884L;
 
@@ -16,7 +21,7 @@ public class ExtraFileTag extends TagSupport {
 
 	// Tag attributes
 	private String src;
-	private String insert = JsConstants.BEFOREALL;
+	private InsertMode insert = InsertMode.BEFOREALL;
 	
 	public int doStartTag() throws JspException {
 		return SKIP_BODY;
@@ -45,11 +50,11 @@ public class ExtraFileTag extends TagSupport {
 		this.src = src;
 	}
 
-	public String getInsert() {
+	public InsertMode getInsert() {
 		return insert;
 	}
 
-	public void setInsert(String insert) {
+	public void setInsert(InsertMode insert) {
 		this.insert = insert;
 	}
 }

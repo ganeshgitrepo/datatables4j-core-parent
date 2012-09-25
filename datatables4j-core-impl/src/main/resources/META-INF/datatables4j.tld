@@ -181,6 +181,11 @@
          <description>(top|bottom|left|right) Respectively fix the
             header, footer, left column, right column. (Default : top)</description>
       </attribute>
+      <attribute>
+         <name>offsetTop</name>
+         <description>TODO</description>
+         <type>java.lang.Integer</type>
+      </attribute>
 
       <!-- Scroller -->
       <attribute>
@@ -296,7 +301,7 @@
    <!-- Prop -->
    <!-- ====================================== -->
    <tag>
-      <description>Allow to override properties usually defined in the
+      <description>Allow to override properties normally defined in the
          DataTables4j properties file.</description>
       <name>prop</name>
       <tag-class>org.datatables4j.tag.PropTag</tag-class>

@@ -8,7 +8,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.datatables4j.model.HtmlColumn;
 
-
+/**
+ * TODO
+ *
+ * @author Thibault Duchateau
+ */
 public abstract class AbstractColumnTag extends BodyTagSupport {
 
 	private static final long serialVersionUID = 1L;

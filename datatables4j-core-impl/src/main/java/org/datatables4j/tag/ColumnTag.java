@@ -4,8 +4,8 @@ import javax.servlet.jsp.JspException;
 
 /**
  * TODO
- * @author tduchate
  *
+ * @author Thibault Duchateau
  */
 public class ColumnTag extends AbstractColumnTag {
 

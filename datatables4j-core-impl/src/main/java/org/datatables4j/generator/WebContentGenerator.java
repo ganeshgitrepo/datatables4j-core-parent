@@ -7,12 +7,12 @@ import java.util.Map.Entry;
 
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.datatables4j.aggregator.AggregateUtils;
 import org.datatables4j.compressor.ResourceCompressorHelper;
 import org.datatables4j.configuration.ConfigGenerator;
-import org.datatables4j.configuration.MainConf;
 import org.datatables4j.datasource.DataProviderHelper;
 import org.datatables4j.exception.BadConfigurationException;
 import org.datatables4j.exception.CompressionException;
@@ -21,10 +21,10 @@ import org.datatables4j.model.CssResource;
 import org.datatables4j.model.ExtraConf;
 import org.datatables4j.model.ExtraFile;
 import org.datatables4j.model.HtmlTable;
+import org.datatables4j.model.HtmlTableProperties;
 import org.datatables4j.model.JsResource;
 import org.datatables4j.model.WebResources;
 import org.datatables4j.module.InternalModuleLoader;
-import org.datatables4j.util.JsConstants;
 import org.datatables4j.util.JsonUtils;
 import org.datatables4j.util.RequestHelper;
 import org.datatables4j.util.ResourceUtils;
@@ -66,14 +66,24 @@ public class WebContentGenerator {
 	public WebResources generateWebResources(PageContext pageContext, HtmlTable table)
 			throws DataNotFoundException, CompressionException, IOException, BadConfigurationException {
 
-		JsResource mainFile = new JsResource("datatables4j.js");
+		HtmlTableProperties properties = table.getProperties();
+		
+		// Bean which stores all needed web resources (js, css)
 		WebResources webResources = new WebResources();
 		
 		// TODO transformer configGenerator en singleton
 		configGenerator = new ConfigGenerator();
 		
-		MainConf mainConf = configGenerator.generateConfig(table);
+		// Init the "configuration" map with the table informations
+		Map<String, Object> mainConf = configGenerator.generateConfig(table);
 		
+		/**
+		 * Build the main file.
+		 */
+		// We need to append a randomUUID in case of multiple table in the same JSP
+		JsResource mainFile = new JsResource("datatables4j-" + RandomStringUtils.randomNumeric(5) + ".js");
+
+		// 
 		mainFile.appendToBeforeAll("var oTable_");
 		mainFile.appendToBeforeAll(table.getId());
 		mainFile.appendToBeforeAll(";");
@@ -91,10 +101,11 @@ public class WebContentGenerator {
 		mainFile.appendToDataTablesConf("=$('#");
 		mainFile.appendToDataTablesConf(table.getId());
 		mainFile.appendToDataTablesConf("').dataTable(");
-				
-		extraConfManagement(mainConf, table);
+			
+		// TODO extraConf en standby car souci de parsing si function dans l'ojbet JSON
+//		extraConfManagement(mainConf, table);
 		
-		// AJAX table
+		// AJAX datasource : data must be added in the configuration file
 		if (table.getDatasourceUrl() != null) {
 			String baseUrl = RequestHelper.getBaseUrl(pageContext);
 			String webServiceUrl = baseUrl + table.getDatasourceUrl();
@@ -104,17 +115,17 @@ public class WebContentGenerator {
 			mainFile.appendToDataTablesConf(
 					configGenerator.getConfig(mainConf,providerHelper.getData(table, webServiceUrl)));
 		}
-		// DOM Table
+		// DOM datasource
 		else {
 			mainFile.appendToDataTablesConf(configGenerator.getConfig(mainConf));
 		}
 		
 		mainFile.appendToDataTablesConf(");");
 		
-		webResources.getJavascripts().put("datatables4j.js", mainFile);
+		webResources.getJavascripts().put(mainFile.getName(), mainFile);
 				
 		// Compressor
-		if(table.getProperties().isCompressorEnable()){
+		if(properties.isCompressorEnable()){
 			compressWebResources(webResources, table);
 		}
 		
@@ -148,7 +159,7 @@ public class WebContentGenerator {
 	 * @throws BadConfigurationException
 	 */
 	private void compressWebResources(WebResources webResources, HtmlTable table) throws BadConfigurationException{
-		// <script> HTML tag generation
+
 		ResourceCompressorHelper compressorHelper = new ResourceCompressorHelper(table);
 		
 		for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
@@ -163,27 +174,50 @@ public class WebContentGenerator {
 	}
 	
 	/**
-	 * TODO
+	 * If extraFile tag have been added, its content must be extracted and merge
+	 * to the main js file.
+	 * 
 	 * @param mainFile
+	 *            The resource to update with extraFiles.
 	 * @param table
-	 * @throws IOException
+	 *            The HTML tale.
+	 * @throws BadConfigurationException
+	 *             if
+	 * 
 	 */
-	private void extraFileManagement(JsResource mainFile, HtmlTable table) throws IOException {
+	private void extraFileManagement(JsResource mainFile, HtmlTable table) throws IOException,
+			BadConfigurationException {
 
-		for (ExtraFile file : table.getExtraFiles()) {
-			if (JsConstants.BEFOREALL.equals(file.getInsert())) {
-				mainFile.appendToBeforeAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
-			} else if (JsConstants.AFTERALL.equals(file.getInsert())) {
-				mainFile.appendToAfterAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
-			} else if (JsConstants.AFTERSTARTDOCUMENTEREADY.equals(file.getInsert())) {
-				mainFile.appendToAfterStartDocumentReady(ResourceUtils
-						.getFileContentFromWebapp(file.getSrc()));
-			} else if (JsConstants.BEFOREENDDOCUMENTREADY.equals(file.getInsert())) {
-				mainFile.appendToBeforeEndDocumentReady(ResourceUtils.getFileContentFromWebapp(file
-						.getSrc()));
+		if (!table.getExtraFiles().isEmpty()) {
+
+			logger.info("Extra files found");
+
+			for (ExtraFile file : table.getExtraFiles()) {
+				
+				switch (file.getInsert()) {
+				case BEFOREALL:
+					mainFile.appendToBeforeAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
+					break;
+
+				case AFTERSTARTDOCUMENTREADY:
+					mainFile.appendToAfterStartDocumentReady(ResourceUtils
+							.getFileContentFromWebapp(file.getSrc()));
+					break;
+					
+				case BEFOREENDDOCUMENTREADY:
+					mainFile.appendToBeforeEndDocumentReady(ResourceUtils
+							.getFileContentFromWebapp(file.getSrc()));
+					break;
+					
+				case AFTERALL:
+					mainFile.appendToAfterAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
+					break;
+					
+				default:
+					throw new BadConfigurationException("Unable to get the file " + file.getSrc());
+				}
 			}
 		}
-
 		// logger.debug("jsfile : {}", jsFile.toString());
 	}
 	
@@ -192,41 +226,29 @@ public class WebContentGenerator {
 	 * @param mainConf
 	 * @param table
 	 */
-	private void extraConfManagement(MainConf mainConf, HtmlTable table) {
+	private void extraConfManagement(Map<String, Object> mainConf, HtmlTable table) throws BadConfigurationException {
 
 		// Jackson object mapper
 		ObjectMapper mapper = new ObjectMapper();
 		
-//		try {
-			Map<String, Object> extraConf = new HashMap<String, Object>();
-			Map<String, Object> tmpMap;
-			for (ExtraConf conf : table.getExtraConfs()) {
-				String confStr = ResourceUtils.getFileContentFromWebapp(conf.getSrc());
-				logger.debug("confStr = {}", confStr);
-				JsonNode newJson = JsonUtils.convertStringToJsonNode(confStr);
-				logger.debug("newJson = {}", newJson);
-				JsonNode oldJson = JsonUtils.convertObjectToJsonNode(mainConf);
-				logger.debug("oldJson = {}", oldJson);
-				
-				JsonNode result = JsonUtils.merge(oldJson, newJson);
-				logger.debug("result = {}", result);
-				
-				tmpMap = (Map<String, Object>) JsonUtils.convertJsonNodeToObject(result, MainConf.class);
-				extraConf.putAll(tmpMap);
-			}
+		Map<String, Object> extraConf = new HashMap<String, Object>();
+		Map<String, Object> tmpMap;
+		for (ExtraConf conf : table.getExtraConfs()) {
+			String confStr = ResourceUtils.getFileContentFromWebapp(conf.getSrc());
+			logger.debug("confStr = {}", confStr);
+			JsonNode newJson = JsonUtils.convertStringToJsonNode(confStr);
+			logger.debug("newJson = {}", newJson);
+			JsonNode oldJson = JsonUtils.convertObjectToJsonNode(mainConf);
+			logger.debug("oldJson = {}", oldJson);
 			
-			logger.debug("extraConf = {}", extraConf);
-			mainConf.putAll(extraConf);
+			JsonNode result = JsonUtils.merge(oldJson, newJson);
+			logger.debug("result = {}", result);
 			
-//		} catch (JsonParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (JsonMappingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+			tmpMap = (Map<String, Object>) JsonUtils.convertJsonNodeToObject(result, Map.class);
+			extraConf.putAll(tmpMap);
+		}
+		
+		logger.debug("extraConf = {}", extraConf);
+		mainConf.putAll(extraConf);
 	}
 }

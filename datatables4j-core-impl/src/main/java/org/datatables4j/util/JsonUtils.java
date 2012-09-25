@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class JsonUtils {
@@ -22,8 +23,12 @@ public class JsonUtils {
 	 */
 	static{
 		mapper = new ObjectMapper();
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+//		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, false);
+		mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, true);
+		mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, false);
+//		mapper.configure(SerializationConfig.Feature.QUOTE_FIELD_NAMES, true);
+		
 	}
 	
 	/**
@@ -106,7 +111,9 @@ public class JsonUtils {
 		StringBuffer tmpRetval = new StringBuffer();
 		// write JSON to a file
 		try {
-			tmpRetval.append(mapper.writeValueAsString(config));
+			tmpRetval.append(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(config));
+			System.out.println("tmpRetval= " + tmpRetval);
+			System.out.println("tmpRetval = " + tmpRetval.toString());
 			// System.out.println(mapper.writeValueAsString(aoColumns));
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block

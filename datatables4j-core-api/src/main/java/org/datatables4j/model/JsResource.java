@@ -32,7 +32,7 @@ public class JsResource extends DataTablesResource {
 	}
 
 	public String getContent() {
-		return this.content;
+		return this.content != null ? this.content : this.toString();
 	}
 
 	public void setContent(String content) {

@@ -7,6 +7,11 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+/**
+ * TODO
+ *
+ * @author Thibault Duchateau
+ */
 public class IterationTEI extends TagExtraInfo {
 
 	public VariableInfo[] getVariableInfo(TagData data) {
