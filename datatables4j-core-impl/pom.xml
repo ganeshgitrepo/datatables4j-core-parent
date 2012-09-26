@@ -6,7 +6,7 @@
    <parent>
       <groupId>org.datatables4j</groupId>
       <artifactId>datatables4j-core-parent</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.2.0-SNAPSHOT</version>
    </parent>
 
    <!-- Main configuration -->
@@ -53,12 +53,23 @@
       <dependency>
          <groupId>com.yahoo.platform.yui</groupId>
          <artifactId>yuicompressor</artifactId>
+         <exclusions>
+            <exclusion>
+               <groupId>rhino</groupId>
+               <artifactId>js</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
 
+      <dependency>
+         <groupId>com.google.javascript</groupId>
+         <artifactId>closure-compiler</artifactId>
+      </dependency>
+      
       <!-- Servlet -->
       <dependency>
          <groupId>javax.servlet</groupId>
-         <artifactId>javax.servlet-api</artifactId>
+         <artifactId>servlet-api</artifactId>
       </dependency>
 
       <!-- JSP -->

@@ -3,7 +3,6 @@ package org.datatables4j.web.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Thibault Duchateau
  */
-@WebServlet(urlPatterns = {"/datatablesController/*"}, name = "datatablesController")
 public class DatatablesServlet extends HttpServlet {
 	private static final long serialVersionUID = 4971523176859296399L;
 
