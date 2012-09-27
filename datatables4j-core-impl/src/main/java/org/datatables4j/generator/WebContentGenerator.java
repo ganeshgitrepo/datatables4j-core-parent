@@ -31,7 +31,7 @@ import org.datatables4j.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.javascript.rhino.head.EvaluatorException;
+//import com.google.javascript.rhino.head.EvaluatorException;
 
 /**
  * Class used for Javascript generation (as text).
