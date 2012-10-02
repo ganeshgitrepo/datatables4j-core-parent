@@ -3,6 +3,7 @@ package org.datatables4j.module;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.datatables4j.constants.ResourceType;
 import org.datatables4j.exception.BadConfigurationException;
 import org.datatables4j.model.CssResource;
 import org.datatables4j.model.HtmlTable;
@@ -25,7 +26,12 @@ public class InternalModuleLoader {
 	private static Logger logger = LoggerFactory.getLogger(InternalModuleLoader.class);
 
 	/**
-	 * Load every module activated by the user in the table tag.
+	 * <p>Load every module activated by the user in the table tag.</p>
+	 * <p>A module may be composed of several elements :
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param jsFile
 	 *            The Javascript which will be generated and may be updated
@@ -54,7 +60,7 @@ public class InternalModuleLoader {
 	
 				// Module javascript
 				if(!module.getJsResources().isEmpty()){
-					modulesSourceJsFile = new JsResource("plugin", "datatables4j-" + module.getModuleName().toLowerCase() + ".js");
+					modulesSourceJsFile = new JsResource(ResourceType.PLUGIN, "datatables4j-" + module.getModuleName().toLowerCase() + ".js");
 	
 					// Module source loading (javascript)
 					for (JsResource jsResource : module.getJsResources()) {

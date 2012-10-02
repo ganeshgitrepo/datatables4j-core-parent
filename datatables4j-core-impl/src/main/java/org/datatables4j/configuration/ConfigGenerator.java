@@ -57,6 +57,12 @@ public class ConfigGenerator {
 		}
 		mainConf.put(DTConstants.DT_AOCOLUMNS, aoColumnsContent);
 			
+		if(table.getLabels() != null){
+			System.out.println("******** table.getLabels() = " + table.getLabels());
+			tmp = new HashMap<String, Object>();
+			tmp.put(DTConstants.DT_URL, table.getLabels());
+			mainConf.put(DTConstants.DT_LANGUAGE, tmp);
+		}
 		if (table.getAutoWidth() != null) {
 			mainConf.put(DTConstants.DT_AUTO_WIDTH, table.getAutoWidth());
 		}
@@ -72,8 +78,8 @@ public class ConfigGenerator {
 		if (table.getPaginate() != null) {
 			mainConf.put(DTConstants.DT_PAGINATE, table.getPaginate());
 		}
-		if (table.getLengthPaginate() != null) {
-			mainConf.put(DTConstants.DT_LENGTH_CHANGE, table.getLengthPaginate());
+		if (table.getLengthChange() != null) {
+			mainConf.put(DTConstants.DT_LENGTH_CHANGE, table.getLengthChange());
 		}
 		if (StringUtils.isNotBlank(table.getPaginationStyle())) {
 			mainConf.put(DTConstants.DT_PAGINATION_TYPE, table.getPaginationStyle());

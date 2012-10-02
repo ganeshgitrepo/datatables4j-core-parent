@@ -58,7 +58,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean filter;
 	protected Boolean info;
 	protected Boolean paginate;
-	protected String lengthPaginate;
+	protected Boolean lengthChange;
 	protected String paginationType;
 	protected Boolean sort;
 
@@ -66,6 +66,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean deferRender;
 	protected Boolean stateSave;
 	protected Boolean processing;
+	protected String labels;
 	
 	// Extra features
 	protected Boolean fixedHeader = false;
@@ -277,8 +278,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.paginate != null) {
 			this.table.setPaginate(this.paginate);
 		}
-		if (StringUtils.isNotBlank(this.lengthPaginate)) {
-			this.table.setLengthPaginate(this.lengthPaginate);
+		if (this.lengthChange != null) {
+			this.table.setLengthChange(this.lengthChange);
 		}
 		if (StringUtils.isNotBlank(this.paginationType)) {
 			this.table.setPaginationStyle(this.paginationType);
@@ -294,6 +295,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 		if(this.cdn != null){
 			this.table.setCdn(this.cdn);
+		}
+		if(StringUtils.isNotBlank(this.labels)){
+			this.table.setLabels(RequestHelper.getBaseUrl(pageContext) + this.labels);
 		}
 
 		// Extra features
@@ -489,12 +493,12 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.paginate = paginate;
 	}
 
-	public String getLengthPaginate() {
-		return lengthPaginate;
+	public Boolean getLengthChange() {
+		return lengthChange;
 	}
 
-	public void setLengthPaginate(String lengthPaginate) {
-		this.lengthPaginate = lengthPaginate;
+	public void setLengthChange(Boolean lengthChange) {
+		this.lengthChange = lengthChange;
 	}
 
 	public Boolean getProcessing() {
@@ -567,6 +571,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setFixedPosition(String fixedPosition) {
 		this.fixedPosition = fixedPosition;
+	}
+	
+	public String getLabels() {
+		return labels;
+	}
+
+	public void setLabels(String labels) {
+		this.labels = labels;
 	}
 	
 	public Integer getOffsetTop() {

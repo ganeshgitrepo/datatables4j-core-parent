@@ -5,4 +5,4 @@
  * @author TDUCHATE
  *
  */
-package org.datatables4j.compressor;
+package org.datatables4j.compression;

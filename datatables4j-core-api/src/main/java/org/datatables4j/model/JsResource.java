@@ -1,10 +1,12 @@
 package org.datatables4j.model;
 
+import org.datatables4j.constants.ResourceType;
+
 public class JsResource extends DataTablesResource {
 
 	private String name;
 	private String content;
-	private String type;
+	private ResourceType type;
 	private StringBuffer beforeAll = new StringBuffer();
 	private StringBuffer afterStartDocumentReady = new StringBuffer();
 	private StringBuffer beforeEndDocumentReady = new StringBuffer();
@@ -18,7 +20,7 @@ public class JsResource extends DataTablesResource {
 		this.name = name;
 	}
 
-	public JsResource(String type, String name) {
+	public JsResource(ResourceType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
@@ -93,11 +95,11 @@ public class JsResource extends DataTablesResource {
 		return tmpRetval.toString();
 	}
 
-	public String getType() {
+	public ResourceType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ResourceType type) {
 		this.type = type;
 	}
 }

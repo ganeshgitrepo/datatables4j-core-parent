@@ -15,17 +15,29 @@ public class PropTag extends TagSupport {
 	private String name;
 	private String value;
 	
+	/**
+	 * TODO
+	 */
 	public int doStartTag() throws JspException {
 		return SKIP_BODY;
 	}
 	
+	/**
+	 * TODO
+	 * ajouter un test sur la nature du parent
+	 */
 	public int doEndTag() throws JspException {
 		
+		// Get parent tag
 		AbstractTableTag parent = (AbstractTableTag) getParent();
 		
+		// Evaluate the tag only once using the isFirstRow method
 		if(parent.isFirstRow()){
+			
+			// Override the existing properties with the new one
 			parent.getTable().getProperties().setProperty(name, value);
 		}
+		
 		return EVAL_PAGE;
 	}
 	

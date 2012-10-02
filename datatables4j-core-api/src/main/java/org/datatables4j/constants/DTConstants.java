@@ -23,6 +23,8 @@ public class DTConstants {
 	public static final String DT_PAGINATION_TYPE = "sPaginationType";
 	public static final String DT_DS_DATA = "aaData";
 	public static final String DT_AOCOLUMNS = "aoColumns";
+	public static final String DT_LANGUAGE = "oLanguage";
+	public static final String DT_URL = "sUrl";
 	
 	// Extra features
 	public static final String DT_SCROLLY = "sScrollY";

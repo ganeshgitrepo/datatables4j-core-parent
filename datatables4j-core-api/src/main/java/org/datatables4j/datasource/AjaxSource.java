@@ -14,7 +14,7 @@ import org.datatables4j.exception.DataNotFoundException;
  * 
  * @author Thibault Duchateau
  */
-public interface DataProvider {
+public interface AjaxSource {
 
 	/**
 	 * <p>

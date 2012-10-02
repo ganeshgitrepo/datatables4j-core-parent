@@ -6,9 +6,14 @@ import java.util.Properties;
 
 import org.datatables4j.aggregator.AggregateMode;
 import org.datatables4j.constants.ConfConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HtmlTableProperties {
 
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(HtmlTableProperties.class);
+		
 	/**
 	 * DataTables properties file.
 	 */
@@ -24,47 +29,38 @@ public class HtmlTableProperties {
 
 		// Get current classloader
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream properties = classLoader.getResourceAsStream(DT_DEFAULT_PROPERTIES);
+		
+		// Get default file as stream
+		InputStream propertiesStream = classLoader.getResourceAsStream(DT_DEFAULT_PROPERTIES);
+		
 		try {
-			propertiesResource.load(properties);
+			// Load all default properties
+			propertiesResource.load(propertiesStream);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		// First, test if custom properties file exists
-		properties = classLoader.getResourceAsStream(DT_PROPERTIES);
+		// Next, try to get the custom properties file
+		propertiesStream = classLoader.getResourceAsStream(DT_PROPERTIES);
 
-		// try {
-		// propertiesResource.load(properties);
+		if (propertiesStream != null) {
 
-		if(properties != null){
-			
-		
-		Properties customProperties = new Properties();
+			Properties customProperties = new Properties();
 			try {
-				customProperties.load(properties);
+				customProperties.load(propertiesStream);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			// If custom properties have been loaded, we merge the properties
+			// Custom properties will override existing ones
 			propertiesResource.putAll(customProperties);
 		}
-		// } catch (Exception e) {
-		// logger.warn("No datatables4j properties file was found");
-		// logger.warn("Loading default configuration");
-
-		// Get default properties file in not added in the project
-		// properties = classLoader.getResourceAsStream(DT_DEFAULT_PROPERTIES);
-
-		// try {
-		// propertiesResource.load(properties);
-		// } catch (IOException e1) {
-		// logger.error("Unable to load datatables4j-default.properties");
-		// throw new BadConfigurationException(e);
-		// }
-		// }
-
+		else{
+			logger.info("No custom file datatables4j.properties has been found. Using default one.");
+		}
 	}
 
 	/**

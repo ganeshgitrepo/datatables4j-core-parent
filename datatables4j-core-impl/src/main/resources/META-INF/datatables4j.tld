@@ -20,7 +20,7 @@
       <tei-class>org.datatables4j.tag.IterationTEI</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
-         DataTables JQuery plugin.</description>
+         DataTables jQuery plugin.</description>
       <attribute>
          <name>id</name>
          <required>true</required>
@@ -48,9 +48,11 @@
       </attribute>
       <attribute>
          <name>cdn</name>
-         <description>(true|false) Enable the DataTables source files to be loaded
+         <description>(true|false) Enable the DataTables source files to
+            be loaded
             from the Microsoft CDN (Content Delivery Framework)
-            preventing you from hosting the files yourself. (Default : false)</description>
+            preventing you from hosting the files yourself. (Default :
+            false)</description>
       </attribute>
       <attribute>
          <name>cssStyle</name>
@@ -81,7 +83,13 @@
          <description>String which is appended to the rowIdBase
             attribute, in order to build row id. (HTML id attribute)</description>
       </attribute>
-
+      <attribute>
+   <name>labels</name>
+   <rtexprvalue>true</rtexprvalue>
+   <description>Base URL of an AJAX loaded file which contains all the
+      labels used in tables. (See :
+      http://www.datatables.net/release-datatables/examples/advanced_init/language_file.html)</description>
+</attribute>
       <attribute>
          <name>deferRender</name>
          <description>(true|false) Defer the creation of the table
@@ -107,7 +115,7 @@
             (Default : true, see http://datatables.net/ref#bPaginate)</description>
       </attribute>
       <attribute>
-         <name>lengthPaginate</name>
+         <name>lengthChange</name>
          <description>(true|false) If paginate is enabled, allows the
             end user to select the size of a formatted page from a
             select menu (sizes are 10, 25, 50 and 100). (Default : true,
@@ -123,11 +131,13 @@
       </attribute>
       <attribute>
          <name>filter</name>
-         <description></description>
+         <description>(true|false) Enable or disable filtering of data.
+            (Default : true, see http://datatables.net/ref#bFilter)</description>
       </attribute>
       <attribute>
          <name>sort</name>
-         <description>(true|false) Enable or disable sorting of columns.
+         <description>(true|false) Enable or disable sorting of all
+            columns.
             Sorting of individual columns can be disabled by the
             "sortable" attribute of column tag. (Default : true, see
             http://datatables.net/ref#bSort)</description>
@@ -183,7 +193,7 @@
       </attribute>
       <attribute>
          <name>offsetTop</name>
-         <description>TODO</description>
+         <description>Offset applied on the top.</description>
          <type>java.lang.Integer</type>
       </attribute>
 
@@ -196,7 +206,8 @@
       </attribute>
       <attribute>
          <name>scrollY</name>
-         <description>Table's height to display in scrolling mode.</description>
+         <description>Table's height to display in scrolling mode.
+            (default : 300px)</description>
       </attribute>
 
       <!-- ColReorder -->
@@ -225,37 +236,43 @@
       <name>column</name>
       <tag-class>org.datatables4j.tag.ColumnTag</tag-class>
       <body-content>JSP</body-content>
+      <description>Describe a column of the HTML table.</description>
       <attribute>
          <name>title</name>
-         <description></description>
+         <description>Column title.</description>
       </attribute>
       <attribute>
          <name>property</name>
-         <description></description>
+         <description>Name of the attribute of the current object being
+            iterated object on, regardless the data source (DOM or AJAX)</description>
       </attribute>
       <attribute>
          <name>sortable</name>
-         <description></description>
+         <description>(true|false) Enable or disable sorting on column.
+            (Default : true)</description>
       </attribute>
       <attribute>
          <name>filterable</name>
-         <description></description>
+         <description>(true|false) Enable or disable filtering on
+            column. (Default : true)</description>
       </attribute>
       <attribute>
          <name>cssStyle</name>
-         <description></description>
+         <description>CSS style applied on header cell (th HTML tag)</description>
       </attribute>
       <attribute>
          <name>cssCellStyle</name>
-         <description></description>
+         <description>CSS style applied on every table cell (td HTML
+            tag)</description>
       </attribute>
       <attribute>
          <name>cssClass</name>
-         <description></description>
+         <description>CSS class applied on header cell (th HTML tag)</description>
       </attribute>
       <attribute>
          <name>cssCellClass</name>
-         <description></description>
+         <description>CSS class applied on every table cell (td HTML
+            tag)</description>
       </attribute>
    </tag>
 
@@ -271,12 +288,13 @@
          <name>src</name>
          <required>true</required>
          <rtexprvalue>true</rtexprvalue>
-         <description></description>
+         <description>Location of the file containing DataTables
+            configuration.</description>
       </attribute>
       <attribute>
          <name>insert</name>
          <description>(BEFOREALL|AFTERSTARTDOCUMENTREADY|BEFORENDDOCUMENTREADY|AFTERALL)
-            Define where the extra file must be inserted. (Default :
+            Specify where the extra file must be inserted. (Default :
             BEFOREALL)</description>
       </attribute>
    </tag>

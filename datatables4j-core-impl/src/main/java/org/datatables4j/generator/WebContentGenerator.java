@@ -7,13 +7,12 @@ import java.util.Map.Entry;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.datatables4j.aggregator.AggregateUtils;
-import org.datatables4j.compressor.ResourceCompressorHelper;
+import org.datatables4j.aggregation.AggregateUtils;
+import org.datatables4j.compression.ResourceCompressorHelper;
 import org.datatables4j.configuration.ConfigGenerator;
-import org.datatables4j.datasource.DataProviderHelper;
+import org.datatables4j.datasource.DataProvider;
 import org.datatables4j.exception.BadConfigurationException;
 import org.datatables4j.exception.CompressionException;
 import org.datatables4j.exception.DataNotFoundException;
@@ -26,12 +25,11 @@ import org.datatables4j.model.JsResource;
 import org.datatables4j.model.WebResources;
 import org.datatables4j.module.InternalModuleLoader;
 import org.datatables4j.util.JsonUtils;
+import org.datatables4j.util.ReflectUtils;
 import org.datatables4j.util.RequestHelper;
 import org.datatables4j.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-//import com.google.javascript.rhino.head.EvaluatorException;
 
 /**
  * Class used for Javascript generation (as text).
@@ -44,7 +42,7 @@ public class WebContentGenerator {
 	private static Logger logger = LoggerFactory.getLogger(WebContentGenerator.class);
 
 	/**
-	 * TODO
+	 * The DataTables configuration generator.
 	 */
 	private static ConfigGenerator configGenerator;
 
@@ -60,7 +58,6 @@ public class WebContentGenerator {
 	 * @throws DataNotFoundException
 	 *             if the web service URL is wrong (only for AJAX datasource)
 	 * @throws IOException 
-	 * @throws EvaluatorException 
 	 * @throws CompressionException 
 	 * @throws BadConfigurationException 
 	 */
@@ -82,7 +79,7 @@ public class WebContentGenerator {
 		 * Build the main file.
 		 */
 		// We need to append a randomUUID in case of multiple table in the same JSP
-		JsResource mainFile = new JsResource("datatables4j-" + RandomStringUtils.randomNumeric(5) + ".js");
+		JsResource mainFile = new JsResource("datatables4j-" + ResourceUtils.getRamdomNumber() + ".js");
 
 		// 
 		mainFile.appendToBeforeAll("var oTable_");
@@ -111,10 +108,10 @@ public class WebContentGenerator {
 			String baseUrl = RequestHelper.getBaseUrl(pageContext);
 			String webServiceUrl = baseUrl + table.getDatasourceUrl();
 			
-			DataProviderHelper providerHelper = new DataProviderHelper();
+			DataProvider dataProvider = new DataProvider();
 			
 			mainFile.appendToDataTablesConf(
-					configGenerator.getConfig(mainConf,providerHelper.getData(table, webServiceUrl)));
+					configGenerator.getConfig(mainConf,dataProvider.getData(table, webServiceUrl)));
 		}
 		// DOM datasource
 		else {
@@ -125,31 +122,38 @@ public class WebContentGenerator {
 		
 		webResources.getJavascripts().put(mainFile.getName(), mainFile);
 				
-		// Compressor
+		// Compression
 		if(properties.isCompressorEnable()){
 			compressWebResources(webResources, table);
 		}
 		
-		aggregatorManagement(webResources, table);
+		// Aggregation
+		if(table.getProperties().isAggregatorEnable()){
+			aggregateWebResources(webResources, table);
+		}
 				
 		return webResources;
 	}
 
-	private void aggregatorManagement(WebResources webResources, HtmlTable table){
-		if(table.getProperties().isAggregatorEnable()){			
-			switch(table.getProperties().getAggregatorMode()){
-				case ALL :
-					AggregateUtils.aggregateAll(webResources);
-					break;
-				
-				case PLUGINS_JS :
-					// TODO
-					break;
-					
-				case PLUGINS_CSS :
-					// TODO
-					break;
-			}
+	
+	/**
+	 * 
+	 * @param webResources
+	 * @param table
+	 */
+	private void aggregateWebResources(WebResources webResources, HtmlTable table) {
+		switch (table.getProperties().getAggregatorMode()) {
+		case ALL:
+			AggregateUtils.aggregateAll(webResources);
+			break;
+
+		case PLUGINS_JS:
+			AggregateUtils.aggregatePluginsJs(webResources);
+			break;
+
+		case PLUGINS_CSS:
+			AggregateUtils.aggregatePluginsCss(webResources);
+			break;
 		}
 	}
 	
@@ -161,16 +165,27 @@ public class WebContentGenerator {
 	 */
 	private void compressWebResources(WebResources webResources, HtmlTable table) throws BadConfigurationException{
 
-		ResourceCompressorHelper compressorHelper = new ResourceCompressorHelper(table);
-		
-		for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
-			entry.getValue().setContent(
-					compressorHelper.getCompressedJavascript(entry.getValue().toString()));
+		// If DataTables4j has been manually installed, some jar might be missing
+		// So check first if the CompressorClass exist in the classpath
+		if(ReflectUtils.canBeUsed(table.getProperties().getCompressorClassName())){
+			
+			// Get the compressor helper instanciating the implementation class
+			ResourceCompressorHelper compressorHelper = new ResourceCompressorHelper(table);
+			
+			// Compress all Javascript resources
+			for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
+				entry.getValue().setContent(
+						compressorHelper.getCompressedJavascript(entry.getValue().toString()));
+			}
+			
+			// Compress all Stylesheet resources
+			for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
+				entry.getValue().setContent(
+						compressorHelper.getCompressedCss(entry.getValue().getContent()));
+			}			
 		}
-		
-		for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
-			entry.getValue().setContent(
-					compressorHelper.getCompressedCss(entry.getValue().getContent()));
+		else{
+			logger.warn("The compressor class {} hasn't been found in the classpath. Compression is disabled.", table.getProperties().getCompressorClassName());
 		}
 	}
 	

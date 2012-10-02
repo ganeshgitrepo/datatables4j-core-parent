@@ -5,4 +5,4 @@
  * @author tduchate
  *
  */
-package org.datatables4j.aggregator;
+package org.datatables4j.aggregation;

@@ -18,11 +18,12 @@ public class HtmlTable {
 	private Boolean filterable;
 	private Boolean paginate;
 	private String paginationStyle;
-	private String lengthPaginate;
+	private Boolean lengthChange;
 	private Boolean processing;
 	private Boolean sort;
 	private Boolean stateSave;
-
+	private String labels;
+	
 	// Extra features
 	private String scrollY;
 	private String fixedPosition;
@@ -205,12 +206,12 @@ public class HtmlTable {
 		this.paginationStyle = paginationStyle;
 	}
 
-	public String getLengthPaginate() {
-		return lengthPaginate;
+	public Boolean getLengthChange() {
+		return lengthChange;
 	}
 
-	public void setLengthPaginate(String lengthPaginate) {
-		this.lengthPaginate = lengthPaginate;
+	public void setLengthChange(Boolean lengthChange) {
+		this.lengthChange = lengthChange;
 	}
 
 	public Boolean getProcessing() {
@@ -307,6 +308,14 @@ public class HtmlTable {
 
 	public void setFixedOffsetTop(Integer fixedOffsetTop) {
 		this.fixedOffsetTop = fixedOffsetTop;
+	}
+
+	public String getLabels() {
+		return labels;
+	}
+
+	public void setLabels(String labels) {
+		this.labels = labels;
 	}
 
 }

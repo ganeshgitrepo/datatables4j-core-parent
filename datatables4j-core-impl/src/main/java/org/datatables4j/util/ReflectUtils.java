@@ -10,40 +10,43 @@ import org.slf4j.LoggerFactory;
 
 /**
  * TODO
+ * 
  * @author tduchate
- *
+ * 
  */
-public class ReflecUtils {
+public class ReflectUtils {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ReflecUtils.class);
-		
+	private static Logger logger = LoggerFactory.getLogger(ReflectUtils.class);
+
 	/**
 	 * TODO
+	 * 
 	 * @param className
 	 * @return
 	 * @throws BadConfigurationException
 	 */
 	public static Class<?> getClass(String className) throws BadConfigurationException {
 		Class<?> klass = null;
-		
+
 		try {
 			klass = ClassUtils.getClass(className);
 		} catch (ClassNotFoundException e) {
 			logger.error("Unable to get class {}", className);
 			throw new BadConfigurationException(e);
 		}
-		
+
 		return klass;
 	}
-	
+
 	/**
 	 * TODO
+	 * 
 	 * @param klass
 	 * @return
 	 * @throws BadConfigurationException
 	 */
-	public static Object getNewInstance(Class<?> klass) throws BadConfigurationException{
+	public static Object getNewInstance(Class<?> klass) throws BadConfigurationException {
 		Object retval = null;
 		try {
 			retval = klass.newInstance();
@@ -54,21 +57,23 @@ public class ReflecUtils {
 			logger.error("Unable to get instance of {}", klass);
 			throw new BadConfigurationException(e);
 		}
-		
+
 		return retval;
 	}
-	
+
 	/**
 	 * TODO
+	 * 
 	 * @param obj
 	 * @param methodName
 	 * @param args
 	 * @return
 	 * @throws BadConfigurationException
 	 */
-	public static Object invokeMethod(Object obj, String methodName, Object[] args) throws BadConfigurationException {
+	public static Object invokeMethod(Object obj, String methodName, Object[] args)
+			throws BadConfigurationException {
 		Object retval = null;
-		
+
 		try {
 			retval = MethodUtils.invokeExactMethod(obj, methodName, args);
 		} catch (NoSuchMethodException e) {
@@ -81,7 +86,24 @@ public class ReflecUtils {
 			logger.error("Unable to invoke method {}", methodName);
 			throw new BadConfigurationException(e);
 		}
-		
+
 		return retval;
+	}
+
+	
+	/**
+	 * TODO
+	 * @param className
+	 * @return
+	 */
+	public static Boolean canBeUsed(String className) {
+		Boolean canBeUsed = false;
+		try {
+			ClassUtils.getClass(className);
+			canBeUsed = true;
+		} catch (ClassNotFoundException e) {
+			logger.warn("Unable to get class {}", className);
+		}
+		return canBeUsed;
 	}
 }

@@ -3,14 +3,14 @@ package org.datatables4j.compressor;
 import org.datatables4j.exception.CompressionException;
 
 /**
- * Compressor for web resources.
+ * Compressor for web resources (Javascript, Stylesheets).
  * 
  * @author Thibault Duchateau
  */
-public interface ResourceCompressor {
+public interface WebResourceCompressor {
 
 	/**
-	 * Return a compressed version of the given Javascript code.
+	 * Return as String a compressed version of the given Javascript code.
 	 * 
 	 * @param input
 	 *            The Javascript code to compress.
@@ -22,7 +22,7 @@ public interface ResourceCompressor {
 	public String getCompressedJavascript(String input) throws CompressionException;
 
 	/**
-	 * Return a compressed version of the given CSS code.
+	 * Return as String a compressed version of the given CSS code.
 	 * 
 	 * @param input
 	 *            The CSS code to compress.

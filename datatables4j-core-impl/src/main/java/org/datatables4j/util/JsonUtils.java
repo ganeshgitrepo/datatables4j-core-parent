@@ -11,7 +11,6 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.node.ObjectNode;
 
 public class JsonUtils {

@@ -5,11 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.datatables4j.exception.BadConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * TODO
@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ResourceUtils {
-
-	private static Logger logger = LoggerFactory.getLogger(ResourceUtils.class);
+	
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 	
 	/**
 	 * TODO
@@ -59,13 +59,14 @@ public class ResourceUtils {
 	public static String getFileContentFromClasspath(String pathToFile) throws BadConfigurationException {
 		String retval = null;
 		try {
-			retval = IOUtils.toString(getFileFromClasspath(pathToFile));
+			retval = toString(getFileFromClasspath(pathToFile));
 		} catch (IOException e) {
 			throw new BadConfigurationException(e);
 		}
-		
+
 		return retval;
 	}
+	
 	
 	/**
 	 * TODO
@@ -76,11 +77,44 @@ public class ResourceUtils {
 	public static String getFileContentFromWebapp(String pathToFile) throws BadConfigurationException{
 		String retval = null;
 		try {
-			retval = IOUtils.toString(getFileFromWebapp(pathToFile));
+			retval = toString(getFileFromWebapp(pathToFile));
 		} catch (IOException e) {
 			throw new BadConfigurationException(e);
 		}
 		
 		return retval;
+	}
+	
+	
+	/**
+	 * TODO
+	 * @param input
+	 * @return
+	 * @throws IOException
+	 */
+	public static String toString(InputStream input) throws IOException {
+		StringWriter sw = new StringWriter();
+
+		InputStreamReader   in = new InputStreamReader  (input);
+		 
+		char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+		int count = 0;
+		int n = 0;
+		while (-1 != (n = in.read(buffer))) {
+			sw.write(buffer, 0, n);
+			count += n;
+		}
+
+		System.out.println("================= sw = " + sw.toString());
+		return sw.toString();
+	}
+	
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public static String getRamdomNumber(){
+		return RandomStringUtils.randomNumeric(5);
 	}
 }

@@ -6,7 +6,7 @@
    <parent>
       <groupId>org.datatables4j</groupId>
       <artifactId>datatables4j-parent</artifactId>
-      <version>0.3.0-SNAPSHOT</version>
+      <version>0.4.0-SNAPSHOT</version>
    </parent>
 
    <!-- Main configuration -->
@@ -43,13 +43,6 @@
             <scope>compile</scope>
          </dependency>
 
-         <!-- Jersey -->
-         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>${jersey.version}</version>
-         </dependency>
-
          <!-- Jackson -->
          <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -67,13 +60,6 @@
          </dependency>
 
          <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>${commons-collection.version}</version>
-            <scope>runtime</scope>
-         </dependency>
-
-         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
@@ -82,19 +68,6 @@
                <exclusion>
                   <groupId>commons-logging</groupId>
                   <artifactId>commons-logging</artifactId>
-               </exclusion>
-            </exclusions>
-         </dependency>
-
-         <!-- YUI Compressor -->
-         <dependency>
-            <groupId>com.yahoo.platform.yui</groupId>
-            <artifactId>yuicompressor</artifactId>
-            <version>${yuicompressor.version}</version>
-            <exclusions>
-               <exclusion>
-                  <groupId>rhino</groupId>
-                  <artifactId>js</artifactId>
                </exclusion>
             </exclusions>
          </dependency>
@@ -128,6 +101,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>net.sourceforge.jwebunit</groupId>
+            <artifactId>jwebunit-htmlunit-plugin</artifactId>
+            <version>${jwebunit.version}</version>
             <scope>test</scope>
          </dependency>
       </dependencies>
