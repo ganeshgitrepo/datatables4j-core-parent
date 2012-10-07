@@ -4,7 +4,7 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_1_2.xsd"
    version="1.2">
-   <tlib-version>0.3.0-SNAPSHOT</tlib-version>
+   <tlib-version>0.5.0-SNAPSHOT</tlib-version>
    <jsp-version>1.2</jsp-version>
    <short-name>datatables</short-name>
    <uri>http://github.com/datatables4j</uri>
@@ -16,8 +16,8 @@
    <!-- ====================================== -->
    <tag>
       <name>table</name>
-      <tag-class>org.datatables4j.tag.TableTag</tag-class>
-      <tei-class>org.datatables4j.tag.IterationTEI</tei-class>
+      <tag-class>org.datatables4j.core.tag.TableTag</tag-class>
+      <tei-class>org.datatables4j.core.tag.IterationTEI</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
          DataTables jQuery plugin.</description>
@@ -84,12 +84,13 @@
             attribute, in order to build row id. (HTML id attribute)</description>
       </attribute>
       <attribute>
-   <name>labels</name>
-   <rtexprvalue>true</rtexprvalue>
-   <description>Base URL of an AJAX loaded file which contains all the
-      labels used in tables. (See :
-      http://www.datatables.net/release-datatables/examples/advanced_init/language_file.html)</description>
-</attribute>
+         <name>labels</name>
+         <rtexprvalue>true</rtexprvalue>
+         <description>Base URL of an AJAX loaded file which contains all
+            the
+            labels used in tables. (See :
+            http://www.datatables.net/release-datatables/examples/advanced_init/language_file.html)</description>
+      </attribute>
       <attribute>
          <name>deferRender</name>
          <description>(true|false) Defer the creation of the table
@@ -174,6 +175,11 @@
          <description>Comma-separated list of format in which to export
             the table. Available for now : CSV</description>
       </attribute>
+      <attribute>
+         <name>jqueryUI</name>
+         <description>(true|false) Enable jQuery UI ThemeRoller support
+            (Default : false, see http://datatables.net/ref#bJQueryUI)</description>
+      </attribute>
 
       <!-- ====================================== -->
       <!-- Extra features -->
@@ -234,7 +240,7 @@
    <!-- ====================================== -->
    <tag>
       <name>column</name>
-      <tag-class>org.datatables4j.tag.ColumnTag</tag-class>
+      <tag-class>org.datatables4j.core.tag.ColumnTag</tag-class>
       <body-content>JSP</body-content>
       <description>Describe a column of the HTML table.</description>
       <attribute>
@@ -252,9 +258,29 @@
             (Default : true)</description>
       </attribute>
       <attribute>
+         <name>sortInit</name>
+         <description>(asc|desc) If sortable is enabled, set the default sorting direction (Default : asc)</description>
+      </attribute>
+      <attribute>
+         <name>sortDirection</name>
+         <description>If sortable is enabled, allow to control the sorting direction(s)</description>
+      </attribute>
+      <attribute>
          <name>filterable</name>
          <description>(true|false) Enable or disable filtering on
             column. (Default : true)</description>
+      </attribute>
+      <attribute>
+         <name>filterType</name>
+         <description>(SELECT|INPUT) If filterable is enabled, you can choose the filter type between 'SELECT' and 'INPUT', adding either select box or input field in the table's footer (Default : INPUT)</description>
+      </attribute>
+      <attribute>
+         <name>filterCssClass</name>
+         <description>If filterable is enabled and filterType is 'INPUT', you can apply a CSS class to the input field with this attribute</description>
+      </attribute>
+      <attribute>
+         <name>filterPlaceholder</name>
+         <description>If filterable is enabled and filterType is 'INPUT', fill in the input field with this attribute (Default : the column's title)</description>
       </attribute>
       <attribute>
          <name>cssStyle</name>
@@ -282,7 +308,7 @@
    <tag>
       <description></description>
       <name>extraFile</name>
-      <tag-class>org.datatables4j.tag.ExtraFileTag</tag-class>
+      <tag-class>org.datatables4j.core.tag.ExtraFileTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>src</name>
@@ -305,7 +331,7 @@
    <tag>
       <description></description>
       <name>extraConf</name>
-      <tag-class>org.datatables4j.tag.ExtraConfTag</tag-class>
+      <tag-class>org.datatables4j.core.tag.ExtraConfTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>src</name>
@@ -322,7 +348,7 @@
       <description>Allow to override properties normally defined in the
          DataTables4j properties file.</description>
       <name>prop</name>
-      <tag-class>org.datatables4j.tag.PropTag</tag-class>
+      <tag-class>org.datatables4j.core.tag.PropTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>name</name>
