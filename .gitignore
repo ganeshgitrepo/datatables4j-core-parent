@@ -1,1 +1,10 @@
-.settings
+#IDE
+.settings/
+.project
+.classpath
+
+.idea/
+*.iml
+
+#Maven
+target/
