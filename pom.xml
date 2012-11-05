@@ -83,7 +83,7 @@
             <!-- Servlet -->
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
+                <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -144,9 +144,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:git://github.com/datatables4j/core.git</connection>
-        <developerConnection>scm:git:git@github.com:datatables4j/core.git</developerConnection>
-        <url>http://github.com/datatables4j/core</url>
+        <connection>scm:git:git://github.com/datatables4j/datatables4j-core-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:datatables4j/datatables4j-core-parent.git</developerConnection>
+        <url>http://github.com/datatables4j/datatables4j-core-parent</url>
     </scm>
 
 </project>
