@@ -12,8 +12,14 @@
     <!-- Main configuration -->
     <artifactId>datatables4j-core-parent</artifactId>
     <packaging>pom</packaging>
-    <name>DataTables4j core</name>
-    <inceptionYear>2012</inceptionYear>
+
+    <name>DataTables4j :: Core :: Parent</name>
+
+    <scm>
+        <connection>scm:git:git://github.com/datatables4j/datatables4j-core-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:datatables4j/datatables4j-core-parent.git</developerConnection>
+        <url>http://github.com/datatables4j/datatables4j-core-parent</url>
+    </scm>
 
     <modules>
         <module>datatables4j-core-api</module>
@@ -24,6 +30,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <jwebunit.version>3.0</jwebunit.version>
     </properties>
 
     <dependencyManagement>
@@ -142,11 +149,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <connection>scm:git:git://github.com/datatables4j/datatables4j-core-parent.git</connection>
-        <developerConnection>scm:git:git@github.com:datatables4j/datatables4j-core-parent.git</developerConnection>
-        <url>http://github.com/datatables4j/datatables4j-core-parent</url>
-    </scm>
 
 </project>

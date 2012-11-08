@@ -12,6 +12,8 @@
     <artifactId>datatables4j-core</artifactId>
     <packaging>jar</packaging>
 
+    <name>DataTables4j :: Core :: Dependencies Wrapper</name>
+
     <dependencies>
         <dependency>
             <groupId>com.github.datatables4j</groupId>
