@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <groupId>com.github.datatables4j</groupId>
         <artifactId>datatables4j-core-parent</artifactId>
-        <groupId>org.datatables4j</groupId>
         <version>0.6.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -14,14 +14,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.datatables4j</groupId>
+            <groupId>com.github.datatables4j</groupId>
             <artifactId>datatables4j-core-api</artifactId>
-            <version>${core.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.datatables4j</groupId>
+            <groupId>com.github.datatables4j</groupId>
             <artifactId>datatables4j-core-impl</artifactId>
-            <version>${core.version}</version>
         </dependency>
     </dependencies>
 
@@ -41,7 +39,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>standalone</shadedClassifierName>
-                            <shadedGroupFilter>org.datatables4j</shadedGroupFilter>
+                            <shadedGroupFilter>com.github.datatables4j</shadedGroupFilter>
                         </configuration>
                     </execution>
                 </executions>

@@ -67,7 +67,7 @@ public class FeatureLoader {
 
 		JsResource pluginsSourceJsFile = null;
 
-		logger.info("Check for plugins ...");
+		logger.info("Check for features ...");
 
 		if (!table.getFeatures().isEmpty()) {
 
@@ -116,6 +116,9 @@ public class FeatureLoader {
 			}
 
 			logger.debug("All features loaded");
+		}
+		else{
+			logger.info("No feature to load");
 		}
 	}
 }

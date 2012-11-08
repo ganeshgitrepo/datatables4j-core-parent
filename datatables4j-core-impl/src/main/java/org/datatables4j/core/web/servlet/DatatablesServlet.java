@@ -20,6 +20,7 @@ package org.datatables4j.core.web.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Thibault Duchateau
  */
+@WebServlet(name="datatablesController", urlPatterns={"/datatablesController/*"})
 public class DatatablesServlet extends HttpServlet {
 	private static final long serialVersionUID = 4971523176859296399L;
 
@@ -45,9 +47,10 @@ public class DatatablesServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		logger.debug("DataTables servlet captured GET request");
+		logger.debug("DataTables servlet captured GET request {}", request.getRequestURI());
 		
 		// Common response header
+		// TODO adapt caching behaviour depending on the file nature (e.g. plugin)
 		response.setHeader("Cache-Control","no-cache");
 		
 		// Get requested file name
