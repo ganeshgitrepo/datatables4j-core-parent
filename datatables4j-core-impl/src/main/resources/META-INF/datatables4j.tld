@@ -16,8 +16,8 @@
    <!-- ====================================== -->
    <tag>
       <name>table</name>
-      <tag-class>org.datatables4j.core.tag.TableTag</tag-class>
-      <tei-class>org.datatables4j.core.tag.IterationTEI</tei-class>
+      <tag-class>com.github.datatables4j.core.tag.TableTag</tag-class>
+      <tei-class>com.github.datatables4j.core.tag.IterationTEI</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
          DataTables jQuery plugin.</description>
@@ -240,7 +240,7 @@
    <!-- ====================================== -->
    <tag>
       <name>column</name>
-      <tag-class>org.datatables4j.core.tag.ColumnTag</tag-class>
+      <tag-class>com.github.datatables4j.core.tag.ColumnTag</tag-class>
       <body-content>JSP</body-content>
       <description>Describe a column of the HTML table.</description>
       <attribute>
@@ -308,7 +308,7 @@
    <tag>
       <description></description>
       <name>extraFile</name>
-      <tag-class>org.datatables4j.core.tag.ExtraFileTag</tag-class>
+      <tag-class>com.github.datatables4j.core.tag.ExtraFileTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>src</name>
@@ -331,7 +331,7 @@
    <tag>
       <description></description>
       <name>extraConf</name>
-      <tag-class>org.datatables4j.core.tag.ExtraConfTag</tag-class>
+      <tag-class>com.github.datatables4j.core.tag.ExtraConfTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>src</name>
@@ -348,7 +348,7 @@
       <description>Allow to override properties normally defined in the
          DataTables4j properties file.</description>
       <name>prop</name>
-      <tag-class>org.datatables4j.core.tag.PropTag</tag-class>
+      <tag-class>com.github.datatables4j.core.tag.PropTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>name</name>
