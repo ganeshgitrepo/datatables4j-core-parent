@@ -20,6 +20,7 @@
         <dependency>
             <groupId>com.github.datatables4j</groupId>
             <artifactId>datatables4j-core-api</artifactId>
+            <version>${datatables4j.core.version}</version>
         </dependency>
 
         <!-- Jackson -->
