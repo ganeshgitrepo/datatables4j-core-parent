@@ -50,7 +50,7 @@ import com.github.datatables4j.core.plugin.ui.FixedHeaderModule;
 import com.github.datatables4j.core.plugin.ui.ScrollerModule;
 import com.github.datatables4j.core.properties.PropertiesLoader;
 import com.github.datatables4j.core.util.RequestHelper;
-import com.github.datatables4j.core.util.ResourceUtils;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
  * Abstract table tag which contains the common configuration between all table
@@ -122,8 +122,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		// Just used to identify the first row (header)
 		rowNumber = 1;
 		
+		this.table = new HtmlTable(id, ResourceHelper.getRamdomNumber());
+		
+		try {
+			// Load table properties
+			PropertiesLoader.load(this.table);
+		} catch (BadConfigurationException e) {
+			throw new JspException("Unable to load DataTables4j configuration");
+		}
+
 		if("AJAX".equals(this.loadingType)){
-			this.table = new HtmlTable(id, ResourceUtils.getRamdomNumber());
 			this.table.addFooterRow();
 			this.table.setDatasourceUrl(url);
 			this.table.addHeaderRow();
@@ -131,7 +139,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			return EVAL_BODY_BUFFERED;
 		}
 		else if("DOM".equals(this.loadingType)){
-			this.table = new HtmlTable(id, ResourceUtils.getRamdomNumber());
 			this.table.addFooterRow();
 			this.table.addHeaderRow();
 
@@ -214,18 +221,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	protected int processDoEndTag() throws JspException {
 		
-		// Getting DataTables4j properties
-		PropertiesLoader properties = PropertiesLoader.getInstance();
-		
 		String baseUrl = RequestHelper.getBaseUrl(pageContext);
 		ServletContext context = pageContext.getServletContext();
 		
 		// Update the HtmlTable object configuration with the attributes
-		updateCommonConfiguration();
+		registerCommonConfiguration();
 
-		// Check if extra features must be activated
+		// Check if modules are activated
 		registerModules();
 
+		// Check if extra features are activated
 		registerFeatures();
 		
 		// Check if the table is being exported
@@ -239,12 +244,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
 
 			// Aggregation
-			if(properties.isAggregatorEnable()){
+			if(this.table.getTableProperties().isAggregatorEnable()){
+				logger.debug("Aggregation enabled");
 				AggregationUtils.processAggregation(webResources, table);
 			}
 
 			// Compression
-			if(properties.isCompressorEnable()){
+			if(this.table.getTableProperties().isCompressorEnable()){
+				logger.debug("Compression enabled");
 				CompressionUtils.processCompression(webResources, table);
 			}
 			
@@ -296,9 +303,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	
 	/**
-	 * TOD
+	 * Register all common configuration with the table.
 	 */
-	private void updateCommonConfiguration() {
+	private void registerCommonConfiguration() {
 		if (StringUtils.isNotBlank(this.cssClass)) {
 			this.table.setCssClass(this.cssClass);
 		}
@@ -360,7 +367,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	}
 
 	/**
-	 * TODO
+	 * Register activated modules with the table.
 	 */
 	private void registerModules() {
 
@@ -378,10 +385,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			logger.info("Internal module detected : colReorder");
 			this.table.registerPlugin(new ColReorderModule());
 		}
-		
-		//TODO Others modules 
 	}
 	
+	/**
+	 * TODO
+	 */
 	private void registerFeatures() {
 
 		if(table.hasOneFilterableColumn()){
@@ -401,7 +409,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		
 		if(StringUtils.isNotBlank(this.export)){
 			
-			String[] exportTypes = this.export.split(",");
+//			String[] exportTypes = this.export.split(",");
 			// Ajouter le ou les lien(s) d'export
 		}
 	}
@@ -421,13 +429,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			try {
 				rowId.append(PropertyUtils.getNestedProperty(this.currentObject, this.rowIdBase));
 			} catch (IllegalAccessException e) {
-				logger.error("Unable to get the value for rowIdBase");
+				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
 				throw new JspException();
 			} catch (InvocationTargetException e) {
-				logger.error("Unable to get the value for rowIdBase");
+				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
 				throw new JspException();
 			} catch (NoSuchMethodException e) {
-				logger.error("Unable to get the value for rowIdBase");
+				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
 				throw new JspException();
 			}
 		}

@@ -41,7 +41,7 @@ import com.github.datatables4j.core.plugin.InternalPluginLoader;
 import com.github.datatables4j.core.util.JsonUtils;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
-import com.github.datatables4j.core.util.ResourceUtils;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
  * Class used for Javascript generation (as text).
@@ -136,7 +136,6 @@ public class WebResourceGenerator {
 	 *            The HTML tale.
 	 * @throws BadConfigurationException
 	 *             if
-	 * 
 	 */
 	private void extraFileManagement(JsResource mainFile, HtmlTable table) throws IOException,
 			BadConfigurationException {
@@ -147,21 +146,21 @@ public class WebResourceGenerator {
 			
 			switch (file.getInsert()) {
 			case BEFOREALL:
-				mainFile.appendToBeforeAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
+				mainFile.appendToBeforeAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
 				break;
 
 			case AFTERSTARTDOCUMENTREADY:
-				mainFile.appendToAfterStartDocumentReady(ResourceUtils
+				mainFile.appendToAfterStartDocumentReady(ResourceHelper
 						.getFileContentFromWebapp(file.getSrc()));
 				break;
 				
 			case BEFOREENDDOCUMENTREADY:
-				mainFile.appendToBeforeEndDocumentReady(ResourceUtils
+				mainFile.appendToBeforeEndDocumentReady(ResourceHelper
 						.getFileContentFromWebapp(file.getSrc()));
 				break;
 				
 			case AFTERALL:
-				mainFile.appendToAfterAll(ResourceUtils.getFileContentFromWebapp(file.getSrc()));
+				mainFile.appendToAfterAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
 				break;
 				
 			default:
@@ -172,7 +171,11 @@ public class WebResourceGenerator {
 	
 	
 	/**
-	 * TODO
+	 * Generates a jQuery AJAX call to be able to merge the server-generated
+	 * DataTables configuration with the configuration stored in extraConf
+	 * files. Warning : this is a temporary method. The goal is to be able to
+	 * generate the entire configuration server-side.
+	 * 
 	 * @param mainConf
 	 * @param table
 	 */

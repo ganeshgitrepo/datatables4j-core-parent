@@ -110,6 +110,10 @@ public class JsResource  {
 		case AGGREGATE :
 			retval.append(this.content);
 			break;
+		
+		case MINIMIFIED :
+			retval.append(this.content);
+			break;
 			
 		default :
 			retval.append(this.content);

@@ -24,34 +24,14 @@ public class DataNotFoundException extends Throwable {
 	public DataNotFoundException() {
 	};
 
-	/**
-	 * Crée une nouvelle instance de NombreNonValideException
-	 * 
-	 * @param message
-	 *            Le message détaillant exception
-	 */
 	public DataNotFoundException(String message) {
 		super(message);
 	}
 
-	/**
-	 * Crée une nouvelle instance de NombreNonValideException
-	 * 
-	 * @param cause
-	 *            L'exception à l'origine de cette exception
-	 */
 	public DataNotFoundException(Throwable cause) {
 		super(cause);
 	}
 
-	/**
-	 * Crée une nouvelle instance de NombreNonValideException
-	 * 
-	 * @param message
-	 *            Le message détaillant exception
-	 * @param cause
-	 *            L'exception à l'origine de cette exception
-	 */
 	public DataNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}

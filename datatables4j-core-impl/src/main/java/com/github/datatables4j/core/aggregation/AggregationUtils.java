@@ -27,9 +27,8 @@ import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
-import com.github.datatables4j.core.properties.PropertiesLoader;
 import com.github.datatables4j.core.util.NameConstants;
-import com.github.datatables4j.core.util.ResourceUtils;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
  * 
@@ -48,9 +47,9 @@ public class AggregationUtils {
 	 */
 	public static void processAggregation(WebResources webResources, HtmlTable table) {
 		
-		PropertiesLoader properties = PropertiesLoader.getInstance();
+		logger.debug("Processing aggregation, using configuration {}", table.getTableProperties().getAggregatorMode());
 		
-		switch (properties.getAggregatorMode()) {
+		switch (table.getTableProperties().getAggregatorMode()) {
 		case ALL:
 			aggregateAll(webResources);
 			break;
@@ -62,6 +61,9 @@ public class AggregationUtils {
 		case PLUGINS_CSS:
 			aggregatePluginsCss(webResources);
 			break;
+			
+		default:
+			break;
 		}
 	}
 	
@@ -71,8 +73,8 @@ public class AggregationUtils {
 	 */
 	public static void aggregateAll(WebResources webResources){
 		
-		String jsResourceName = NameConstants.DT_AGG_ALL_JS + ResourceUtils.getRamdomNumber() + ".js";
-		String cssResourceName = NameConstants.DT_AGG_ALL_CSS + ResourceUtils.getRamdomNumber() + ".css";
+		String jsResourceName = NameConstants.DT_AGG_ALL_JS + ResourceHelper.getRamdomNumber() + ".js";
+		String cssResourceName = NameConstants.DT_AGG_ALL_CSS + ResourceHelper.getRamdomNumber() + ".css";
 		
 		JsResource aggregateJsFile = new JsResource(ResourceType.AGGREGATE, jsResourceName);
 		CssResource aggregateCssFile = new CssResource(cssResourceName);
@@ -111,7 +113,7 @@ public class AggregationUtils {
 	 */
 	public static void aggregatePluginsJs(WebResources webResources){
 		
-		String jsResourceName = NameConstants.DT_AGG_PLUGINS_JS + ResourceUtils.getRamdomNumber() + ".js";
+		String jsResourceName = NameConstants.DT_AGG_PLUGINS_JS + ResourceHelper.getRamdomNumber() + ".js";
 		JsResource aggregatePluginsJsFile = new JsResource(jsResourceName);
 		
 		String aggregatedJsContent = "";
@@ -140,7 +142,7 @@ public class AggregationUtils {
 	 */
 	public static void aggregatePluginsCss(WebResources webResources){
 		
-		String cssResourceName = NameConstants.DT_AGG_PLUGINS_CSS + ResourceUtils.getRamdomNumber() + ".css";
+		String cssResourceName = NameConstants.DT_AGG_PLUGINS_CSS + ResourceHelper.getRamdomNumber() + ".css";
 		CssResource aggregatePluginsCssFile = new CssResource(cssResourceName);
 		
 		String aggregatedCssContent = "";

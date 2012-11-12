@@ -21,11 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.properties.PropertiesLoader;
-import com.github.datatables4j.core.util.ReflectUtils;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
- * TODO
+ * Helper class handling compression methods for Javascript and Stylesheet resources.
  * 
  * @author Thibault Duchateau
  */
@@ -37,64 +37,56 @@ public class ResourceCompressorHelper {
 	private String compressorClassName;
 	
 	/**
-	 * Static inner class used for initialization-on-demand holder strategy.
-	 */
-	private static class SingletonHolder {
-		private final static ResourceCompressorHelper instance = new ResourceCompressorHelper();
-	}
-
-	/**
-	 * Unique entry point for the class.
-	 * 
-	 * @return the unique instance of the class.
-	 */
-	public static ResourceCompressorHelper getInstance() {
-		return SingletonHolder.instance;
-	}
-	
-	/**
 	 * Private constructor which retrieve the compressor class from properties.
 	 */
-	private ResourceCompressorHelper(){
+	public ResourceCompressorHelper(HtmlTable table){
+				
+		this.compressorClassName = table.getTableProperties().getCompressorClassName();
 		
-		PropertiesLoader properties = PropertiesLoader.getInstance();
-		
-		this.compressorClassName = properties.getCompressorClassName();
-
-		logger.debug("Compress using {} implementation", this.compressorClassName);
+		logger.debug("ResourceCompressor loaded. About to use {} implementation", this.compressorClassName);
 	}
 	
 	
 	/**
-	 * TODO
+	 * Compress the javascript input using the compressorClassName and return
+	 * it.
 	 * 
 	 * @param input
-	 * @return
+	 *            The stringified javascript to compress.
+	 * @return The compressed stringified javascript.
 	 * @throws BadConfigurationException
+	 *             if the compressorClassName is not present in the classPath.
 	 */
 	public String getCompressedJavascript(String input) throws BadConfigurationException {
 		
-		Class<?> compressorClass = ReflectUtils.getClass(this.compressorClassName);
+		Class<?> compressorClass = ReflectHelper.getClass(this.compressorClassName);
 		
-		Object obj = ReflectUtils.getNewInstance(compressorClass);
+		logger.debug("Instancing the compressor class {}", compressorClass);
+		Object obj = ReflectHelper.getNewInstance(compressorClass);
 
-		return (String) ReflectUtils.invokeMethod(obj, "getCompressedJavascript", new Object[]{input});
+		logger.debug("Invoking method getCompressedJavascript");
+		String compressedContent = (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[]{input});
+				
+		return compressedContent;
 	}
 	
 	
 	/**
-	 * TODO
+	 * Compress the CSS input using the compressorClassName and return
+	 * it.
 	 * 
 	 * @param input
-	 * @return
+	 *            The stringified CSS to compress.
+	 * @return The compressed stringified CSS.
 	 * @throws BadConfigurationException
+	 *             if the compressorClassName is not present in the classPath.
 	 */
 	public String getCompressedCss(String input) throws BadConfigurationException {
 
-		Class<?> compressorClass = ReflectUtils.getClass(this.compressorClassName);
+		Class<?> compressorClass = ReflectHelper.getClass(this.compressorClassName);
 		
-		Object obj = ReflectUtils.getNewInstance(compressorClass);
+		Object obj = ReflectHelper.getNewInstance(compressorClass);
 		
-		return (String) ReflectUtils.invokeMethod(obj, "getCompressedCss", new Object[]{input});
+		return (String) ReflectHelper.invokeMethod(obj, "getCompressedCss", new Object[]{input});
 	}
 }

@@ -24,8 +24,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.datatables4j.core.api.aggregator.AggregateMode;
-import com.github.datatables4j.core.api.constants.ConfConstants;
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
  * Aggregates the default DataTables4j properties file with a potential custom one.
@@ -47,29 +47,17 @@ public class PropertiesLoader {
 	public final static String DT_CUSTOM_PROPERTIES = "datatables4j.properties";
 	
 	/**
-	 * Static inner class used for initialization-on-demand holder strategy.
-	 */
-	private static class SingletonHolder {
-		// Unique instance non initialised yet
-		private final static PropertiesLoader instance = new PropertiesLoader();
-	}
-
-	/**
-	 * Unique entry point for the class.
+	 * Load the properties in the table using : <li>first, the global
+	 * datatables4j properties file <li>second, the project specific properties
+	 * file, if it exists
 	 * 
-	 * @return the unique instance of the class.
+	 * @param table
+	 *            The table where to load properties.
 	 */
-	public static PropertiesLoader getInstance() {
-		return SingletonHolder.instance;
-	}
-	
-	/**
-	 * Private constructor which loads properties file
-	 */
-	private PropertiesLoader(){
+	public static void load(HtmlTable table) throws BadConfigurationException {
 		
 		// Initialize properties
-		propertiesResource = new Properties();
+		Properties propertiesResource = new Properties();
 
 		// Get current classloader
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -81,8 +69,7 @@ public class PropertiesLoader {
 			// Load all default properties
 			propertiesResource.load(propertiesStream);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BadConfigurationException("Unable to load the default configuration file", e);
 		}
 
 		// Next, try to get the custom properties file
@@ -92,10 +79,10 @@ public class PropertiesLoader {
 
 			Properties customProperties = new Properties();
 			try {
+				// Load project-specific properties
 				customProperties.load(propertiesStream);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new BadConfigurationException("Unable to load the project-specific configuration file", e);
 			}
 
 			// If custom properties have been loaded, we merge the properties
@@ -104,54 +91,11 @@ public class PropertiesLoader {
 		} else {
 			logger.info("No custom file datatables4j.properties has been found. Using default one.");
 		}
+		
+		table.getTableProperties().initProperties(propertiesResource);
 	}
-	
-
-	/**
-	 * Update a property. Called if a prop tag is present in a table tag.
-	 * 
-	 * @param key
-	 *            The property's key to update.
-	 * @param value
-	 *            The property's value to use.
-	 */
-	public void setProperty(String key, String value) {
-		this.propertiesResource.put(key, value);
-	}
-
-	/**
-	 * Get the value associated with the key in the properties file.
-	 * 
-	 * @param key
-	 *            String The key.
-	 * @return String The value associated with the key.
-	 */
-	public String getProperty(String key) {
-		return propertiesResource.getProperty(key);
-	}
-
-	/**
-	 * Get the DataSource provider class name.
-	 * 
-	 * @return The DataSource provider class name.
-	 */
-	public String getDatasourceClassName() {
-		return getProperty(ConfConstants.DT_DATASOURCE_CLASS);
-	}
-
-	public String getCompressorClassName() {
-		return getProperty(ConfConstants.DT_COMPRESSOR_CLASS);
-	}
-
-	public Boolean isCompressorEnable() {
-		return Boolean.parseBoolean(getProperty(ConfConstants.DT_COMPRESSOR_ENABLE));
-	}
-
-	public Boolean isAggregatorEnable() {
-		return Boolean.parseBoolean(getProperty(ConfConstants.DT_AGGREGATOR_ENABLE));
-	}
-
-	public AggregateMode getAggregatorMode() {
-		return AggregateMode.valueOf(getProperty(ConfConstants.DT_AGGREGATOR_MODE));
+		
+	public Properties getProperties(){
+		return this.propertiesResource;
 	}
 }

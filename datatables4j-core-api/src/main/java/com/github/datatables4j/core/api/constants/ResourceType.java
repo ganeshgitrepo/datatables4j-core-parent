@@ -23,5 +23,5 @@ package com.github.datatables4j.core.api.constants;
  * @author Thibault Duchateau
  */
 public enum ResourceType {
-	MAIN, PLUGIN, FEATURE, AGGREGATE
+	MAIN, PLUGIN, FEATURE, AGGREGATE, MINIMIFIED
 }

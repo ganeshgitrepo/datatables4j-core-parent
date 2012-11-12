@@ -20,43 +20,55 @@ package com.github.datatables4j.core.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import com.github.datatables4j.core.properties.PropertiesLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Allow to override the DataTables4j global properties locally.
+ * Tag which allows to override the DataTables4j global properties locally.
  *
  * @author Thibault Duchateau
  */
 public class PropTag extends TagSupport {
 	private static final long serialVersionUID = -3453884184847355817L;
 
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(PropTag.class);
+		
 	// Tag attributes
 	private String name;
 	private String value;
 	
 	/**
-	 * TODO
+	 * A PropTag has no body but we test here that the PropTag is in the right place.
 	 */
 	public int doStartTag() throws JspException {
+
+		if (!(getParent() instanceof AbstractTableTag)) {
+			throw new JspException("PropTag must be inside AbstractTableTag");
+		}
+
 		return SKIP_BODY;
 	}
 	
 	/**
-	 * TODO
-	 * ajouter un test sur la nature du parent
+	 * Process the tag updating table properties.
 	 */
 	public int doEndTag() throws JspException {
 		
 		// Get parent tag
 		AbstractTableTag parent = (AbstractTableTag) getParent();
-		
+
 		// Evaluate the tag only once using the isFirstRow method
 		if(parent.isFirstRow()){
 			
-			PropertiesLoader properties = PropertiesLoader.getInstance();
-			
-			// Override the existing properties with the new one
-			properties.setProperty(name, value);
+			if(parent.getTable().getTableProperties().isValidProperty(name)){
+				// Override the existing properties with the new one
+				parent.getTable().getTableProperties().setProperty(name,  value);
+			}
+			else{
+				logger.error("The property {} doesn't exist. Please visit the documentation.", name);
+				throw new JspException(name + " is not a valid property");
+			}
 		}
 		
 		return EVAL_PAGE;

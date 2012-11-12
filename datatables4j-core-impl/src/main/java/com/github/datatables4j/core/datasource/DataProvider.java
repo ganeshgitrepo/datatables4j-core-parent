@@ -20,8 +20,7 @@ package com.github.datatables4j.core.datasource;
 
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.properties.PropertiesLoader;
-import com.github.datatables4j.core.util.ReflectUtils;
+import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
  * Class that will instanciate the chosen implementation class for retrieving
@@ -45,17 +44,14 @@ public class DataProvider {
 	 *             if the implementation class cannot be found.
 	 */
 	public Object getData(HtmlTable table, String webServiceUrl) throws BadConfigurationException {
-
-		// Get Datatables4j properties
-		PropertiesLoader properties = PropertiesLoader.getInstance();
 		
 		// Get DataProvider class from the properties file
-		Class<?> klass = ReflectUtils.getClass(properties.getDatasourceClassName());
+		Class<?> klass = ReflectHelper.getClass(table.getTableProperties().getDatasourceClassName());
 		
 		// Get new instance of this class
-		Object obj = ReflectUtils.getNewInstance(klass);
+		Object obj = ReflectHelper.getNewInstance(klass);
 		
 		// Inovke getData method and return result
-		return ReflectUtils.invokeMethod(obj, "getData", new Object[]{webServiceUrl});
+		return ReflectHelper.invokeMethod(obj, "getData", new Object[]{webServiceUrl});
 	}
 }

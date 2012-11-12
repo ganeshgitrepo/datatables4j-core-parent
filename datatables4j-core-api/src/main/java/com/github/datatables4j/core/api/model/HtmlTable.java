@@ -52,6 +52,7 @@ public class HtmlTable {
 	private List<HtmlRow> head = new LinkedList<HtmlRow>();
 	private List<HtmlRow> body = new LinkedList<HtmlRow>();
 	private List<HtmlRow> foot = new LinkedList<HtmlRow>();
+	private TableProperties tableProperties = new TableProperties();
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private String datasourceUrl;
 	private List<Plugin> plugins = new ArrayList<Plugin>();
@@ -387,5 +388,13 @@ public class HtmlTable {
 
 	public void setJqueryUI(Boolean jqueryUI) {
 		this.jqueryUI = jqueryUI;
+	}
+
+	public TableProperties getTableProperties() {
+		return tableProperties;
+	}
+
+	public void setTableProperties(TableProperties tableProperties) {
+		this.tableProperties = tableProperties;
 	}
 }
