@@ -23,5 +23,5 @@ package com.github.datatables4j.core.api.aggregator;
  * @author Thibault Duchateau
  */
 public enum AggregateMode {
-	ALL, PER_TABLE, PLUGINS_JS, PLUGINS_CSS
+	ALL, PLUGINS_JS, PLUGINS_CSS
 }

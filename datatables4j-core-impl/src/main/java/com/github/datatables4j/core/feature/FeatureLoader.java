@@ -30,7 +30,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.util.NameConstants;
-import com.github.datatables4j.core.util.ResourceUtils;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
  * TODO
@@ -91,7 +91,7 @@ public class FeatureLoader {
 					for (JsResource jsResource : feature.getJsResources()) {
 						String location = "datatables/features/"
 								+ jsResource.getName();
-						pluginsSourceJsFile.setContent(ResourceUtils
+						pluginsSourceJsFile.setContent(ResourceHelper
 								.getFileContentFromClasspath(location));
 					}
 					

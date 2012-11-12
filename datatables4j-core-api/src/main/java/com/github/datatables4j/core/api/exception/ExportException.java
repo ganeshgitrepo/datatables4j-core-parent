@@ -15,24 +15,29 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package com.github.datatables4j.core.util;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+package com.github.datatables4j.core.api.exception;
 
 /**
- * TODO
+ * Raised if something went wrong during table export.
+ * 
  * @author Thibault Duchateau
  */
-public class RequestHelper {
+public class ExportException extends Exception {
 
-	/**
-	 * TODO
-	 * @param pageContext
-	 * @return
-	 */
-	public static String getBaseUrl(PageContext pageContext){
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		return request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
+	private static final long serialVersionUID = 3243845798907773547L;
+
+	public ExportException() {
+	};
+
+	public ExportException(String message) {
+		super(message);
+	}
+
+	public ExportException(Throwable cause) {
+		super(cause);
+	}
+
+	public ExportException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }

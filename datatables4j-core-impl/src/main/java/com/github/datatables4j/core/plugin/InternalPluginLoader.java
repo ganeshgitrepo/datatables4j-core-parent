@@ -32,7 +32,7 @@ import com.github.datatables4j.core.api.model.Plugin;
 import com.github.datatables4j.core.api.model.PluginConf;
 import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.util.NameConstants;
-import com.github.datatables4j.core.util.ResourceUtils;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
  * Internal plugin loader (e.g. : Scroller, FixedHeader, ...).
@@ -86,7 +86,7 @@ public class InternalPluginLoader {
 					for (JsResource jsResource : plugin.getJsResources()) {
 						String location = "datatables/plugins/" + plugin.getPluginName().toLowerCase() + "/js/"
 								+ jsResource.getName();
-						pluginsSourceJsFile.setContent(ResourceUtils.getFileContentFromClasspath(location));
+						pluginsSourceJsFile.setContent(ResourceHelper.getFileContentFromClasspath(location));
 					}
 	
 					webResources.getJavascripts().put(pluginsSourceJsFile.getName(), pluginsSourceJsFile);
@@ -148,7 +148,7 @@ public class InternalPluginLoader {
 					for (CssResource cssResource : plugin.getCssResources()) {
 						String location = "datatables/plugins/" + plugin.getPluginName().toLowerCase() + "/css/"
 								+ cssResource.getName();
-						cssContent.append(ResourceUtils.getFileContentFromClasspath(location));
+						cssContent.append(ResourceHelper.getFileContentFromClasspath(location));
 					}
 					
 					pluginsSourceCssFile.setContent(cssContent.toString());
