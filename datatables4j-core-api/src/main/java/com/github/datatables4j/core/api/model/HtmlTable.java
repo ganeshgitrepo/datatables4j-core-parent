@@ -61,6 +61,9 @@ public class HtmlTable {
 	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
 	private String randomId;
 
+	// Export
+	private Boolean exporting;
+	
 	public HtmlTable() {
 	};
 
@@ -82,6 +85,14 @@ public class HtmlTable {
 		this.attributes.put("id", domId);
 	}
 
+	public List<HtmlRow> getHeadRows(){
+		return head;
+	}
+	
+	public List<HtmlRow> getBodyRows(){
+		return body;
+	}
+	
 	public HtmlRow addHeaderRow() {
 		HtmlRow row = new HtmlRow();
 		this.head.add(row);
@@ -396,5 +407,13 @@ public class HtmlTable {
 
 	public void setTableProperties(TableProperties tableProperties) {
 		this.tableProperties = tableProperties;
+	}
+
+	public Boolean getExporting() {
+		return exporting;
+	}
+
+	public void setExporting(Boolean exporting) {
+		this.exporting = exporting;
 	}
 }

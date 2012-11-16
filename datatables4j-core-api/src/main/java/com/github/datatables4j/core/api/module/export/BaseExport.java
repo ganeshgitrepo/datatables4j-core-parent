@@ -23,5 +23,5 @@ public interface BaseExport {
 	 * 
 	 * @param out The stream to send back to client.
 	 */
-	public void processExport(OutputStream out);
+	public Object processExport(OutputStream out);
 }

@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
@@ -32,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.datatables4j.core.aggregation.AggregationUtils;
+import com.github.datatables4j.core.aggregator.ResourceAggregator;
 import com.github.datatables4j.core.api.constants.CdnConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
@@ -41,10 +43,11 @@ import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
-import com.github.datatables4j.core.compression.CompressionUtils;
+import com.github.datatables4j.core.compressor.ResourceCompressor;
 import com.github.datatables4j.core.feature.ui.InputFilteringFeature;
 import com.github.datatables4j.core.feature.ui.SelectFilteringFeature;
 import com.github.datatables4j.core.generator.WebResourceGenerator;
+import com.github.datatables4j.core.module.export.CsvExport;
 import com.github.datatables4j.core.plugin.ui.ColReorderModule;
 import com.github.datatables4j.core.plugin.ui.FixedHeaderModule;
 import com.github.datatables4j.core.plugin.ui.ScrollerModule;
@@ -102,7 +105,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean colReorder = false;
 
 	// Awesome features
-	protected String export;
+	protected Boolean export;
 	
 	// Internal common attributes
 	protected int rowNumber;
@@ -214,91 +217,149 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 	}
 	
+	public static int count = 1;
 	/**
 	 * TODO
 	 * @return
 	 * @throws JspException
 	 */
 	protected int processDoEndTag() throws JspException {
-		
+		System.out.println(" ========================== DEBUT doEndTag");
 		String baseUrl = RequestHelper.getBaseUrl(pageContext);
 		ServletContext context = pageContext.getServletContext();
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 		
 		// Update the HtmlTable object configuration with the attributes
 		registerCommonConfiguration();
 
-		// Check if modules are activated
-		registerModules();
-
-		// Check if extra features are activated
-		registerFeatures();
-		
-		// Check if the table is being exported
-		checkExport();
-		
-		try {
-			//
-			WebResourceGenerator contentGenerator = new WebResourceGenerator();
+		// The table is being exported
+		if(isExporting()){
 			
-			// JS script generation according to the JSP tags configuration
-			WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
-
-			// Aggregation
-			if(this.table.getTableProperties().isAggregatorEnable()){
-				logger.debug("Aggregation enabled");
-				AggregationUtils.processAggregation(webResources, table);
-			}
-
-			// Compression
-			if(this.table.getTableProperties().isCompressorEnable()){
-				logger.debug("Compression enabled");
-				CompressionUtils.processCompression(webResources, table);
-			}
+			this.table.setExporting(true);
 			
-			// <link> HTML tag generation
-			if(this.isCdnEnable()){
-				pageContext.getOut().println("<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");				
-			}
-			for(Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()){
-				context.setAttribute(entry.getKey(), entry.getValue());
-				pageContext.getOut().println(
-						"<link href=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\" rel=\"stylesheet\">");
-			}
-						
-			// HTML generation
-			pageContext.getOut().println(this.table.toHtml());
-						
-			// <script> HTML tag generation
-			if(this.isCdnEnable()){
-				pageContext.getOut().println("<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
-			}
-			for(Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()){
-				System.out.println("Fichier = " + entry.getKey());
-				context.setAttribute(entry.getKey(), entry.getValue());
-				pageContext.getOut().println(
-						"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\"></script>");
-			}
+			CsvExport csvExport = new CsvExport();
+			csvExport.initExport(table);
+			String content = String.valueOf(csvExport.processExport(null));
 			
-			logger.debug("Web content generated");
-		} 
-		catch (IOException e) {
-			logger.error("Something went wront with the datatables tag");
-			throw new JspException(e);
-		} 
-		catch (CompressionException e) {
-			logger.error("Something went wront with the compressor.");
-			throw new JspException(e);
-		} 
-		catch (BadConfigurationException e) {
-			logger.error("Something went wront with the DataTables4j configuration. Please check your datatables4j.properties file");
-			throw new JspException(e);
-		} 
-		catch (DataNotFoundException e) {
-			logger.error("Something went wront with the data provider.");
-			throw new JspException(e);
+			request.setAttribute("type", "CSV");
+			request.setAttribute("data", content);
+
+			response.reset();
+//			try {
+//				pageContext.getOut().clearBuffer();
+//			} catch (IOException e) {
+//				throw new JspException(e);
+//			}
+
+			return SKIP_PAGE;
+		}
+		// The table must be generated and displayed
+		else{
+			this.table.setExporting(false);
+			
+			// Check if modules are activated
+			registerModules();
+
+			// Check if extra features are activated
+			registerFeatures();
+			
+			// Check if the table is being exported
+			checkExport();
+			
+			try {
+				//
+				WebResourceGenerator contentGenerator = new WebResourceGenerator();
+				
+				// JS script generation according to the JSP tags configuration
+				WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
+
+				// Aggregation
+				if(this.table.getTableProperties().isAggregatorEnable()){
+					logger.debug("Aggregation enabled");
+					ResourceAggregator.processAggregation(webResources, table);
+				}
+
+				// Compression
+				if(this.table.getTableProperties().isCompressorEnable()){
+					logger.debug("Compression enabled");
+					ResourceCompressor.processCompression(webResources, table);
+				}
+				
+				// <link> HTML tag generation
+				if(this.isCdnEnable()){
+					pageContext.getOut().println("<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");				
+				}
+				for(Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()){
+					context.setAttribute(entry.getKey(), entry.getValue());
+					pageContext.getOut().println(
+							"<link href=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\" rel=\"stylesheet\">");
+				}
+							
+				// HTML generation
+				pageContext.getOut().println(this.table.toHtml());
+				
+				if(canBeExported()){
+					String currentURL = null;
+					if( request.getAttribute("javax.servlet.forward.request_uri") != null ){
+						currentURL = (String)request.getAttribute("javax.servlet.forward.request_uri");
+					}
+					if( currentURL != null && request.getAttribute("javax.servlet.include.query_string") != null ){
+						currentURL += "?" + request.getQueryString();
+					}
+					System.out.println("currentURL = " + currentURL);
+
+					StringBuffer bufferExport = new StringBuffer();
+					bufferExport.append("<a href=\"");
+					bufferExport.append(currentURL);
+					bufferExport.append("?exporting=1");
+					bufferExport.append("\">Export</a>");
+					
+					System.out.println("bufferExport = " + bufferExport.toString());
+					System.out.println("request.getRequestURI() = " + request.getRequestURI());
+					System.out.println("request.getRequestURL() = " + request.getRequestURL());
+					System.out.println("request.getPathInfo() = " + request.getPathInfo());
+					System.out.println("request.getPathTranslated() = " + request.getPathTranslated());
+					System.out.println("request.getServletPath() = " + request.getServletPath());
+					System.out.println(request.getServletContext().getContextPath());
+
+					pageContext.getOut().println(bufferExport.toString());		
+				}
+				
+				// <script> HTML tag generation
+				if(this.isCdnEnable()){
+					pageContext.getOut().println("<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
+				}
+				for(Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()){
+					System.out.println("Fichier = " + entry.getKey());
+					context.setAttribute(entry.getKey(), entry.getValue());
+					pageContext.getOut().println(
+							"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\"></script>");
+				}
+				
+				logger.debug("Web content generated");
+			} 
+			catch (IOException e) {
+				logger.error("Something went wront with the datatables tag");
+				throw new JspException(e);
+			} 
+			catch (CompressionException e) {
+				logger.error("Something went wront with the compressor.");
+				throw new JspException(e);
+			} 
+			catch (BadConfigurationException e) {
+				logger.error("Something went wront with the DataTables4j configuration. Please check your datatables4j.properties file");
+				throw new JspException(e);
+			} 
+			catch (DataNotFoundException e) {
+				logger.error("Something went wront with the data provider.");
+				throw new JspException(e);
+			}
+
+			return EVAL_PAGE;
 		}
 		
-		return EVAL_PAGE;
+//		System.out.println(" ========================== FIN doEndTag");
 	}
 
 	
@@ -407,11 +468,20 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	private void checkExport(){
 		
-		if(StringUtils.isNotBlank(this.export)){
+		if(this.export != null){
 			
 //			String[] exportTypes = this.export.split(",");
 			// Ajouter le ou les lien(s) d'export
 		}
+	}
+	
+	private Boolean isExporting(){
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		return (Boolean) (request.getAttribute("isExporting") != null ? request.getAttribute("isExporting") : false);
+	}
+	
+	private Boolean canBeExported(){
+		return this.export != null ? this.export : false;
 	}
 	
 	/**
@@ -658,11 +728,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.cdn = cdn;
 	}
 	
-	public String getExport() {
+	public Boolean getExport() {
 		return export;
 	}
 
-	public void setExport(String export) {
+	public void setExport(Boolean export) {
 		this.export = export;
 	}
 	
