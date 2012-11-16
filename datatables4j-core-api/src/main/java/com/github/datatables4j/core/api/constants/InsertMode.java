@@ -23,5 +23,16 @@ package com.github.datatables4j.core.api.constants;
  * @author Thibault Duchateau
  */
 public enum InsertMode {
-	BEFOREALL, AFTERALL, AFTERSTARTDOCUMENTREADY, BEFOREENDDOCUMENTREADY
+	
+	// The javascript is inserted before all instruction.
+	BEFOREALL, 
+	
+	// The javascript is inserted after all instruction.
+	AFTERALL, 
+	
+	// The javascript is inserted just after the start of the jQuery $(document).ready(); function.
+	AFTERSTARTDOCUMENTREADY, 
+	
+	// The javascript is inserted just before the end of the jQuery $(document).ready(); function.
+	BEFOREENDDOCUMENTREADY
 }

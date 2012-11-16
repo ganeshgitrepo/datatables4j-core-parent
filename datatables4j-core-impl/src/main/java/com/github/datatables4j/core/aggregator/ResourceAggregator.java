@@ -15,7 +15,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package com.github.datatables4j.core.aggregation;
+package com.github.datatables4j.core.aggregator;
 
 import java.util.Map.Entry;
 
@@ -31,19 +31,23 @@ import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
- * 
+ * Web resources aggregator.
  *
  * @author Thibault Duchateau
  */
-public class AggregationUtils {
+public class ResourceAggregator {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(AggregationUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(ResourceAggregator.class);
 
 	/**
-	 * TODO
+	 * Main routine of the aggregator which launches different type of
+	 * aggregation depending on the datatables4j configuration.
+	 * 
 	 * @param webResources
+	 *            The wrapper POJO containing all web resources to aggregate.
 	 * @param table
+	 *            The table containing the datatatables4j configuration.
 	 */
 	public static void processAggregation(WebResources webResources, HtmlTable table) {
 		
@@ -68,8 +72,12 @@ public class AggregationUtils {
 	}
 	
 	/**
-	 * TODO
+	 * All web resources are aggregated. <li>All javascript resources will be
+	 * merge into one file <li>All stylesheets resources will be merge into one
+	 * file, if there is some.
+	 * 
 	 * @param webResources
+	 *            The wrapper POJO containing all web resources to aggregate.
 	 */
 	public static void aggregateAll(WebResources webResources){
 		
@@ -92,24 +100,26 @@ public class AggregationUtils {
 		}
 		aggregateCssFile.setContent(aggregatedCssContent);
 		
-		// Remove all existing Javascript resources
+		// All existing Javascript resources are removed
 		webResources.getJavascripts().clear();
 		
-		// Add aggregated one
+		// Add aggregated Javascript resource
 		webResources.getJavascripts().put(aggregateJsFile.getName(), aggregateJsFile);
 		
-		// Remove all existing Stylesheets resources
+		// All existing Stylesheets resources are removed
 		webResources.getStylesheets().clear();
 		
-		// Add aggregated one
+		// Add aggregated stylesheet resource
 		webResources.getStylesheets().put(aggregateCssFile.getName(), aggregateCssFile);
 		
 		logger.debug("Aggregation (ALL) completed");
 	}
 	
 	/**
-	 * TODO
+	 * Only javascript resources are aggregated. The other ones remain unchanged.
+	 * 
 	 * @param webResources
+	 *            The wrapper POJO containing all web resources to aggregate.
 	 */
 	public static void aggregatePluginsJs(WebResources webResources){
 		
@@ -137,8 +147,10 @@ public class AggregationUtils {
 	}
 	
 	/**
-	 * TODO
+	 * Only stylesheet resources are aggregated. The other ones remain unchanged.
+	 * 
 	 * @param webResources
+	 *            The wrapper POJO containing all web resources to aggregate.
 	 */
 	public static void aggregatePluginsCss(WebResources webResources){
 		

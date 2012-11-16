@@ -2,7 +2,8 @@ package com.github.datatables4j.core.api.model;
 
 import java.util.Properties;
 
-import com.github.datatables4j.core.api.aggregator.AggregateMode;
+import com.github.datatables4j.core.api.aggregator.AggregatorMode;
+import com.github.datatables4j.core.api.compressor.CompressorMode;
 import com.github.datatables4j.core.api.constants.ConfConstants;
 
 /**
@@ -22,7 +23,8 @@ public class TableProperties {
 	}
 	
 	/**
-	 * Update a property. Called if a prop tag is present in a table tag.
+	 * Update a property. Called if a prop tag is present in a table tag. Only
+	 * the current table is affected.
 	 * 
 	 * @param key
 	 *            The property's key to update.
@@ -56,49 +58,53 @@ public class TableProperties {
 	
 		return property.equals(ConfConstants.DT_COMPRESSOR_CLASS)
 				|| property.equals(ConfConstants.DT_COMPRESSOR_ENABLE)
+				|| property.equals(ConfConstants.DT_COMPRESSOR_MODE)
 				|| property.equals(ConfConstants.DT_AGGREGATOR_ENABLE)
 				|| property.equals(ConfConstants.DT_AGGREGATOR_MODE)
 				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS);
 	}
 	
 	/**
-	 * Get the DataSource provider class name.
-	 * 
-	 * @return The DataSource provider class name.
+	 * @return The data source provider class name.
 	 */
 	public String getDatasourceClassName() {
 		return getProperty(ConfConstants.DT_DATASOURCE_CLASS);
 	}
 
 	/**
-	 * TODO
-	 * @return
+	 * @return the compressor class name.
 	 */
 	public String getCompressorClassName() {
 		return getProperty(ConfConstants.DT_COMPRESSOR_CLASS);
 	}
 
 	/**
-	 * TODO
-	 * @return
+	 * @return true if the compression is enabled (the value must be "true"),
+	 *         false otherwise.
 	 */
 	public Boolean isCompressorEnable() {
 		return Boolean.parseBoolean(getProperty(ConfConstants.DT_COMPRESSOR_ENABLE));
 	}
 
 	/**
-	 * TODO
-	 * @return
+	 * @return the compressor mode.
+	 */
+	public CompressorMode getCompressorMode(){
+		return CompressorMode.valueOf(getProperty(ConfConstants.DT_COMPRESSOR_MODE));
+	}
+	
+	/**
+	 * @return true if the aggregation is enabled (the value must be "true"),
+	 *         false otherwise.
 	 */
 	public Boolean isAggregatorEnable() {
 		return Boolean.parseBoolean(getProperty(ConfConstants.DT_AGGREGATOR_ENABLE));
 	}
 
 	/**
-	 * TODO
-	 * @return
+	 * @return the aggregator mode.
 	 */
-	public AggregateMode getAggregatorMode() {
-		return AggregateMode.valueOf(getProperty(ConfConstants.DT_AGGREGATOR_MODE));
+	public AggregatorMode getAggregatorMode() {
+		return AggregatorMode.valueOf(getProperty(ConfConstants.DT_AGGREGATOR_MODE));
 	}
 }

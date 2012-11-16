@@ -33,7 +33,7 @@ import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
- * TODO
+ * Feature loader class (e.g. : inputfiltering, selectFiltering, ...).
  * 
  * @author Thibault Duchateau
  */
@@ -43,24 +43,19 @@ public class FeatureLoader {
 	private static Logger logger = LoggerFactory.getLogger(FeatureLoader.class);
 
 	/**
-	 * <p>
-	 * Load every plugin activated by the user in the table tag.
-	 * </p>
-	 * <p>
-	 * A plugin may be composed of several elements :
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * </p>
+	 * Load every feature activated for the given table.
 	 * 
-	 * @param jsFile
-	 *            The Javascript which will be generated and may be updated
-	 *            accordingly to modules.
+	 * @param mainJsFile
+	 *            The main Javascript file which will be generated and may be
+	 *            updated accordingly to modules.
 	 * @param table
 	 *            The table containing module informations.
 	 * @param mainConf
 	 *            Main DataTables configuration which may be updated accordingly
 	 *            to modules.
+	 * @param webResources
+	 *            The wrapper POJO containing all web resources to generate.
+	 * @throws BadConfigurationException
 	 */
 	public static void loadFeatures(JsResource mainJsFile, HtmlTable table,
 			Map<String, Object> mainConf, WebResources webResources)
@@ -77,17 +72,17 @@ public class FeatureLoader {
 				logger.debug("Loading {} v{} ...", feature.getFeatureName(),
 						feature.getFeatureVersion());
 
-				// Module initialization
+				// Feature initialization
 				feature.setup(table);
 
-				// Module javascript
+				// Feature javascript
 				if (!feature.getJsResources().isEmpty()) {
 
 					pluginsSourceJsFile = new JsResource(ResourceType.FEATURE,
 							NameConstants.DT_PLUGIN_JS + feature.getFeatureName().toLowerCase() + "-" + table.getRandomId()
 									+ ".js");
 
-					// Module source loading (javascript)
+					// Feature source loading (javascript)
 					for (JsResource jsResource : feature.getJsResources()) {
 						String location = "datatables/features/"
 								+ jsResource.getName();
@@ -99,7 +94,7 @@ public class FeatureLoader {
 							pluginsSourceJsFile);
 				}
 
-				// Module configuration loading
+				// Feature configuration loading
 				if (StringUtils.isNotBlank(feature.getBeforeAllScript())) {
 					mainJsFile.appendToBeforeAll(feature.getBeforeAllScript());
 				}

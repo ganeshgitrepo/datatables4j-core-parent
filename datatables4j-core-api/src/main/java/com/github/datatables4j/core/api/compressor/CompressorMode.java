@@ -15,13 +15,21 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package com.github.datatables4j.core.api.aggregator;
+package com.github.datatables4j.core.api.compressor;
 
 /**
- * Enum containing the available modes of aggregation.
+ * Enum containing the available modes of compression.
  * 
  * @author Thibault Duchateau
  */
-public enum AggregateMode {
-	ALL, PLUGINS_JS, PLUGINS_CSS
+public enum CompressorMode {
+
+	// JS and CSS are compressed
+	ALL, 
+	
+	// Only JS is compressed
+	JS, 
+	
+	// Only CSS is compressed
+	CSS
 }

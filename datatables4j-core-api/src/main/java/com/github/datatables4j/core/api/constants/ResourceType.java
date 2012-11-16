@@ -23,5 +23,19 @@ package com.github.datatables4j.core.api.constants;
  * @author Thibault Duchateau
  */
 public enum ResourceType {
-	MAIN, PLUGIN, FEATURE, AGGREGATE, MINIMIFIED
+	
+	// Main DataTables javascript file
+	MAIN, 
+	
+	// DataTables plugin javascript file
+	PLUGIN, 
+	
+	// DataTables4j feature javascript file
+	FEATURE, 
+	
+	// DataTables4j javascript aggregated file
+	AGGREGATE, 
+	
+	// DataTables4j javascript minimified file
+	MINIMIFIED
 }

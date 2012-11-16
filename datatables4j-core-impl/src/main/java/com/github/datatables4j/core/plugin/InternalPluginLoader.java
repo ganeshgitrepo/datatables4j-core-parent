@@ -35,7 +35,7 @@ import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
- * Internal plugin loader (e.g. : Scroller, FixedHeader, ...).
+ * Internal plugin loader class (e.g. : Scroller, FixedHeader, ...).
  * 
  * @author Thibault Duchateau
  */

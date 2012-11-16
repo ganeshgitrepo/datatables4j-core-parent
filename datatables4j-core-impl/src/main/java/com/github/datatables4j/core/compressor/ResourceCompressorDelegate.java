@@ -15,7 +15,7 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package com.github.datatables4j.core.compression;
+package com.github.datatables4j.core.compressor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,21 +25,22 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
- * Helper class handling compression methods for Javascript and Stylesheet resources.
+ * Helper class in charge of the instanciation of the compressor implementation
+ * defined in the datatables4j configuration file.
  * 
  * @author Thibault Duchateau
  */
-public class ResourceCompressorHelper {
+public class ResourceCompressorDelegate {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ResourceCompressorHelper.class);
+	private static Logger logger = LoggerFactory.getLogger(ResourceCompressorDelegate.class);
 	
 	private String compressorClassName;
 	
 	/**
 	 * Private constructor which retrieve the compressor class from properties.
 	 */
-	public ResourceCompressorHelper(HtmlTable table){
+	public ResourceCompressorDelegate(HtmlTable table){
 				
 		this.compressorClassName = table.getTableProperties().getCompressorClassName();
 		
@@ -59,13 +60,21 @@ public class ResourceCompressorHelper {
 	 */
 	public String getCompressedJavascript(String input) throws BadConfigurationException {
 		
+		String compressedContent = null;
+		
 		Class<?> compressorClass = ReflectHelper.getClass(this.compressorClassName);
 		
 		logger.debug("Instancing the compressor class {}", compressorClass);
 		Object obj = ReflectHelper.getNewInstance(compressorClass);
 
 		logger.debug("Invoking method getCompressedJavascript");
-		String compressedContent = (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[]{input});
+		
+		// TODO catch CompressionException from getCompressedJavascript
+//		try {
+			 compressedContent = (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[] { input });
+//		} catch (CompressionException e) {
+//
+//		}
 				
 		return compressedContent;
 	}
