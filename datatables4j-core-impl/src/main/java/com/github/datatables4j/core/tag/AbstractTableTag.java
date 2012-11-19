@@ -21,11 +21,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
@@ -34,30 +31,24 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.datatables4j.core.aggregator.ResourceAggregator;
-import com.github.datatables4j.core.api.constants.CdnConstants;
-import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.exception.CompressionException;
-import com.github.datatables4j.core.api.exception.DataNotFoundException;
-import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.model.ExportConf;
+import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.WebResources;
-import com.github.datatables4j.core.compressor.ResourceCompressor;
 import com.github.datatables4j.core.feature.ui.InputFilteringFeature;
 import com.github.datatables4j.core.feature.ui.SelectFilteringFeature;
-import com.github.datatables4j.core.generator.WebResourceGenerator;
-import com.github.datatables4j.core.module.export.CsvExport;
 import com.github.datatables4j.core.plugin.ui.ColReorderModule;
 import com.github.datatables4j.core.plugin.ui.FixedHeaderModule;
 import com.github.datatables4j.core.plugin.ui.ScrollerModule;
-import com.github.datatables4j.core.properties.PropertiesLoader;
 import com.github.datatables4j.core.util.RequestHelper;
-import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
- * Abstract table tag which contains the common configuration between all table
- * tags.
+ * Abstract class which contains :<br />
+ * <ul>
+ * <li>all the boring technical stuff needed by Java tags (getters and setters
+ * for all attributes)</li>
+ * <li>helper methods used to init the table</li>
+ * </ul>
  * 
  * @author Thibault Duchateau
  */
@@ -95,7 +86,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean processing;
 	protected String labels;
 	protected Boolean jqueryUI;
-	
+
 	// Extra features
 	protected Boolean fixedHeader = false;
 	protected String fixedPosition;
@@ -106,267 +97,20 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	// Awesome features
 	protected Boolean export;
-	
+
 	// Internal common attributes
 	protected int rowNumber;
-	protected HtmlTable table = new HtmlTable();
+	protected HtmlTable table;
 	protected Iterator<Object> iterator;
 	protected Object currentObject;
 	protected String loadingType;
 	protected Boolean cdn = false;
-	
-	/**
-	 * TODO
-	 * @return
-	 * @throws JspException
-	 */
-	protected int processDoStartTag() throws JspException{
-		
-		// Just used to identify the first row (header)
-		rowNumber = 1;
-		
-		this.table = new HtmlTable(id, ResourceHelper.getRamdomNumber());
-		
-		try {
-			// Load table properties
-			PropertiesLoader.load(this.table);
-		} catch (BadConfigurationException e) {
-			throw new JspException("Unable to load DataTables4j configuration");
-		}
 
-		if("AJAX".equals(this.loadingType)){
-			this.table.addFooterRow();
-			this.table.setDatasourceUrl(url);
-			this.table.addHeaderRow();
-			this.table.addRow();
-			return EVAL_BODY_BUFFERED;
-		}
-		else if("DOM".equals(this.loadingType)){
-			this.table.addFooterRow();
-			this.table.addHeaderRow();
-
-			// Body management
-			if (iterator.hasNext()) {
-				Object object = iterator.next();
-				if(row != null){
-					pageContext.setAttribute(row, object);					
-				}
-				this.setCurrentObject(object);
-
-				String rowId = this.getRowId();
-				if (StringUtils.isNotBlank(rowId)) {
-						this.table.addRow(rowId);
-				} else {
-					this.table.addRow();
-				}
-				
-				return EVAL_BODY_BUFFERED;
-			} else {
-				return SKIP_BODY;
-			}
-		}
-		
-		// Never reached
-		return SKIP_BODY;
-	}
-	
-	/**
-	 * TODO
-	 * @return
-	 * @throws JspException
-	 */
-	protected int processDoAfterBody() throws JspException {
-		
-		if ("DOM".equals(this.loadingType) && iterator.hasNext()) {
-
-//			BodyContent body = getBodyContent();
-//			try {
-//				body.writeOut(getPreviousOut());
-//			} catch (IOException e) {
-//				throw new JspTagException("IterationTag: " + e.getMessage());
-//			}
-//
-//			// clear up so the next time the body content is empty
-//			body.clearBody();
-
-//			if (iterator.hasNext()) {
-				Object object = iterator.next();
-				this.setCurrentObject(object);
-				if(row != null){
-					pageContext.setAttribute(row, object);					
-				}
-
-				String rowId = this.getRowId();
-				if (StringUtils.isNotBlank(rowId)) {
-						this.table.addRow(rowId);
-				} else {
-					this.table.addRow();
-				}
-				
-				this.rowNumber++;
-				
-				// System.out.println(rowNumber);
-				return EVAL_BODY_AGAIN;
-//			} else {
-//				return EVAL_PAGE;
-//			}
-		}
-		else{
-			
-			return SKIP_BODY;			
-		}
-	}
-	
-	public static int count = 1;
-	/**
-	 * TODO
-	 * @return
-	 * @throws JspException
-	 */
-	protected int processDoEndTag() throws JspException {
-		System.out.println(" ========================== DEBUT doEndTag");
-		String baseUrl = RequestHelper.getBaseUrl(pageContext);
-		ServletContext context = pageContext.getServletContext();
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-		
-		// Update the HtmlTable object configuration with the attributes
-		registerCommonConfiguration();
-
-		// The table is being exported
-		if(isExporting()){
-			
-			this.table.setExporting(true);
-			
-			CsvExport csvExport = new CsvExport();
-			csvExport.initExport(table);
-			String content = String.valueOf(csvExport.processExport(null));
-			
-			request.setAttribute("type", "CSV");
-			request.setAttribute("data", content);
-
-			response.reset();
-//			try {
-//				pageContext.getOut().clearBuffer();
-//			} catch (IOException e) {
-//				throw new JspException(e);
-//			}
-
-			return SKIP_PAGE;
-		}
-		// The table must be generated and displayed
-		else{
-			this.table.setExporting(false);
-			
-			// Check if modules are activated
-			registerModules();
-
-			// Check if extra features are activated
-			registerFeatures();
-			
-			// Check if the table is being exported
-			checkExport();
-			
-			try {
-				//
-				WebResourceGenerator contentGenerator = new WebResourceGenerator();
-				
-				// JS script generation according to the JSP tags configuration
-				WebResources webResources = contentGenerator.generateWebResources(pageContext, this.table);
-
-				// Aggregation
-				if(this.table.getTableProperties().isAggregatorEnable()){
-					logger.debug("Aggregation enabled");
-					ResourceAggregator.processAggregation(webResources, table);
-				}
-
-				// Compression
-				if(this.table.getTableProperties().isCompressorEnable()){
-					logger.debug("Compression enabled");
-					ResourceCompressor.processCompression(webResources, table);
-				}
-				
-				// <link> HTML tag generation
-				if(this.isCdnEnable()){
-					pageContext.getOut().println("<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");				
-				}
-				for(Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()){
-					context.setAttribute(entry.getKey(), entry.getValue());
-					pageContext.getOut().println(
-							"<link href=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\" rel=\"stylesheet\">");
-				}
-							
-				// HTML generation
-				pageContext.getOut().println(this.table.toHtml());
-				
-				if(canBeExported()){
-					String currentURL = null;
-					if( request.getAttribute("javax.servlet.forward.request_uri") != null ){
-						currentURL = (String)request.getAttribute("javax.servlet.forward.request_uri");
-					}
-					if( currentURL != null && request.getAttribute("javax.servlet.include.query_string") != null ){
-						currentURL += "?" + request.getQueryString();
-					}
-					System.out.println("currentURL = " + currentURL);
-
-					StringBuffer bufferExport = new StringBuffer();
-					bufferExport.append("<a href=\"");
-					bufferExport.append(currentURL);
-					bufferExport.append("?exporting=1");
-					bufferExport.append("\">Export</a>");
-					
-					System.out.println("bufferExport = " + bufferExport.toString());
-					System.out.println("request.getRequestURI() = " + request.getRequestURI());
-					System.out.println("request.getRequestURL() = " + request.getRequestURL());
-					System.out.println("request.getPathInfo() = " + request.getPathInfo());
-					System.out.println("request.getPathTranslated() = " + request.getPathTranslated());
-					System.out.println("request.getServletPath() = " + request.getServletPath());
-					System.out.println(request.getServletContext().getContextPath());
-
-					pageContext.getOut().println(bufferExport.toString());		
-				}
-				
-				// <script> HTML tag generation
-				if(this.isCdnEnable()){
-					pageContext.getOut().println("<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
-				}
-				for(Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()){
-					System.out.println("Fichier = " + entry.getKey());
-					context.setAttribute(entry.getKey(), entry.getValue());
-					pageContext.getOut().println(
-							"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey() + "\"></script>");
-				}
-				
-				logger.debug("Web content generated");
-			} 
-			catch (IOException e) {
-				logger.error("Something went wront with the datatables tag");
-				throw new JspException(e);
-			} 
-			catch (CompressionException e) {
-				logger.error("Something went wront with the compressor.");
-				throw new JspException(e);
-			} 
-			catch (BadConfigurationException e) {
-				logger.error("Something went wront with the DataTables4j configuration. Please check your datatables4j.properties file");
-				throw new JspException(e);
-			} 
-			catch (DataNotFoundException e) {
-				logger.error("Something went wront with the data provider.");
-				throw new JspException(e);
-			}
-
-			return EVAL_PAGE;
-		}
-		
-//		System.out.println(" ========================== FIN doEndTag");
-	}
-
-	
 	/**
 	 * Register all common configuration with the table.
 	 */
-	private void registerCommonConfiguration() {
+	protected void registerBasicConfiguration() {
+
 		if (StringUtils.isNotBlank(this.cssClass)) {
 			this.table.setCssClass(this.cssClass);
 		}
@@ -403,119 +147,250 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.stateSave != null) {
 			this.table.setStateSave(this.stateSave);
 		}
-		if(this.cdn != null){
+		if (this.cdn != null) {
 			this.table.setCdn(this.cdn);
 		}
-		if(StringUtils.isNotBlank(this.labels)){
+		if (StringUtils.isNotBlank(this.labels)) {
 			this.table.setLabels(RequestHelper.getBaseUrl(pageContext) + this.labels);
 		}
-		if(this.jqueryUI != null){
+		if (this.jqueryUI != null) {
 			this.table.setJqueryUI(this.jqueryUI);
 		}
 
-		// Extra features
+	}
+
+	/**
+	 * Register activated modules with the table.
+	 */
+	protected void registerModules() {
+
+		// Modules activation
+		if (this.fixedHeader) {
+			logger.info("Internal module detected : fixedHeader");
+			this.table.registerPlugin(new FixedHeaderModule());
+		}
+
+		if (this.scroller) {
+			logger.info("Internal module detected : scroller");
+			this.table.registerPlugin(new ScrollerModule());
+		}
+
+		if (this.colReorder) {
+			logger.info("Internal module detected : colReorder");
+			this.table.registerPlugin(new ColReorderModule());
+		}
+
+		// Modules configuration
 		if (StringUtils.isNotBlank(this.scrollY)) {
 			this.table.setScrollY(this.scrollY);
 		}
-		
+
 		if (StringUtils.isNotBlank(this.fixedPosition)) {
 			this.table.setFixedPosition(this.fixedPosition);
 		}
-		
+
 		if (this.fixedOffsetTop != null) {
 			this.table.setFixedOffsetTop(this.fixedOffsetTop);
 		}
 	}
 
 	/**
-	 * Register activated modules with the table.
+	 * Register activated features with the table.
 	 */
-	private void registerModules() {
+	protected void registerFeatures() {
 
-		if (this.fixedHeader) {
-			logger.info("Internal module detected : fixedHeader");
-			this.table.registerPlugin(new FixedHeaderModule());
-		}
-		
-		if(this.scroller){
-			logger.info("Internal module detected : scroller");
-			this.table.registerPlugin(new ScrollerModule());
-		}
-		
-		if(this.colReorder){
-			logger.info("Internal module detected : colReorder");
-			this.table.registerPlugin(new ColReorderModule());
-		}
-	}
-	
-	/**
-	 * TODO
-	 */
-	private void registerFeatures() {
-
-		if(table.hasOneFilterableColumn()){
+		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
 			this.table.registerFeature(new InputFilteringFeature());
 			this.table.registerFeature(new SelectFilteringFeature());
-		} 
-	}
-	
-	/**
-	 * TODO il faut :
-	 * 1) ajouter des boutons correspondant aux differents types d'export dispo
-	 * 2) proposer une URL d'export
-	 * 3) appeler la bonne classe de génération
-	 */
-	private void checkExport(){
-		
-		if(this.export != null){
-			
-//			String[] exportTypes = this.export.split(",");
-			// Ajouter le ou les lien(s) d'export
 		}
 	}
-	
-	private Boolean isExporting(){
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		return (Boolean) (request.getAttribute("isExporting") != null ? request.getAttribute("isExporting") : false);
+
+	/**
+	 * Process the iteration over the data (only for DOM source).
+	 * 
+	 * @return EVAL_BODY_BUFFERED if some data remain in the Java Collection,
+	 *         SKIP_BODY otherwise.
+	 * @throws JspException
+	 *             if something went wrong during the row id generation.
+	 */
+	protected int processIteration() throws JspException {
+
+		if ("DOM".equals(this.loadingType) && iterator.hasNext()) {
+
+			Object object = iterator.next();
+
+			this.setCurrentObject(object);
+			table.setObjectType(object.getClass().getSimpleName());
+
+			if (row != null) {
+				pageContext.setAttribute(row, object);
+			}
+
+			String rowId = getRowId();
+			if (StringUtils.isNotBlank(rowId)) {
+				this.table.addRow(rowId);
+			} else {
+				this.table.addRow();
+			}
+
+			return EVAL_BODY_BUFFERED;
+		} else {
+			return SKIP_BODY;
+		}
 	}
-	
-	private Boolean canBeExported(){
+
+	/**
+	 * Generate all export links. TODO sortir le pageContext.getOut()
+	 * 
+	 * @throws IOException
+	 */
+	protected void generateExportLinks() throws IOException {
+
+		StringBuffer bufferExport = new StringBuffer();
+
+		bufferExport.append("<br />");
+
+		// TODO : variabiliser l'emplacement des boutons
+		for (ExportConf conf : table.getExportConfs().values()) {
+			bufferExport.append("&nbsp;");
+			bufferExport.append(getExportLink(conf));
+		}
+
+		pageContext.getOut().println(bufferExport.toString());
+	}
+
+	/**
+	 * Generate and return an export link from the export configuration.
+	 * 
+	 * @param conf
+	 *            The export configuration coming from an ExportTag.
+	 * @return a StringBuffer containing the HTML A tag.
+	 */
+	private StringBuffer getExportLink(ExportConf conf) {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		String currentURL = RequestHelper.getCurrentUrl(request);
+
+		StringBuffer link = new StringBuffer();
+
+		link.append("<a");
+
+		if (StringUtils.isNotBlank(conf.getId())) {
+			link.append(" id=\"");
+			link.append(conf.getId());
+			link.append("\"");
+		}
+
+		if (StringUtils.isNotBlank(conf.getCssClass())) {
+			link.append(" class=\"");
+			link.append(conf.getCssClass());
+			link.append("\"");
+		}
+
+		if (StringUtils.isNotBlank(conf.getCssStyle())) {
+			link.append(" style=\"");
+			link.append(conf.getCssStyle());
+			link.append("\"");
+		}
+
+		link.append(" href=\"");
+		link.append(currentURL);
+		link.append("?");
+		link.append(ExportConstants.DT4J_EXPORT);
+		link.append("=1&");
+		link.append(ExportConstants.DT4J_EXPORT_TYPE);
+		link.append("=");
+		link.append(ExportType.valueOf(conf.getType()).getUrlParameter());
+		link.append("\">");
+		link.append(conf.getLabel());
+
+		link.append("</a>");
+
+		return link;
+	}
+
+	/**
+	 * Test if the table if being exported thanks to a request attribute set at
+	 * the beginning of the evaluation when the user clicked on an export link.
+	 * 
+	 * @return true if the table is being exported, false otherwise.
+	 */
+	protected Boolean isExporting() {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		return (Boolean) (request.getAttribute("isExporting") != null ? request
+				.getAttribute("isExporting") : false);
+	}
+
+	/**
+	 * Return the current export type asked by the user on export link click.
+	 * 
+	 * @return An enum corresponding to the type of export.
+	 */
+	protected ExportType getCurrentExportType() {
+
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+
+		// Get the URL parameter used to identify the export type
+		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
+
+		// Convert it to the corresponding enum
+		ExportType exportType = ExportType.findByUrlParameter(Integer.parseInt(exportTypeString));
+
+		return exportType;
+	}
+
+	/**
+	 * Test if the user want his table to be exported. TODO tester la presence
+	 * de ExportTag ?
+	 * 
+	 * @return true if the table can be exported, false otherwise.
+	 */
+	protected Boolean canBeExported() {
 		return this.export != null ? this.export : false;
 	}
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * Return the row id using prefix, base and suffix. Prefix and sufix are
+	 * just prepended and appended strings. Base is extracted from the current
+	 * iterated object.
+	 * 
+	 * @return return the row id using prefix, base and suffix.
 	 * @throws JspException
+	 *             is the rowIdBase doesn't have a corresponding property
+	 *             accessor method.
 	 */
-	private String getRowId() throws JspException{
-		
+	protected String getRowId() throws JspException {
+
 		StringBuffer rowId = new StringBuffer();
-		if(this.rowIdPrefix != null){
+		
+		if (StringUtils.isNotBlank(this.rowIdPrefix)) {
 			rowId.append(this.rowIdPrefix);
 		}
-		if(this.rowIdBase != null){
+		
+		if (StringUtils.isNotBlank(this.rowIdBase)) {
 			try {
 				rowId.append(PropertyUtils.getNestedProperty(this.currentObject, this.rowIdBase));
 			} catch (IllegalAccessException e) {
 				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
-				throw new JspException();
+				throw new JspException(e);
 			} catch (InvocationTargetException e) {
 				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
-				throw new JspException();
+				throw new JspException(e);
 			} catch (NoSuchMethodException e) {
 				logger.error("Unable to get the value for the given rowIdBase {}", this.rowIdBase);
-				throw new JspException();
+				throw new JspException(e);
 			}
 		}
-		if(this.rowIdSufix != null){
+		
+		if (StringUtils.isNotBlank(this.rowIdSufix)) {
 			rowId.append(this.rowIdSufix);
 		}
-		
+
 		return rowId.toString();
 	}
-	
+
+	/** Getters and setters for all attributes */
+
 	public HtmlTable getTable() {
 		return this.table;
 	}
@@ -523,7 +398,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setRow(String row) {
 		this.row = row;
 	}
-	
+
 	public Boolean isFirstRow() {
 		return this.rowNumber == 1;
 	}
@@ -567,7 +442,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setRowIdBase(String rowIdBase) {
 		this.rowIdBase = rowIdBase;
 	}
-	
+
 	public String getRowIdPrefix() {
 		return this.rowIdPrefix;
 	}
@@ -575,7 +450,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setRowIdPrefix(String rowIdPrefix) {
 		this.rowIdPrefix = rowIdPrefix;
 	}
-	
+
 	public String getRowIdSufix() {
 		return this.rowIdSufix;
 	}
@@ -687,7 +562,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setColReorder(Boolean colReorder) {
 		this.colReorder = colReorder;
 	}
-	
+
 	public String getScrollY() {
 		return scrollY;
 	}
@@ -695,7 +570,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setScrollY(String scrollY) {
 		this.scrollY = scrollY;
 	}
-	
+
 	public String getFixedPosition() {
 		return fixedPosition;
 	}
@@ -703,7 +578,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setFixedPosition(String fixedPosition) {
 		this.fixedPosition = fixedPosition;
 	}
-	
+
 	public String getLabels() {
 		return labels;
 	}
@@ -711,7 +586,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setLabels(String labels) {
 		this.labels = labels;
 	}
-	
+
 	public Integer getOffsetTop() {
 		return fixedOffsetTop;
 	}
@@ -719,7 +594,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setOffsetTop(Integer fixedOffsetTop) {
 		this.fixedOffsetTop = fixedOffsetTop;
 	}
-	
+
 	public Boolean isCdnEnable() {
 		return cdn;
 	}
@@ -727,7 +602,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setCdn(Boolean cdn) {
 		this.cdn = cdn;
 	}
-	
+
 	public Boolean getExport() {
 		return export;
 	}
@@ -735,8 +610,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setExport(Boolean export) {
 		this.export = export;
 	}
-	
-	public String getLoadingType(){
+
+	public String getLoadingType() {
 		return this.loadingType;
 	}
 
@@ -748,7 +623,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.loadingType = "AJAX";
 		this.url = url;
 	}
-	
+
 	public Boolean getJqueryUI() {
 		return jqueryUI;
 	}
@@ -756,7 +631,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setJqueryUI(Boolean jqueryUI) {
 		this.jqueryUI = jqueryUI;
 	}
-	
+
 	public void setData(Collection<Object> data) {
 		this.loadingType = "DOM";
 		this.data = data;
@@ -768,15 +643,5 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			// TODO afficher un message d'erreur
 			// TODO afficher une alerte javascript
 		}
-	}
-	
-	/**
-	 * TODO
-	 */
-	public void release() {
-		// TODO Auto-generated method stub
-		super.release();
-		
-		// TODO
 	}
 }

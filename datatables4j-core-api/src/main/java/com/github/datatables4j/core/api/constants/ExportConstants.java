@@ -18,17 +18,25 @@
 package com.github.datatables4j.core.api.constants;
 
 /**
- * DataTables4j configuration related constants.
+ * DataTables4j export related constants.
  * 
  * @author Thibault Duchateau
  */
-public class ConfConstants {
+public class ExportConstants {
 
-	public static final String DT_DATASOURCE_CLASS = "datasource.class";
-	public static final String DT_AGGREGATOR_ENABLE = "aggregator.enable";
-	public static final String DT_AGGREGATOR_MODE = "aggregator.mode";
-	public static final String DT_COMPRESSOR_ENABLE = "compressor.enable";
-	public static final String DT_COMPRESSOR_MODE = "compressor.mode";
-	public static final String DT_COMPRESSOR_CLASS = "compressor.class";
-	public static final String DT_EXPORT_TYPES = "export.types";
+	/** Request attributes */
+
+	// Export properties
+	public static final String DT4J_EXPORT_PROPERTIES = "dt4j-export-properties";
+
+	// Export content
+	public static final String DT4J_EXPORT_CONTENT = "dt4j-export-content";
+
+	/** Request parameters */
+
+	// Export en cours
+	public static final String DT4J_EXPORT = "dt4je";
+
+	// Type d'export en cours
+	public static final String DT4J_EXPORT_TYPE = "dt4jt";
 }

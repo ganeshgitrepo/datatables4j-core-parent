@@ -94,8 +94,4 @@ public class PropertiesLoader {
 		
 		table.getTableProperties().initProperties(propertiesResource);
 	}
-		
-	public Properties getProperties(){
-		return this.propertiesResource;
-	}
 }

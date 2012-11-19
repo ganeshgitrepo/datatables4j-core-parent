@@ -1,5 +1,25 @@
+/*
+ * DataTables4j, a JSP taglib to display table with jQuery and DataTables
+ * Copyright (c) 2012, DataTables4j <datatables4j@gmail.com>
+ *
+ * This Program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ * 
+ * The Program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 package com.github.datatables4j.core.api.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import com.github.datatables4j.core.api.aggregator.AggregatorMode;
@@ -61,7 +81,8 @@ public class TableProperties {
 				|| property.equals(ConfConstants.DT_COMPRESSOR_MODE)
 				|| property.equals(ConfConstants.DT_AGGREGATOR_ENABLE)
 				|| property.equals(ConfConstants.DT_AGGREGATOR_MODE)
-				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS);
+				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_TYPES);
 	}
 	
 	/**
@@ -106,5 +127,20 @@ public class TableProperties {
 	 */
 	public AggregatorMode getAggregatorMode() {
 		return AggregatorMode.valueOf(getProperty(ConfConstants.DT_AGGREGATOR_MODE));
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public List<ExportType> getExportTypes(){
+		List<ExportType> exportTypes = new ArrayList<ExportType>();
+		List<String> exportTypesString = Arrays.asList(getProperty(ConfConstants.DT_EXPORT_TYPES).split(","));
+		
+		for(String type : exportTypesString){
+			exportTypes.add(ExportType.valueOf(type));
+		}
+		System.out.println("exportTypes = " + exportTypes);
+		return exportTypes;
 	}
 }

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tag which allows to override the DataTables4j global properties locally.
+ * Tag used to locally override the DataTables4j global configuration.
  *
  * @author Thibault Duchateau
  */

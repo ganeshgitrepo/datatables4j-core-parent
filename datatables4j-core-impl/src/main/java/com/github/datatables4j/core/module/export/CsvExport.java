@@ -1,13 +1,13 @@
 package com.github.datatables4j.core.module.export;
 
-import java.io.OutputStream;
-
+import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.module.export.BaseExport;
+import com.github.datatables4j.core.api.module.export.AbstractExport;
 
-public class CsvExport implements BaseExport {
+public class CsvExport extends AbstractExport {
 
 	private HtmlTable table;
 	
@@ -17,12 +17,19 @@ public class CsvExport implements BaseExport {
 	}
 
 	@Override
-	public Object processExport(OutputStream out) {
-		
+	public Object processExport() throws ExportException {
+	
 		StringBuffer buffer = new StringBuffer();
 		
+		if(table.getExportConfs().get(ExportType.CSV).getIncludeHeader()){
+			for(HtmlRow row : table.getHeadRows()){
+				for(HtmlColumn column : row.getColumns()){
+					buffer.append(column.getContent()).append(";");
+				}
+				buffer.append("\n");
+			}			
+		}
 		for(HtmlRow row : table.getBodyRows()){
-			
 			for(HtmlColumn column : row.getColumns()){
 				buffer.append(column.getContent()).append(";");
 			}

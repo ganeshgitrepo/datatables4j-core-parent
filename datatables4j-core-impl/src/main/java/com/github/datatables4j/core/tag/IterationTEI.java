@@ -25,12 +25,15 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 /**
- * TODO
+ * TEI for TableTag.
  *
  * @author Thibault Duchateau
  */
 public class IterationTEI extends TagExtraInfo {
 
+	/**
+	 * TODO
+	 */
 	public VariableInfo[] getVariableInfo(TagData data) {
 		System.out.println("getId =" + data.getId());
 		

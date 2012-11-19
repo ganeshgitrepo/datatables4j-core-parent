@@ -22,17 +22,33 @@ import javax.servlet.jsp.PageContext;
 
 /**
  * TODO
+ * 
  * @author Thibault Duchateau
  */
 public class RequestHelper {
 
 	/**
 	 * TODO
+	 * 
 	 * @param pageContext
 	 * @return
 	 */
-	public static String getBaseUrl(PageContext pageContext){
+	public static String getBaseUrl(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		return request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
+		return request.getRequestURL().toString()
+				.replace(request.getRequestURI(), request.getContextPath());
+	}
+
+	public static String getCurrentUrl(HttpServletRequest request) {
+		String currentUrl = null;
+		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
+			currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
+		}
+		if (currentUrl != null
+				&& request.getAttribute("javax.servlet.include.query_string") != null) {
+			currentUrl += "?" + request.getQueryString();
+		}
+		System.out.println("currentURL = " + currentUrl);
+		return currentUrl;
 	}
 }

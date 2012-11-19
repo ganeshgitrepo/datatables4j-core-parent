@@ -1,3 +1,20 @@
+/*
+ * DataTables4j, a JSP taglib to display table with jQuery and DataTables
+ * Copyright (c) 2012, DataTables4j <datatables4j@gmail.com>
+ *
+ * This Program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ * 
+ * The Program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
 package com.github.datatables4j.core.web.filter;
 
 import java.io.IOException;
@@ -11,6 +28,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
+
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.model.ExportProperties;
 
 /**
  * TODO
@@ -45,12 +65,15 @@ public class DatatablesFilter implements Filter {
 
 		// Le param "exporting" est mis en request par la classe
 		// AbstractTableTag si l'attribut export est a true dans la JSP
-
+		// Si pas de parametre dans l'URL, le filtre ne doit rien faire
+		
 		// Don't filter anything
-		if (request.getParameter("exporting") == null) {
+		if (request.getParameter(ExportConstants.DT4J_EXPORT) == null) {
 
 			chain.doFilter(request, response);
-		} else {
+			
+		}
+		else {
 
 			// TODO : utiliser des constantes
 			request.setAttribute("isExporting", true);
@@ -60,20 +83,24 @@ public class DatatablesFilter implements Filter {
 
 			chain.doFilter(request, resWrapper);
 
+			ExportProperties exportProperties = (ExportProperties) request.getAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES);
+			String fileName = exportProperties.getFileName() + "." + exportProperties.getCurrentExportType().getExtension();
+			System.out.println("fileName = " + fileName);
+			
 			// TODO : variabiliser : configuration DT4J ?
-			res.setHeader("Content-Disposition", "attachment; filename=\"" + "toto.csv" + "\"");
+			res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
 			// TODO : recuperer en fonction du lien d'export
-			res.setContentType("text/csv");
+			res.setContentType(exportProperties.getCurrentExportType().getMimeType());
 
 			// TODO : utiliser des constantes
-			String content = String.valueOf(request.getAttribute("data"));
-			System.out.println("content = " + content);
+			String content = String.valueOf(request.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
 
 			// TODO : printWriter pour flux text, outputStream pour flux binaire
 			PrintWriter out = response.getWriter();
 			out.write(content);
 			out.flush();
+			out.close();
 		}
 
 		System.out.println(" ===================== FIN doFilter");

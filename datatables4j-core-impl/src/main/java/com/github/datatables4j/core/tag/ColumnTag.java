@@ -20,7 +20,7 @@ package com.github.datatables4j.core.tag;
 import javax.servlet.jsp.JspException;
 
 /**
- * TODO
+ * Tag used to generate a HTML table's column.
  *
  * @author Thibault Duchateau
  */

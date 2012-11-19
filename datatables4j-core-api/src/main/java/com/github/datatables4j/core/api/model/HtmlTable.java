@@ -60,9 +60,12 @@ public class HtmlTable {
 	private List<ExtraFile> extraFiles = new ArrayList<ExtraFile>();
 	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
 	private String randomId;
-
+	private String objectType;
+	
 	// Export
+	private ExportProperties exportProperties;
 	private Boolean exporting;
+	private Map<ExportType, ExportConf> exportConfs = new HashMap<ExportType, ExportConf>();
 	
 	public HtmlTable() {
 	};
@@ -415,5 +418,29 @@ public class HtmlTable {
 
 	public void setExporting(Boolean exporting) {
 		this.exporting = exporting;
+	}
+
+	public String getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(String objectType) {
+		this.objectType = objectType;
+	}
+
+	public ExportProperties getExportProperties() {
+		return exportProperties;
+	}
+
+	public void setExportProperties(ExportProperties exportProperties) {
+		this.exportProperties = exportProperties;
+	}
+
+	public Map<ExportType, ExportConf> getExportConfs() {
+		return exportConfs;
+	}
+
+	public void setExportConfs(Map<ExportType, ExportConf> exportConfs) {
+		this.exportConfs = exportConfs;
 	}
 }

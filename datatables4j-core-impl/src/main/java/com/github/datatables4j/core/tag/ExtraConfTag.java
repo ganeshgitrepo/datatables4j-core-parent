@@ -25,7 +25,7 @@ import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.util.RequestHelper;
 
 /**
- * TODO
+ * Tag used to add some extra Javascript configuration to the DataTable.
  *
  * @author Thibault Duchateau
  */
@@ -36,10 +36,16 @@ public class ExtraConfTag extends TagSupport {
 	// Tag attributes
 	private String src;
 
+	/**
+	 * TODO
+	 */
 	public int doStartTag() throws JspException {
 		return SKIP_BODY;
 	}
 
+	/**
+	 * TODO
+	 */
 	public int doEndTag() throws JspException {
 
 		AbstractTableTag parent = (AbstractTableTag) getParent();
@@ -50,6 +56,11 @@ public class ExtraConfTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 
+	/**
+	 * TODO
+	 * @param src
+	 * @return
+	 */
 	private String getLocation(String src){
 		return RequestHelper.getBaseUrl(pageContext) + src;
 	}

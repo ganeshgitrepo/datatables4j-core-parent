@@ -361,4 +361,41 @@
          <description>Property's value to override.</description>
       </attribute>
    </tag>
+   
+   <!-- ====================================== -->
+   <!-- Export -->
+   <!-- ====================================== -->
+   <tag>
+      <description></description>
+      <name>export</name>
+      <tag-class>com.github.datatables4j.core.tag.ExportTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <name>id</name>
+      </attribute>
+      <attribute>
+         <name>fileName</name>
+      </attribute>
+      <attribute>
+         <name>type</name>
+      </attribute>
+      <attribute>
+         <name>label</name>
+      </attribute>
+      <attribute>
+         <name>cssStyle</name>
+      </attribute>
+      <attribute>
+         <name>cssClass</name>
+      </attribute>
+      <attribute>
+         <name>position</name>
+      </attribute>
+      <attribute>
+         <name>area</name>
+      </attribute>
+      <attribute>
+         <name>includeHeader</name>
+      </attribute>
+   </tag>
 </taglib>

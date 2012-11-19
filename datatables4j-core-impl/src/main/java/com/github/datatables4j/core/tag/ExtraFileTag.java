@@ -27,7 +27,7 @@ import com.github.datatables4j.core.api.constants.InsertMode;
 import com.github.datatables4j.core.api.model.ExtraFile;
 
 /**
- * TODO
+ * Tag used to add an extra Javascript configuration file.
  *
  * @author Thibault Duchateau
  */
@@ -41,10 +41,16 @@ public class ExtraFileTag extends TagSupport {
 	private String src;
 	private InsertMode insert = InsertMode.BEFOREALL;
 	
+	/**
+	 * TODO
+	 */
 	public int doStartTag() throws JspException {
 		return SKIP_BODY;
 	}
 	
+	/**
+	 * TODO
+	 */
 	public int doEndTag() throws JspException {
 		
 		AbstractTableTag parent = (AbstractTableTag) getParent();
@@ -55,6 +61,11 @@ public class ExtraFileTag extends TagSupport {
 		return EVAL_PAGE;
 	}
 	
+	/**
+	 * TODO
+	 * @param tmpSource
+	 * @return
+	 */
 	private String getRealSource(String tmpSource){
 		logger.debug("getRealSource = {}", pageContext.getServletContext().getRealPath(tmpSource));
 		return pageContext.getServletContext().getRealPath(tmpSource);
