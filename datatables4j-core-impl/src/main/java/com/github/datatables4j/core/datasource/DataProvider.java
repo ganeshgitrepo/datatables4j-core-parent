@@ -23,6 +23,8 @@ import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.util.ReflectHelper;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Class that will instanciate the chosen implementation class for retrieving
  * data using AJAX. The implementation class is referenced in the DataTables4j
@@ -54,8 +56,8 @@ public class DataProvider {
         try {
             return ReflectHelper.invokeMethod(obj, "getData", new Object[]{webServiceUrl});
         } catch (BadConfigurationException e) {
-            if (e.getCause() instanceof DataNotFoundException) {
-                throw (DataNotFoundException) e.getCause();
+            if (e.getCause() instanceof InvocationTargetException) {
+                throw (DataNotFoundException) ((InvocationTargetException) e.getCause()).getTargetException();
             } else {
                 throw e;
             }

@@ -24,6 +24,8 @@ import com.github.datatables4j.core.util.ReflectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Helper class in charge of the instanciation of the compressor implementation
  * defined in the datatables4j configuration file.
@@ -70,8 +72,8 @@ public class ResourceCompressorDelegate {
         try {
             return (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[]{input});
         } catch (BadConfigurationException e) {
-            if (e.getCause() instanceof CompressionException) {
-                throw (CompressionException) e.getCause();
+            if (e.getCause() instanceof InvocationTargetException) {
+                throw (CompressionException) ((InvocationTargetException) e.getCause()).getTargetException();
             } else {
                 throw e;
             }
@@ -97,8 +99,8 @@ public class ResourceCompressorDelegate {
         try {
             return (String) ReflectHelper.invokeMethod(obj, "getCompressedCss", new Object[]{input});
         } catch (BadConfigurationException e) {
-            if (e.getCause() instanceof CompressionException) {
-                throw (CompressionException) e.getCause();
+            if (e.getCause() instanceof InvocationTargetException) {
+                throw (CompressionException) ((InvocationTargetException) e.getCause()).getTargetException();
             } else {
                 throw e;
             }
