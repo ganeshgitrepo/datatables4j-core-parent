@@ -29,7 +29,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
  *
  * @author Thibault Duchateau
  */
-public class IterationTEI extends TagExtraInfo {
+public class TableTagExtraInfo extends TagExtraInfo {
 
 	/**
 	 * TODO

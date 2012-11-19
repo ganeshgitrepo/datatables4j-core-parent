@@ -227,7 +227,7 @@ public class TableTag extends AbstractTableTag {
 			// l'export (emplacement)
 			// Voir pour les ajouter en javascript
 			if (canBeExported()) {
-				generateExportLinks();
+				pageContext.getOut().println(generateExportLinks());
 			}
 
 			// <script> HTML tag generation

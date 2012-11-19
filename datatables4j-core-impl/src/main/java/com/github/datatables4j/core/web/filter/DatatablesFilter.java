@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
@@ -59,48 +60,60 @@ public class DatatablesFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+			FilterChain chain) throws IOException, ServletException {
 		System.out.println(" ===================== DEBUT doFilter");
 
 		// Le param "exporting" est mis en request par la classe
 		// AbstractTableTag si l'attribut export est a true dans la JSP
 		// Si pas de parametre dans l'URL, le filtre ne doit rien faire
-		
-		// Don't filter anything
-		if (request.getParameter(ExportConstants.DT4J_EXPORT) == null) {
 
-			chain.doFilter(request, response);
+		if (servletRequest instanceof HttpServletRequest) {
+
+			HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+			// Don't filter anything
+			 if (request.getParameter(ExportConstants.DT4J_EXPORT) == null) {
+
+				chain.doFilter(servletRequest, servletResponse);
+				
+			} else {
 			
-		}
-		else {
+				// TODO : utiliser des constantes
+				request.setAttribute("isExporting", true);
 
-			// TODO : utiliser des constantes
-			request.setAttribute("isExporting", true);
+				HttpServletResponse response = (HttpServletResponse) servletResponse;
+				DatatablesResponseWrapper resWrapper = new DatatablesResponseWrapper(response);
 
-			HttpServletResponse res = (HttpServletResponse) response;
-			DatatablesResponseWrapper resWrapper = new DatatablesResponseWrapper(res);
+				chain.doFilter(request, resWrapper);
 
-			chain.doFilter(request, resWrapper);
+				ExportProperties exportProperties = (ExportProperties) request
+						.getAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES);
+				String fileName = exportProperties.getFileName() + "."
+						+ exportProperties.getCurrentExportType().getExtension();
+				System.out.println("fileName = " + fileName);
 
-			ExportProperties exportProperties = (ExportProperties) request.getAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES);
-			String fileName = exportProperties.getFileName() + "." + exportProperties.getCurrentExportType().getExtension();
-			System.out.println("fileName = " + fileName);
-			
-			// TODO : variabiliser : configuration DT4J ?
-			res.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+				// TODO : variabiliser : configuration DT4J ?
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName
+						+ "\"");
 
-			// TODO : recuperer en fonction du lien d'export
-			res.setContentType(exportProperties.getCurrentExportType().getMimeType());
+				// TODO : recuperer en fonction du lien d'export
+				response.setContentType(exportProperties.getCurrentExportType().getMimeType());
 
-			// TODO : utiliser des constantes
-			String content = String.valueOf(request.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
+				// TODO : utiliser des constantes
+				String content = String.valueOf(servletRequest
+						.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
 
-			// TODO : printWriter pour flux text, outputStream pour flux binaire
-			PrintWriter out = response.getWriter();
-			out.write(content);
-			out.flush();
-			out.close();
+				// TODO : printWriter pour flux text, outputStream pour flux
+				// binaire
+				PrintWriter out = servletResponse.getWriter();
+				out.write(content);
+				out.flush();
+				out.close();
+			}
+
+		} else {
+			chain.doFilter(servletRequest, servletResponse);
 		}
 
 		System.out.println(" ===================== FIN doFilter");

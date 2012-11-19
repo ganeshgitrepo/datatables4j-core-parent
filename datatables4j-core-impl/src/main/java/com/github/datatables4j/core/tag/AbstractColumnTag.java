@@ -17,11 +17,8 @@
  */
 package com.github.datatables4j.core.tag;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.github.datatables4j.core.api.constants.FilterType;
@@ -29,8 +26,13 @@ import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 
 /**
- * TODO
- *
+ * Abstract class which contains :<br />
+ * <ul>
+ * <li>all the boring technical stuff needed by Java tags (getters and setters
+ * for all Column tag attributes)</li>
+ * <li>helper methods used to manipulate the columns</li>
+ * </ul>
+ * 
  * @author Thibault Duchateau
  */
 public abstract class AbstractColumnTag extends BodyTagSupport {
@@ -53,86 +55,22 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	protected String filterPlaceholder = "";
 	
 	/**
+	 * Add a column to the table.
 	 * 
-	 * @return
-	 */
-	protected int processDoStartTag(){
-		TableTag parent = (TableTag) getParent();
-		if (parent.getLoadingType() == "AJAX") {
-			return EVAL_PAGE;
-		} 
-		else if (parent.getLoadingType() == "DOM") {
-			if (getBodyContent() != null) {
-				// System.out.println("BODYCONTENT EXISTE");
-				return EVAL_BODY_BUFFERED;
-			} else {
-				// System.out.println("BODYCONTENT VIDE");
-				if (property != null) {
-
-					// AbstractTableTag parent = (AbstractTableTag) getParent();
-
-					try {
-						this.addColumn(
-								false,
-								PropertyUtils.getNestedProperty(parent.getCurrentObject(),
-										this.property).toString());
-
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return EVAL_PAGE;
-			}
-		}
-		
-		// Never reached
-		return SKIP_BODY;
-	}
-	
-	/**
-	 * TODO
-	 * @return
-	 */
-	protected int processDoEndTag(){
-		TableTag parent = (TableTag) getParent();
-		if (parent.getLoadingType() == "AJAX") {
-
-			HtmlColumn column = new HtmlColumn(true, this.title);
-			column.setProperty(this.property);
-			column.setSortable(this.sortable);
-			parent.getTable().getLastHeaderRow().addColumn(column);
-			parent.getTable().getLastFooterRow().addColumn(new HtmlColumn());
-			return EVAL_PAGE;
-		} else if (parent.getLoadingType() == "DOM") {
-			if (parent.isFirstRow()) {
-
-				this.addColumn(true, this.title);
-			}
-			return EVAL_PAGE;
-		}
-		return SKIP_PAGE;
-	}
-	
-	/**
-	 * TODO
 	 * @param isHeader
 	 * @param content
 	 */
 	protected void addColumn(Boolean isHeader, String content){
 		
+		// Init the column
 		HtmlColumn column = new HtmlColumn(isHeader, content);
 
+		// Common configuration (between header and non-header columns)
 		column.setSortable(this.sortable);
 		
 		AbstractTableTag parent = (AbstractTableTag) getParent();
 		
+		// Non-header columns
 		if(!isHeader){
 			if(StringUtils.isNotBlank(this.cssCellClass)){
 				column.setCssCellClass(this.cssCellClass);
@@ -143,7 +81,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 			parent.getTable().getLastRow().addColumn(column);			
 		}
-		// Column in 1st row
+		// Header columns
 		else{
 			if(StringUtils.isNotBlank(this.cssClass)){
 				column.setCssClass(this.cssClass);
@@ -206,6 +144,8 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 			}
 		}
 	}
+	
+	/** Getters and setters */
 	
 	public void setId(String id) {
 		this.id = id;

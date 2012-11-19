@@ -17,7 +17,7 @@
    <tag>
       <name>table</name>
       <tag-class>com.github.datatables4j.core.tag.TableTag</tag-class>
-      <tei-class>com.github.datatables4j.core.tag.IterationTEI</tei-class>
+      <tei-class>com.github.datatables4j.core.tag.TableTagExtraInfo</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
          DataTables jQuery plugin.</description>
@@ -245,6 +245,7 @@
       <description>Describe a column of the HTML table.</description>
       <attribute>
          <name>title</name>
+         <rtexprvalue>true</rtexprvalue>
          <description>Column title.</description>
       </attribute>
       <attribute>

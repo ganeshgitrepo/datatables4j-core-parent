@@ -46,7 +46,7 @@ import com.github.datatables4j.core.util.RequestHelper;
  * Abstract class which contains :<br />
  * <ul>
  * <li>all the boring technical stuff needed by Java tags (getters and setters
- * for all attributes)</li>
+ * for all Table tag attributes)</li>
  * <li>helper methods used to init the table</li>
  * </ul>
  * 
@@ -241,23 +241,23 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	}
 
 	/**
-	 * Generate all export links. TODO sortir le pageContext.getOut()
+	 * Generate all export links.
 	 * 
 	 * @throws IOException
 	 */
-	protected void generateExportLinks() throws IOException {
+	protected StringBuffer generateExportLinks() throws IOException {
 
-		StringBuffer bufferExport = new StringBuffer();
+		StringBuffer exportLinks = new StringBuffer();
 
-		bufferExport.append("<br />");
+		exportLinks.append("<br />");
 
 		// TODO : variabiliser l'emplacement des boutons
 		for (ExportConf conf : table.getExportConfs().values()) {
-			bufferExport.append("&nbsp;");
-			bufferExport.append(getExportLink(conf));
+			exportLinks.append("&nbsp;");
+			exportLinks.append(getExportLink(conf));
 		}
 
-		pageContext.getOut().println(bufferExport.toString());
+		return exportLinks;
 	}
 
 	/**
@@ -295,6 +295,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		link.append(" href=\"");
 		link.append(currentURL);
+		
 		link.append("?");
 		link.append(ExportConstants.DT4J_EXPORT);
 		link.append("=1&");
@@ -306,6 +307,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		link.append("</a>");
 
+		System.out.println("link = " + link);
 		return link;
 	}
 
@@ -317,7 +319,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	protected Boolean isExporting() {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		return (Boolean) (request.getAttribute("isExporting") != null ? request
+		System.out.println(request.getAttribute("isExporting"));
+		System.out.println(pageContext.getRequest().getAttribute("isExporting") != null);
+		return (Boolean) (pageContext.getRequest().getAttribute("isExporting") != null ? pageContext.getRequest()
 				.getAttribute("isExporting") : false);
 	}
 
@@ -330,6 +334,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
+//		String exportURI = "dt4j/export/";
+//		String currentURL = RequestHelper.getCurrentUrl(request);
+//		
+//		System.out.println(" currentURL.substring(currentURL.indexOf(exportURI)) = "+  currentURL.substring(currentURL.indexOf(exportURI)));
+//		String[] test = currentURL.substring(currentURL.indexOf(exportURI)).split("/"); 
+//		System.out.println("test = " + test);
+//		
 		// Get the URL parameter used to identify the export type
 		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
 

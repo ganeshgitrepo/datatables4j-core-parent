@@ -37,12 +37,8 @@ public class PropertiesLoader {
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(PropertiesLoader.class);
-	
-	/**
-	 * DataTables properties file.
-	 */
-	private Properties propertiesResource;
 
+	// Properties files location
 	public final static String DT_DEFAULT_PROPERTIES = "config/datatables4j-default.properties";
 	public final static String DT_CUSTOM_PROPERTIES = "datatables4j.properties";
 	

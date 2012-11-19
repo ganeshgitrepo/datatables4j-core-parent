@@ -17,29 +17,96 @@
  */
 package com.github.datatables4j.core.tag;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.servlet.jsp.JspException;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.datatables4j.core.api.model.HtmlColumn;
 
 /**
  * Tag used to generate a HTML table's column.
- *
+ * 
  * @author Thibault Duchateau
  */
 public class ColumnTag extends AbstractColumnTag {
 
 	private static final long serialVersionUID = -8928415196287387948L;
 
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(ColumnTag.class);
+
 	/**
 	 * TODO
 	 */
 	public int doStartTag() throws JspException {
-		return processDoStartTag();
+		TableTag parent = (TableTag) getParent();
+
+		if (parent.getLoadingType() == "AJAX") {
+			return EVAL_PAGE;
+		} else if (parent.getLoadingType() == "DOM") {
+			if (getBodyContent() != null) {
+				return EVAL_BODY_BUFFERED;
+			} else {
+				if (property != null) {
+
+					// AbstractTableTag parent = (AbstractTableTag) getParent();
+
+					try {
+						this.addColumn(
+								false,
+								PropertyUtils.getNestedProperty(parent.getCurrentObject(),
+										this.property).toString());
+
+					} catch (IllegalAccessException e) {
+						logger.error("Unable to get the value for the given property {}",
+								this.property);
+						throw new JspException(e);
+					} catch (InvocationTargetException e) {
+						logger.error("Unable to get the value for the given property {}",
+								this.property);
+						throw new JspException(e);
+					} catch (NoSuchMethodException e) {
+						logger.error("Unable to get the value for the given property {}",
+								this.property);
+						throw new JspException(e);
+					}
+				}
+				return EVAL_PAGE;
+			}
+		}
+
+		// Never reached
+		return SKIP_BODY;
 	}
 
 	/**
 	 * TODO
 	 */
 	public int doEndTag() throws JspException {
-		return processDoEndTag();
+		TableTag parent = (TableTag) getParent();
+
+		if ("DOM".equals(parent.getLoadingType())) {
+
+			if (parent.isFirstRow()) {
+
+				this.addColumn(true, this.title);
+			}
+			return EVAL_PAGE;
+		} else if ("AJAX".equals(parent.getLoadingType())) {
+
+			HtmlColumn column = new HtmlColumn(true, this.title);
+			column.setProperty(this.property);
+			column.setSortable(this.sortable);
+			parent.getTable().getLastHeaderRow().addColumn(column);
+			parent.getTable().getLastFooterRow().addColumn(new HtmlColumn());
+			return EVAL_PAGE;
+		}
+
+		return SKIP_PAGE;
 	}
 
 	/**
@@ -48,16 +115,10 @@ public class ColumnTag extends AbstractColumnTag {
 	public int doAfterBody() throws JspException {
 
 		TableTag parent = (TableTag) getParent();
-		if (parent.getLoadingType() == "AJAX") {
-			
-		}
-		else{
-			if (getBodyContent() != null) {
-				String bodyString = getBodyContent().getString();
-				this.addColumn(false, bodyString);
-			} else {
-				// System.out.println("BODY VIDE !");
-			}
+		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {
+
+			String bodyString = getBodyContent().getString();
+			this.addColumn(false, bodyString);
 		}
 
 		return EVAL_PAGE;
