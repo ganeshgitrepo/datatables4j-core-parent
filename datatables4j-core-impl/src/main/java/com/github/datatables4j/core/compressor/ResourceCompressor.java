@@ -17,158 +17,154 @@
  */
 package com.github.datatables4j.core.compressor;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.util.ReflectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * Web resources compressor.
- * 
+ *
  * @author Thibault Duchateau
  */
 public class ResourceCompressor {
 
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ResourceCompressor.class);
+    // Logger
+    private static Logger logger = LoggerFactory.getLogger(ResourceCompressor.class);
 
-	/**
-	 * Main routine of the compressor which launches different type of
-	 * compression depending on the datatables4j configuration.
-	 * 
-	 * @param webResources
-	 *            The wrapper POJO containing all web resources to compress.
-	 * @param table
-	 *            The table containing the datatatables4j configuration.
-	 */
-	public static void processCompression(WebResources webResources, HtmlTable table)
-			throws BadConfigurationException {
+    /**
+     * Main routine of the compressor which launches different type of
+     * compression depending on the datatables4j configuration.
+     *
+     * @param webResources The wrapper POJO containing all web resources to compress.
+     * @param table        The table containing the datatatables4j configuration.
+     * @throws BadConfigurationException if a property have a bad configuration.
+     * @throws CompressionException      if a error append during the compression.
+     */
+    public static void processCompression(WebResources webResources, HtmlTable table)
+            throws BadConfigurationException, CompressionException {
 
-		logger.debug("Processing compression, using class {} and mode {}", table.getTableProperties()
-				.getCompressorClassName(), table.getTableProperties().getCompressorMode());
+        logger.debug("Processing compression, using class {} and mode {}", table.getTableProperties()
+                .getCompressorClassName(), table.getTableProperties().getCompressorMode());
 
-		// Get the compressor helper instance
-		ResourceCompressorDelegate compressorHelper = new ResourceCompressorDelegate(table);
+        // Get the compressor helper instance
+        ResourceCompressorDelegate compressorHelper = new ResourceCompressorDelegate(table);
 
-		// If DataTables4j has been manually installed, some jar might be
-		// missing
-		// So, first check if the CompressorClass exist in the classpath
-		if (ReflectHelper.canBeUsed(table.getTableProperties().getCompressorClassName())) {
+        // If DataTables4j has been manually installed, some jar might be
+        // missing
+        // So, first check if the CompressorClass exist in the classpath
+        if (ReflectHelper.canBeUsed(table.getTableProperties().getCompressorClassName())) {
 
-			switch (table.getTableProperties().getCompressorMode()) {
-			case ALL:
-				compressJavascript(webResources, compressorHelper);
-				compressStylesheet(webResources, compressorHelper);
-				break;
-			case CSS:
-				compressStylesheet(webResources, compressorHelper);
-				break;
-			case JS:
-				compressJavascript(webResources, compressorHelper);
-				break;
-			default:
-				break;
+            switch (table.getTableProperties().getCompressorMode()) {
+                case ALL:
+                    compressJavascript(webResources, compressorHelper);
+                    compressStylesheet(webResources, compressorHelper);
+                    break;
+                case CSS:
+                    compressStylesheet(webResources, compressorHelper);
+                    break;
+                case JS:
+                    compressJavascript(webResources, compressorHelper);
+                    break;
+                default:
+                    break;
 
-			}
+            }
 
-			logger.debug("Compression completed");
-			
-		} else {
-			logger.warn(
-					"The compressor class {} hasn't been found in the classpath. Compression is disabled.",
-					table.getTableProperties().getCompressorClassName());
-		}
+            logger.debug("Compression completed");
 
-	}
+        } else {
+            logger.warn(
+                    "The compressor class {} hasn't been found in the classpath. Compression is disabled.",
+                    table.getTableProperties().getCompressorClassName());
+        }
 
-	
-	/**
-	 * Compress only javascript resources using the implementation defined in
-	 * the datatables4j properties file.
-	 * 
-	 * @param webResources
-	 *            The wrapper POJO containing all web resources to compress.
-	 * @param helper
-	 *            The resource compressor helper, proxy of the real compressor
-	 *            implementation.
-	 * @throws BadConfigurationException
-	 *             if no compressor implementation can be found.
-	 */
-	private static void compressJavascript(WebResources webResources, ResourceCompressorDelegate helper)
-			throws BadConfigurationException {
+    }
 
-		Map<String, JsResource> newJavascripts = new TreeMap<String, JsResource>();
 
-		// Compress all Javascript resources
-		for (Entry<String, JsResource> oldEntry : webResources.getJavascripts().entrySet()) {
+    /**
+     * Compress only javascript resources using the implementation defined in
+     * the datatables4j properties file.
+     *
+     * @param webResources The wrapper POJO containing all web resources to compress.
+     * @param helper       The resource compressor helper, proxy of the real compressor
+     *                     implementation.
+     * @throws BadConfigurationException if no compressor implementation can be found.
+     * @throws CompressionException      if a error append during the compression.
+     */
+    private static void compressJavascript(WebResources webResources, ResourceCompressorDelegate helper)
+            throws BadConfigurationException, CompressionException {
 
-			// Copy the entry
-			JsResource minimifiedResource = oldEntry.getValue();
+        Map<String, JsResource> newJavascripts = new TreeMap<String, JsResource>();
 
-			// Update content using the compressor implementation
-			minimifiedResource.setContent(helper.getCompressedJavascript(oldEntry.getValue()
-					.getContent()));
+        // Compress all Javascript resources
+        for (Entry<String, JsResource> oldEntry : webResources.getJavascripts().entrySet()) {
 
-			// Update name
-			minimifiedResource.setName(oldEntry.getValue().getName().replace(".js", ".min.js"));
+            // Copy the entry
+            JsResource minimifiedResource = oldEntry.getValue();
 
-			// Update type
-			minimifiedResource.setType(ResourceType.MINIMIFIED);
+            // Update content using the compressor implementation
+            minimifiedResource.setContent(helper.getCompressedJavascript(oldEntry.getValue()
+                    .getContent()));
 
-			// Add the new minified resource
-			newJavascripts.put(minimifiedResource.getName(), minimifiedResource);
-		}
+            // Update name
+            minimifiedResource.setName(oldEntry.getValue().getName().replace(".js", ".min.js"));
 
-		// Use the new map of compressed javascript file instead of the old
-		// one
-		webResources.setJavascripts(newJavascripts);
-	}
+            // Update type
+            minimifiedResource.setType(ResourceType.MINIMIFIED);
 
-	
-	/**
-	 * Compress only stylesheet resources using the implementation defined in
-	 * the datatables4j properties file.
-	 * 
-	 * @param webResources
-	 *            The wrapper POJO containing all web resources to compress.
-	 * @param helper
-	 *            The resource compressor helper, proxy of the real compressor
-	 *            implementation.
-	 * @throws BadConfigurationException
-	 *             if no compressor implementation can be found.
-	 */
-	private static void compressStylesheet(WebResources webResources, ResourceCompressorDelegate helper)
-			throws BadConfigurationException {
+            // Add the new minified resource
+            newJavascripts.put(minimifiedResource.getName(), minimifiedResource);
+        }
 
-		Map<String, CssResource> newStylesheets = new TreeMap<String, CssResource>();
+        // Use the new map of compressed javascript file instead of the old
+        // one
+        webResources.setJavascripts(newJavascripts);
+    }
 
-		// Compress all Stylesheet resources
-		for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
 
-			// Copy the entry
-			CssResource minimifiedResource = entry.getValue();
+    /**
+     * Compress only stylesheet resources using the implementation defined in
+     * the datatables4j properties file.
+     *
+     * @param webResources The wrapper POJO containing all web resources to compress.
+     * @param helper       The resource compressor helper, proxy of the real compressor
+     *                     implementation.
+     * @throws BadConfigurationException if no compressor implementation can be found.
+     * @throws CompressionException      if a error append during the compression.
+     */
+    private static void compressStylesheet(WebResources webResources, ResourceCompressorDelegate helper)
+            throws BadConfigurationException, CompressionException {
 
-			// Update content using the compressor implementation
-			minimifiedResource.setContent(helper.getCompressedCss(entry.getValue().getContent()));
+        Map<String, CssResource> newStylesheets = new TreeMap<String, CssResource>();
 
-			// Update name
-			minimifiedResource.setName(entry.getValue().getName().replace(".css", ".min.css"));
+        // Compress all Stylesheet resources
+        for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
 
-			newStylesheets.put(minimifiedResource.getName(), minimifiedResource);
-		}
+            // Copy the entry
+            CssResource minimifiedResource = entry.getValue();
 
-		// Use the new map of compressed stylesheets file instead of the old
-		// one
-		webResources.setStylesheets(newStylesheets);
-	}
+            // Update content using the compressor implementation
+            minimifiedResource.setContent(helper.getCompressedCss(entry.getValue().getContent()));
+
+            // Update name
+            minimifiedResource.setName(entry.getValue().getName().replace(".css", ".min.css"));
+
+            newStylesheets.put(minimifiedResource.getName(), minimifiedResource);
+        }
+
+        // Use the new map of compressed stylesheets file instead of the old
+        // one
+        webResources.setStylesheets(newStylesheets);
+    }
 }
