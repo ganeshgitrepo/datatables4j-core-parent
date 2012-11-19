@@ -17,14 +17,6 @@
  */
 package com.github.datatables4j.core.generator;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.jsp.PageContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
@@ -38,165 +30,165 @@ import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.datasource.DataProvider;
 import com.github.datatables4j.core.feature.FeatureLoader;
 import com.github.datatables4j.core.plugin.InternalPluginLoader;
-import com.github.datatables4j.core.util.JsonUtils;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
 import com.github.datatables4j.core.util.ResourceHelper;
+import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.jsp.PageContext;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Class used for Javascript generation (as text).
- * 
+ *
  * @author Thibault Duchateau
  */
 public class WebResourceGenerator {
 
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(WebResourceGenerator.class);
+    // Logger
+    private static Logger logger = LoggerFactory.getLogger(WebResourceGenerator.class);
+
+    /**
+     * The DataTables configuration generator.
+     */
+    private static ConfigGenerator configGenerator;
+
+    /**
+     * TODO
+     *
+     * @param pageContext Context of the servlet.
+     * @param table       Table from which the configuration is extracted.
+     * @return A string corresponding to the Javascript code to return to the
+     *         JSP.
+     * @throws DataNotFoundException     if the web service URL is wrong (only for AJAX datasource)
+     * @throws IOException
+     * @throws CompressionException
+     * @throws BadConfigurationException
+     */
+    public WebResources generateWebResources(PageContext pageContext, HtmlTable table)
+	    throws DataNotFoundException, CompressionException, IOException, BadConfigurationException {
+
+	// Bean which stores all needed web resources (js, css)
+	WebResources webResources = new WebResources();
+
+	// TODO transformer configGenerator en singleton
+	configGenerator = new ConfigGenerator();
+
+	// Init the "configuration" map with the table informations
+	// The configuration may be updated depending on the user's choices
+	Map<String, Object> mainConf = configGenerator.generateConfig(table);
 
 	/**
-	 * The DataTables configuration generator.
+	 * Build the main file.
 	 */
-	private static ConfigGenerator configGenerator;
+	// We need to append a randomUUID in case of multiple tables exists in the same JSP
+	JsResource mainJsFile = new JsResource(ResourceType.MAIN, NameConstants.DT_MAIN_JS + table.getRandomId() + ".js", table.getId());
 
-	/**
-	 * TODO
-	 * 
-	 * @param pageContext
-	 *            Context of the servlet.
-	 * @param table
-	 *            Table from which the configuration is extracted.
-	 * @return A string corresponding to the Javascript code to return to the
-	 *         JSP.
-	 * @throws DataNotFoundException
-	 *             if the web service URL is wrong (only for AJAX datasource)
-	 * @throws IOException 
-	 * @throws CompressionException 
-	 * @throws BadConfigurationException 
-	 */
-	public WebResources generateWebResources(PageContext pageContext, HtmlTable table)
-			throws DataNotFoundException, CompressionException, IOException, BadConfigurationException {
-		
-		// Bean which stores all needed web resources (js, css)
-		WebResources webResources = new WebResources();
-		
-		// TODO transformer configGenerator en singleton
-		configGenerator = new ConfigGenerator();
-		
-		// Init the "configuration" map with the table informations
-		// The configuration may be updated depending on the user's choices
-		Map<String, Object> mainConf = configGenerator.generateConfig(table);
-		
-		/**
-		 * Build the main file.
-		 */
-		// We need to append a randomUUID in case of multiple tables exists in the same JSP
-		JsResource mainJsFile = new JsResource(ResourceType.MAIN, NameConstants.DT_MAIN_JS + table.getRandomId() + ".js", table.getId());
-
-		// Extra files management
-		if (!table.getExtraFiles().isEmpty()) {
-			extraFileManagement(mainJsFile, table);
-		}
-
-		// Internal module management
-		InternalPluginLoader.loadPlugins(mainJsFile, table, mainConf, webResources);
-		FeatureLoader.loadFeatures(mainJsFile, table, mainConf, webResources);
-		
-		// TODO extraConf en standby car souci de parsing si function dans l'ojbet JSON
-		extraConfManagement(mainJsFile, mainConf, table);
-		
-		// AJAX datasource : data must be added in the configuration file
-		if (table.getDatasourceUrl() != null) {
-			String baseUrl = RequestHelper.getBaseUrl(pageContext);
-			String webServiceUrl = baseUrl + table.getDatasourceUrl();
-			
-			DataProvider dataProvider = new DataProvider();
-			
-			mainConf.put(DTConstants.DT_DS_DATA, dataProvider.getData(table, webServiceUrl));
-			
-			mainJsFile.appendToDataTablesConf(JsonUtils.convertObjectToJsonString(mainConf));
-		}
-		// DOM datasource
-		else {
-			mainJsFile.appendToDataTablesConf(JsonUtils.convertObjectToJsonString(mainConf));
-		}
-				
-		webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
-				
-		return webResources;
+	// Extra files management
+	if (!table.getExtraFiles().isEmpty()) {
+	    extraFileManagement(mainJsFile, table);
 	}
-	
-	
-	/**
-	 * If extraFile tag have been added, its content must be extracted and merge
-	 * to the main js file.
-	 * 
-	 * @param mainFile
-	 *            The resource to update with extraFiles.
-	 * @param table
-	 *            The HTML tale.
-	 * @throws BadConfigurationException
-	 *             if
-	 */
-	private void extraFileManagement(JsResource mainFile, HtmlTable table) throws IOException,
-			BadConfigurationException {
 
-		logger.info("Extra files found");
+	// Internal module management
+	InternalPluginLoader.loadPlugins(mainJsFile, table, mainConf, webResources);
+	FeatureLoader.loadFeatures(mainJsFile, table, mainConf, webResources);
 
-		for (ExtraFile file : table.getExtraFiles()) {
-			
-			switch (file.getInsert()) {
-			case BEFOREALL:
-				mainFile.appendToBeforeAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
-				break;
+	// TODO extraConf in standby because of a parsing issue when a function is in JSON object
+	extraConfManagement(mainJsFile, mainConf, table);
 
-			case AFTERSTARTDOCUMENTREADY:
-				mainFile.appendToAfterStartDocumentReady(ResourceHelper
-						.getFileContentFromWebapp(file.getSrc()));
-				break;
-				
-			case BEFOREENDDOCUMENTREADY:
-				mainFile.appendToBeforeEndDocumentReady(ResourceHelper
-						.getFileContentFromWebapp(file.getSrc()));
-				break;
-				
-			case AFTERALL:
-				mainFile.appendToAfterAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
-				break;
-				
-			default:
-				throw new BadConfigurationException("Unable to get the extraFile " + file.getSrc());
-			}
-		}
+	// AJAX datasource : data must be added in the configuration file
+	if (table.getDatasourceUrl() != null) {
+	    String baseUrl = RequestHelper.getBaseUrl(pageContext);
+	    String webServiceUrl = baseUrl + table.getDatasourceUrl();
+
+	    DataProvider dataProvider = new DataProvider();
+
+	    mainConf.put(DTConstants.DT_DS_DATA, dataProvider.getData(table, webServiceUrl));
+
+	    mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
 	}
-	
-	
-	/**
-	 * Generates a jQuery AJAX call to be able to merge the server-generated
-	 * DataTables configuration with the configuration stored in extraConf
-	 * files. Warning : this is a temporary method. The goal is to be able to
-	 * generate the entire configuration server-side.
-	 * 
-	 * @param mainConf
-	 * @param table
-	 */
-	private void extraConfManagement(JsResource mainJsFile, Map<String, Object> mainConf, HtmlTable table) throws BadConfigurationException {
+	// DOM datasource
+	else {
+	    mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
+	}
 
-		for (ExtraConf conf : table.getExtraConfs()) {
-			StringBuffer extaConf = new StringBuffer();
-			extaConf.append("$.ajax({url:\"");
-			extaConf.append(conf.getSrc());
-			extaConf.append("\",dataType: \"text\",type: \"GET\", success: function(extraProperties, xhr, response) {");
-			extaConf.append("$.extend(true, oTable_");
-			extaConf.append(table.getId());
-			extaConf.append("_params, eval('(' + extraProperties + ')'));");
-			extaConf.append("}, error : function(jqXHR, textStatus, errorThrown){");
-			extaConf.append("alert(\"textStatus = \" + textStatus);");
-			extaConf.append("alert(\"errorThrown = \" + errorThrown);");
-			extaConf.append("}});");
-			extaConf.append("console.log(oTable_" + table.getId() + "_params);");
-			mainJsFile.appendToBeforeStartDocumentReady(extaConf.toString());
-		}
-		 
+	webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
+
+	return webResources;
+    }
+
+
+    /**
+     * If extraFile tag have been added, its content must be extracted and merge
+     * to the main js file.
+     *
+     * @param mainFile The resource to update with extraFiles.
+     * @param table    The HTML tale.
+     * @throws BadConfigurationException if
+     */
+    private void extraFileManagement(JsResource mainFile, HtmlTable table) throws IOException,
+	    BadConfigurationException {
+
+	logger.info("Extra files found");
+
+	for (ExtraFile file : table.getExtraFiles()) {
+
+	    switch (file.getInsert()) {
+		case BEFOREALL:
+		    mainFile.appendToBeforeAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
+		    break;
+
+		case AFTERSTARTDOCUMENTREADY:
+		    mainFile.appendToAfterStartDocumentReady(ResourceHelper
+			    .getFileContentFromWebapp(file.getSrc()));
+		    break;
+
+		case BEFOREENDDOCUMENTREADY:
+		    mainFile.appendToBeforeEndDocumentReady(ResourceHelper
+			    .getFileContentFromWebapp(file.getSrc()));
+		    break;
+
+		case AFTERALL:
+		    mainFile.appendToAfterAll(ResourceHelper.getFileContentFromWebapp(file.getSrc()));
+		    break;
+
+		default:
+		    throw new BadConfigurationException("Unable to get the extraFile " + file.getSrc());
+	    }
+	}
+    }
+
+
+    /**
+     * Generates a jQuery AJAX call to be able to merge the server-generated
+     * DataTables configuration with the configuration stored in extraConf
+     * files. Warning : this is a temporary method. The goal is to be able to
+     * generate the entire configuration server-side.
+     *
+     * @param mainConf
+     * @param table
+     */
+    private void extraConfManagement(JsResource mainJsFile, Map<String, Object> mainConf, HtmlTable table) throws BadConfigurationException {
+
+	for (ExtraConf conf : table.getExtraConfs()) {
+	    StringBuffer extaConf = new StringBuffer();
+	    extaConf.append("$.ajax({url:\"");
+	    extaConf.append(conf.getSrc());
+	    extaConf.append("\",dataType: \"text\",type: \"GET\", success: function(extraProperties, xhr, response) {");
+	    extaConf.append("$.extend(true, oTable_");
+	    extaConf.append(table.getId());
+	    extaConf.append("_params, eval('(' + extraProperties + ')'));");
+	    extaConf.append("}, error : function(jqXHR, textStatus, errorThrown){");
+	    extaConf.append("alert(\"textStatus = \" + textStatus);");
+	    extaConf.append("alert(\"errorThrown = \" + errorThrown);");
+	    extaConf.append("}});");
+	    extaConf.append("console.log(oTable_" + table.getId() + "_params);");
+	    mainJsFile.appendToBeforeStartDocumentReady(extaConf.toString());
+	}
+
 //		// Jackson object mapper
 //		ObjectMapper mapper = new ObjectMapper();
 //		
@@ -219,5 +211,5 @@ public class WebResourceGenerator {
 //		
 //		logger.debug("extraConf = {}", extraConf);
 //		mainConf.putAll(extraConf);
-	}
+    }
 }
