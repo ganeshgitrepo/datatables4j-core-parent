@@ -17,13 +17,27 @@
  */
 package com.github.datatables4j.core.generator;
 
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
+import com.github.datatables4j.core.api.model.ExportButtonPosition;
+import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
+import com.github.datatables4j.core.api.model.HtmlDiv;
+import com.github.datatables4j.core.api.model.HtmlLink;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
@@ -33,13 +47,6 @@ import com.github.datatables4j.core.plugin.InternalPluginLoader;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
 import com.github.datatables4j.core.util.ResourceHelper;
-import org.json.simple.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.jsp.PageContext;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Class used for Javascript generation (as text).
@@ -115,10 +122,93 @@ public class WebResourceGenerator {
 	    mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
 	}
 
+	if(table.isExportable()){
+		exportManagement(table, mainJsFile);
+	}
+	
 	webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
 
 	return webResources;
     }
+
+
+	private void exportManagement(HtmlTable table, JsResource mainJsFile) {
+		if(table.getExportConfs() != null){
+
+			HtmlDiv divExport = new HtmlDiv(table.getId() + "_dt4j_export");
+			HtmlLink link = null;
+			for(ExportConf conf : table.getExportConfs().values()){
+				
+				link = new HtmlLink();
+				
+				if (StringUtils.isNotBlank(conf.getId())) {
+					link.setId(conf.getId());
+				}
+
+				if (conf.getCssClass() != null) {
+					link.setCssClass(conf.getCssClass());
+				}
+
+				if(conf.getCssStyle() != null){
+					link.setCssStyle(conf.getCssStyle());
+				}
+				link.addCssStyle("margin-left:2px;margin-left:2px;");
+				
+				link.setHref(conf.getUrl());
+				link.setLabel(conf.getLabel());
+				
+				divExport.addContent(link.toHtml());
+			}
+			
+			System.out.println("divExport = " + divExport.toHtml());
+			
+			for(ExportButtonPosition position : table.getExportButtonPositions()){
+				
+				switch(position){
+				case BOTTOM_LEFT:
+					divExport.addCssStyle("float:left;margin-right:10px;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_info').before('" + divExport.toHtml() + "');$('#" + table.getId() + "_info').css('clear', 'none');");
+					break;
+					
+				case BOTTOM_MIDDLE:
+					divExport.addCssStyle("float:left;margin-left:10px;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_paginate').before('" + divExport.toHtml() + "');");
+					break;
+					
+				case BOTTOM_RIGHT:
+					divExport.addCssStyle("float:right;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_paginate').before('" + divExport.toHtml() + "');");
+					break;
+					
+				case TOP_LEFT:
+					divExport.addCssStyle("float:left;margin-right:10px;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_length').before('" + divExport.toHtml() + "');");
+					break;
+					
+				case TOP_MIDDLE:
+					divExport.addCssStyle("float:left;margin-left:10px;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_filter').before('" + divExport.toHtml() + "');");
+					break;
+					
+				case TOP_RIGHT:
+					divExport.addCssStyle("float:right;");
+					mainJsFile.appendToBeforeEndDocumentReady(
+							"$('#" + table.getId() + "_length').after('" + divExport.toHtml() + "');");
+					break;
+					
+				default:
+					break;	
+				}
+			}
+			
+			System.out.println("divExport = " + divExport.toHtml());
+		}
+	}
 
 
     /**
@@ -165,7 +255,8 @@ public class WebResourceGenerator {
     /**
      * Generates a jQuery AJAX call to be able to merge the server-generated
      * DataTables configuration with the configuration stored in extraConf
-     * files. Warning : this is a temporary method. The goal is to be able to
+     * files. <br />
+     * Warning : this is a temporary method. The goal is to be able to
      * generate the entire configuration server-side.
      *
      * @param mainConf
@@ -189,13 +280,15 @@ public class WebResourceGenerator {
 	    mainJsFile.appendToBeforeStartDocumentReady(extaConf.toString());
 	}
 
+		// TODO Old way here, trying to parse in JSON the content of extraConf file
+		// TODO using Jackson but "function" keyword is not JSON compliant
 //		// Jackson object mapper
 //		ObjectMapper mapper = new ObjectMapper();
 //		
 //		Map<String, Object> extraConf = new HashMap<String, Object>();
 //		Map<String, Object> tmpMap;
 //		for (ExtraConf conf : table.getExtraConfs()) {
-//			String confStr = ResourceUtils.getFileContentFromWebapp(conf.getSrc());
+//			String confStr = ResourceHelper.getFileContentFromWebapp(conf.getSrc());
 //			logger.debug("confStr = {}", confStr);
 //			JsonNode newJson = JsonUtils.convertStringToJsonNode(confStr);
 //			logger.debug("newJson = {}", newJson);

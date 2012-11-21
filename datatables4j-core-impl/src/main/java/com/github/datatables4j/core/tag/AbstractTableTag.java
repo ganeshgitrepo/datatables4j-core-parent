@@ -19,8 +19,10 @@ package com.github.datatables4j.core.tag;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -95,8 +98,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected String scrollY = "300px";
 	protected Boolean colReorder = false;
 
-	// Awesome features
+	// Export
 	protected Boolean export;
+	protected String exportButtons;
 
 	// Internal common attributes
 	protected int rowNumber;
@@ -207,6 +211,30 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	}
 
 	/**
+	 * Register export configuration.
+	 */
+	protected void registerExportConfiguration() {
+
+		System.out.println("this.export = " + this.export);
+		if(this.export != null && this.export){
+			
+			table.setIsExportable(true);
+			System.out.println("this.exportButtons = " + this.exportButtons);
+			List<ExportButtonPosition> positionList = new ArrayList<ExportButtonPosition>();
+			if(StringUtils.isNotBlank(this.exportButtons)){
+				String[] positions = this.exportButtons.trim().toUpperCase().split(",");
+				for(String position : positions){
+					positionList.add(ExportButtonPosition.valueOf(position));
+				}
+			}
+			else{
+				positionList.add(ExportButtonPosition.TOP_RIGHT);
+			}
+			this.table.setExportButtonPositions(positionList);			
+		}
+	}
+	
+	/**
 	 * Process the iteration over the data (only for DOM source).
 	 * 
 	 * @return EVAL_BODY_BUFFERED if some data remain in the Java Collection,
@@ -245,16 +273,15 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 * 
 	 * @throws IOException
 	 */
-	protected StringBuffer generateExportLinks() throws IOException {
+	protected StringBuffer getExportLinks() {
 
 		StringBuffer exportLinks = new StringBuffer();
 
 		exportLinks.append("<br />");
 
-		// TODO : variabiliser l'emplacement des boutons
 		for (ExportConf conf : table.getExportConfs().values()) {
 			exportLinks.append("&nbsp;");
-			exportLinks.append(getExportLink(conf));
+			exportLinks.append(getGeneratedExportLink(conf));
 		}
 
 		return exportLinks;
@@ -267,7 +294,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 *            The export configuration coming from an ExportTag.
 	 * @return a StringBuffer containing the HTML A tag.
 	 */
-	private StringBuffer getExportLink(ExportConf conf) {
+	private StringBuffer getGeneratedExportLink(ExportConf conf) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		String currentURL = RequestHelper.getCurrentUrl(request);
 
@@ -281,13 +308,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			link.append("\"");
 		}
 
-		if (StringUtils.isNotBlank(conf.getCssClass())) {
+		if (conf.getCssClass() != null) {
 			link.append(" class=\"");
 			link.append(conf.getCssClass());
 			link.append("\"");
 		}
 
-		if (StringUtils.isNotBlank(conf.getCssStyle())) {
+		if (conf.getCssStyle() != null) {
 			link.append(" style=\"");
 			link.append(conf.getCssStyle());
 			link.append("\"");
@@ -641,6 +668,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setJqueryUI(Boolean jqueryUI) {
 		this.jqueryUI = jqueryUI;
+	}
+
+	public String getExportButtons() {
+		return exportButtons;
+	}
+
+	public void setExportButtons(String exportButtons) {
+		this.exportButtons = exportButtons;
 	}
 
 	public void setData(Collection<Object> data) {

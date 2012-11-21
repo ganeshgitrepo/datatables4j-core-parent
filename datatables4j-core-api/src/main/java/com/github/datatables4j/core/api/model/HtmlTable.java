@@ -66,6 +66,8 @@ public class HtmlTable {
 	private ExportProperties exportProperties;
 	private Boolean exporting;
 	private Map<ExportType, ExportConf> exportConfs = new HashMap<ExportType, ExportConf>();
+	private List<ExportButtonPosition> exportButtonPositions;
+	private Boolean isExportable = false;
 	
 	public HtmlTable() {
 	};
@@ -443,4 +445,21 @@ public class HtmlTable {
 	public void setExportConfs(Map<ExportType, ExportConf> exportConfs) {
 		this.exportConfs = exportConfs;
 	}
+
+	public Boolean isExportable() {
+		return isExportable;
+	}
+
+	public void setIsExportable(Boolean isExportable) {
+		this.isExportable = isExportable;
+	}
+
+	public List<ExportButtonPosition> getExportButtonPositions() {
+		return exportButtonPositions;
+	}
+
+	public void setExportButtonPositions(List<ExportButtonPosition> exportButtonPositions) {
+		this.exportButtonPositions = exportButtonPositions;
+	}
+	
 }

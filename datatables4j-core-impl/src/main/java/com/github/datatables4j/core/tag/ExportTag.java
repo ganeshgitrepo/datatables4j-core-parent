@@ -17,14 +17,18 @@
  */
 package com.github.datatables4j.core.tag;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
+import com.github.datatables4j.core.util.RequestHelper;
 
 /**
  * Tag which allows to configure the table export.
@@ -44,7 +48,7 @@ public class ExportTag extends TagSupport {
 	private String label;
 	private String cssStyle;
 	private String cssClass;
-	private String position;// TODO
+	private ExportButtonPosition position;
 	private Boolean includeHeader;
 	private String area;// TODO
 	
@@ -77,11 +81,15 @@ public class ExportTag extends TagSupport {
 			conf.setFileName(fileName != null ? fileName : "export");
 			conf.setType(type != null ? type.toUpperCase() : "CSV");
 			conf.setLabel(label != null ? label : type.toUpperCase());
-			conf.setCssClass(cssClass != null ? cssClass : "");
-			conf.setCssStyle(cssStyle != null ? cssStyle : "");
-			conf.setPosition(position);
+			conf.setCssClass(cssClass != null ? new StringBuffer(cssClass) : new StringBuffer());
+			conf.setCssStyle(cssStyle != null ? new StringBuffer(cssStyle) : new StringBuffer());
+			conf.setPosition(position != null ? position : ExportButtonPosition.TOP_MIDDLE);
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
+			
+			HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+			String currentURL = RequestHelper.getCurrentUrl(request);
+			conf.setUrl(currentURL + "?" + ExportConstants.DT4J_EXPORT + "=1&" + ExportConstants.DT4J_EXPORT_TYPE + "=" + ExportType.valueOf(conf.getType()).getUrlParameter());
 			
 			parent.getTable().getExportConfs().put(ExportType.valueOf(type), conf);
 			
@@ -139,11 +147,11 @@ public class ExportTag extends TagSupport {
 		this.cssClass = cssClass;
 	}
 
-	public String getPosition() {
+	public ExportButtonPosition getPosition() {
 		return position;
 	}
 
-	public void setPosition(String position) {
+	public void setPosition(ExportButtonPosition position) {
 		this.position = position;
 	}
 

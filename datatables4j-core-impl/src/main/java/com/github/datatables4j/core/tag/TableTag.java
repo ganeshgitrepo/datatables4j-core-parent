@@ -36,6 +36,7 @@ import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportProperties;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -117,6 +118,9 @@ public class TableTag extends AbstractTableTag {
 		// Update the HtmlTable object configuration with the attributes
 		registerBasicConfiguration();
 
+		// Update the HtmlTable object with the export configuration
+		registerExportConfiguration();
+		
 		// The table is being exported
 		if (isExporting()) {
 			return setupExport();
@@ -227,7 +231,7 @@ public class TableTag extends AbstractTableTag {
 			// l'export (emplacement)
 			// Voir pour les ajouter en javascript
 			if (canBeExported()) {
-				pageContext.getOut().println(generateExportLinks());
+//				pageContext.getOut().println(getExportLinks());
 			}
 
 			// <script> HTML tag generation

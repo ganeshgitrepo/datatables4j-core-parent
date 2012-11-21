@@ -11,11 +11,12 @@ public class ExportConf {
 	private String fileName;
 	private String type;
 	private String label;
-	private String cssStyle;
-	private String cssClass;
-	private String position;
+	private StringBuffer cssStyle;
+	private StringBuffer cssClass;
+	private ExportButtonPosition position;
 	private Boolean includeHeader;
 	private String area;
+	private String url;
 	
 	public String getId() {
 		return id;
@@ -41,22 +42,22 @@ public class ExportConf {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	public String getCssStyle() {
+	public StringBuffer getCssStyle() {
 		return cssStyle;
 	}
-	public void setCssStyle(String cssStyle) {
+	public void setCssStyle(StringBuffer cssStyle) {
 		this.cssStyle = cssStyle;
 	}
-	public String getCssClass() {
+	public StringBuffer getCssClass() {
 		return cssClass;
 	}
-	public void setCssClass(String cssClass) {
+	public void setCssClass(StringBuffer cssClass) {
 		this.cssClass = cssClass;
 	}
-	public String getPosition() {
+	public ExportButtonPosition getPosition() {
 		return position;
 	}
-	public void setPosition(String position) {
+	public void setPosition(ExportButtonPosition position) {
 		this.position = position;
 	}
 	public Boolean getIncludeHeader() {
@@ -70,5 +71,11 @@ public class ExportConf {
 	}
 	public void setArea(String area) {
 		this.area = area;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

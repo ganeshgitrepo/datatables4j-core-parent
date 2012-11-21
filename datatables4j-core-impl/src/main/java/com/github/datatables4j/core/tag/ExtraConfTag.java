@@ -62,7 +62,7 @@ public class ExtraConfTag extends TagSupport {
 	 * @return
 	 */
 	private String getLocation(String src){
-		return RequestHelper.getBaseUrl(pageContext) + src;
+		return pageContext.getServletContext().getRealPath(src);
 	}
 
 	public String getSrc() {
