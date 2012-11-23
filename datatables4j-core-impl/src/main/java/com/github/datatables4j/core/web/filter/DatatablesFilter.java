@@ -51,18 +51,14 @@ public class DatatablesFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		System.out.println(" ===================== DEBUT init");
-
+		
 		// TODO configuration dynamique de l'urlPattern en fonction de la conf
 		// Datatables4j ?
-
-		System.out.println(" ===================== FIN init");
 	}
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
-		System.out.println(" ===================== DEBUT doFilter");
 
 		// Le param "exporting" est mis en request par la classe
 		// AbstractTableTag si l'attribut export est a true dans la JSP
@@ -115,12 +111,10 @@ public class DatatablesFilter implements Filter {
 		} else {
 			chain.doFilter(servletRequest, servletResponse);
 		}
-
-		System.out.println(" ===================== FIN doFilter");
 	}
 
 	@Override
 	public void destroy() {
-
+		// Nothing to do
 	}
 }
