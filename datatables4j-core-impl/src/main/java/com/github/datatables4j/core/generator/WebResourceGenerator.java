@@ -32,7 +32,7 @@ import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
-import com.github.datatables4j.core.api.model.ExportButtonPosition;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
@@ -64,7 +64,7 @@ public class WebResourceGenerator {
 	private static ConfigGenerator configGenerator;
 
 	/**
-	 * TODO
+	 * <p>Main method which generated the web resources (js and css files).
 	 * 
 	 * @param pageContext
 	 *            Context of the servlet.
@@ -85,11 +85,9 @@ public class WebResourceGenerator {
 		// Bean which stores all needed web resources (js, css)
 		WebResources webResources = new WebResources();
 
-		// TODO transformer configGenerator en singleton
-		configGenerator = new ConfigGenerator();
-
 		// Init the "configuration" map with the table informations
 		// The configuration may be updated depending on the user's choices
+		configGenerator = new ConfigGenerator();
 		Map<String, Object> mainConf = configGenerator.generateConfig(table);
 
 		/**
@@ -109,8 +107,7 @@ public class WebResourceGenerator {
 		InternalPluginLoader.loadPlugins(mainJsFile, table, mainConf, webResources);
 		FeatureLoader.loadFeatures(mainJsFile, table, mainConf, webResources);
 
-		// TODO extraConf in standby because of a parsing issue when a function
-		// is in JSON object
+		// Extra conf management
 		extraConfManagement(mainJsFile, mainConf, table);
 
 		// AJAX datasource : data must be added in the configuration file
@@ -194,7 +191,7 @@ public class WebResourceGenerator {
 			}
 		}
 
-		for (ExportButtonPosition position : table.getExportButtonPositions()) {
+		for (ExportLinkPosition position : table.getExportLinkPositions()) {
 
 			switch (position) {
 			case BOTTOM_LEFT:

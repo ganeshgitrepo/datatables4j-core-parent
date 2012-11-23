@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO
+ * All the available export types.
  *
  * @author Thibault Duchateau
  */

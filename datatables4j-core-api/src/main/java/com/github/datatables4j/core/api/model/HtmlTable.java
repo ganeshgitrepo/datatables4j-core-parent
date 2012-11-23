@@ -67,7 +67,7 @@ public class HtmlTable {
 	private ExportProperties exportProperties;
 	private Boolean exporting;
 	private Map<ExportType, ExportConf> exportConfMap = new HashMap<ExportType, ExportConf>();
-	private List<ExportButtonPosition> exportButtonPositions;
+	private List<ExportLinkPosition> exportLinkPositions;
 	private Boolean isExportable = false;
 	
 	public HtmlTable() {
@@ -455,12 +455,12 @@ public class HtmlTable {
 		this.isExportable = isExportable;
 	}
 
-	public List<ExportButtonPosition> getExportButtonPositions() {
-		return exportButtonPositions;
+	public List<ExportLinkPosition> getExportLinkPositions() {
+		return exportLinkPositions;
 	}
 
-	public void setExportButtonPositions(List<ExportButtonPosition> exportButtonPositions) {
-		this.exportButtonPositions = exportButtonPositions;
+	public void setExportLinkPositions(List<ExportLinkPosition> exportLinkPositions) {
+		this.exportLinkPositions = exportLinkPositions;
 	}
 
 	public String getCurrentUrl() {

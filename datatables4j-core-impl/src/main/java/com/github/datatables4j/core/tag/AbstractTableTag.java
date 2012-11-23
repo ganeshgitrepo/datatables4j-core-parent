@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadExportConfigurationException;
-import com.github.datatables4j.core.api.model.ExportButtonPosition;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -220,24 +220,24 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 			table.setIsExportable(true);
 
-			// Export buttons position
-			List<ExportButtonPosition> positionList = new ArrayList<ExportButtonPosition>();
+			// Export links position
+			List<ExportLinkPosition> positionList = new ArrayList<ExportLinkPosition>();
 			if (StringUtils.isNotBlank(this.exportLinks)) {
 				String[] positions = this.exportLinks.trim().toUpperCase().split(",");
 
 				for (String position : positions) {
 					try {
-						positionList.add(ExportButtonPosition.valueOf(position));
+						positionList.add(ExportLinkPosition.valueOf(position));
 					} catch (IllegalArgumentException e) {
 						logger.error("The export cannot be activated for the table {}. ", table.getId());
-						logger.error("{} is not a valid value among {}", position, ExportButtonPosition.values());
+						logger.error("{} is not a valid value among {}", position, ExportLinkPosition.values());
 						throw new BadExportConfigurationException(e);
 					}
 				}
 			} else {
-				positionList.add(ExportButtonPosition.TOP_RIGHT);
+				positionList.add(ExportLinkPosition.TOP_RIGHT);
 			}
-			this.table.setExportButtonPositions(positionList);
+			this.table.setExportLinkPositions(positionList);
 
 			// Export links
 			// The exportConfMap hasn't been filled by ExportTag
@@ -250,7 +250,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 					conf.setFileName("export");
 					conf.setType(exportType.toString());
 					conf.setLabel(exportType.toString());					
-					conf.setPosition(ExportButtonPosition.TOP_MIDDLE);
+					conf.setPosition(ExportLinkPosition.TOP_MIDDLE);
 					conf.setIncludeHeader(true);
 					conf.setArea("ALL");
 					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&"
@@ -340,8 +340,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	}
 
 	/**
-	 * Test if the user want his table to be exported. TODO tester la presence
-	 * de ExportTag ?
+	 * Test if the user want his table to be exported.
 	 * 
 	 * @return true if the table can be exported, false otherwise.
 	 */

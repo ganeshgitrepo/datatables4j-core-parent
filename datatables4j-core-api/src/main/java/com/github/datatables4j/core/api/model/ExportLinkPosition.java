@@ -17,37 +17,6 @@
  */
 package com.github.datatables4j.core.api.model;
 
-/**
- * TODO
- *
- * @author Thibault Duchateau
- */
-public class DataTablesResource {
-
-	private String name;
-	private String content;
-
-	public DataTablesResource(){
-		
-	}
-	
-	public DataTablesResource(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
+public enum ExportLinkPosition {
+	TOP_LEFT, TOP_MIDDLE, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT
 }

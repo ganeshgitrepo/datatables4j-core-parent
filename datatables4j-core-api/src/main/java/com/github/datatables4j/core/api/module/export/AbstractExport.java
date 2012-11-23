@@ -21,7 +21,7 @@ import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
- * Contract for every export implementations.
+ * Contract for every export implementation.
  * 
  * @author Thibault Duchateau
  */

@@ -18,7 +18,7 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * TODO
+ * POJO used to wrap current export properties.
  *
  * @author Thibault Duchateau
  */

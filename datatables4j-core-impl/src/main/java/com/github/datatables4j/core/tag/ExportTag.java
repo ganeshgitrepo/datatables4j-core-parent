@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
-import com.github.datatables4j.core.api.model.ExportButtonPosition;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
 
@@ -46,7 +46,7 @@ public class ExportTag extends TagSupport {
 	private String label;
 	private String cssStyle;
 	private String cssClass;
-	private ExportButtonPosition position;
+	private ExportLinkPosition position;
 	private Boolean includeHeader;
 	private String area;// TODO
 	
@@ -81,7 +81,7 @@ public class ExportTag extends TagSupport {
 			conf.setLabel(label != null ? label : type.toUpperCase());
 			conf.setCssClass(cssClass != null ? new StringBuffer(cssClass) : new StringBuffer());
 			conf.setCssStyle(cssStyle != null ? new StringBuffer(cssStyle) : new StringBuffer());
-			conf.setPosition(position != null ? position : ExportButtonPosition.TOP_MIDDLE);
+			conf.setPosition(position != null ? position : ExportLinkPosition.TOP_MIDDLE);
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
 			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&" + ExportConstants.DT4J_EXPORT_TYPE + "=" + ExportType.valueOf(conf.getType()).getUrlParameter());
@@ -142,11 +142,11 @@ public class ExportTag extends TagSupport {
 		this.cssClass = cssClass;
 	}
 
-	public ExportButtonPosition getPosition() {
+	public ExportLinkPosition getPosition() {
 		return position;
 	}
 
-	public void setPosition(ExportButtonPosition position) {
+	public void setPosition(ExportLinkPosition position) {
 		this.position = position;
 	}
 
