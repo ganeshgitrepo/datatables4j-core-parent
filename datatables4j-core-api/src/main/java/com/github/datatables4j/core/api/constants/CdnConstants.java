@@ -24,7 +24,7 @@ package com.github.datatables4j.core.api.constants;
  */
 public class CdnConstants {
 
-	public static final String CDN_JS = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.js";
-	public static final String CDN_JS_MIN = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/jquery.dataTables.min.js";
-	public static final String CDN_CSS = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.3/css/jquery.dataTables.css";
+	public static final String CDN_JS = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js";
+	public static final String CDN_JS_MIN = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js";
+	public static final String CDN_CSS = "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css";
 }
