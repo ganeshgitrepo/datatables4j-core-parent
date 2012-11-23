@@ -61,11 +61,12 @@ public class HtmlTable {
 	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
 	private String randomId;
 	private String objectType;
+	private String currentUrl;
 	
 	// Export
 	private ExportProperties exportProperties;
 	private Boolean exporting;
-	private Map<ExportType, ExportConf> exportConfs = new HashMap<ExportType, ExportConf>();
+	private Map<ExportType, ExportConf> exportConfMap = new HashMap<ExportType, ExportConf>();
 	private List<ExportButtonPosition> exportButtonPositions;
 	private Boolean isExportable = false;
 	
@@ -438,12 +439,12 @@ public class HtmlTable {
 		this.exportProperties = exportProperties;
 	}
 
-	public Map<ExportType, ExportConf> getExportConfs() {
-		return exportConfs;
+	public Map<ExportType, ExportConf> getExportConfMap() {
+		return exportConfMap;
 	}
 
-	public void setExportConfs(Map<ExportType, ExportConf> exportConfs) {
-		this.exportConfs = exportConfs;
+	public void setExportConfMap(Map<ExportType, ExportConf> exportConfs) {
+		this.exportConfMap = exportConfs;
 	}
 
 	public Boolean isExportable() {
@@ -460,6 +461,14 @@ public class HtmlTable {
 
 	public void setExportButtonPositions(List<ExportButtonPosition> exportButtonPositions) {
 		this.exportButtonPositions = exportButtonPositions;
+	}
+
+	public String getCurrentUrl() {
+		return currentUrl;
+	}
+
+	public void setCurrentUrl(String currentUrl) {
+		this.currentUrl = currentUrl;
 	}
 	
 }

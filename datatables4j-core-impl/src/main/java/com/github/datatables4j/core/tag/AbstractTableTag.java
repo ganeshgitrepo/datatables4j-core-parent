@@ -17,7 +17,6 @@
  */
 package com.github.datatables4j.core.tag;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.exception.BadExportConfigurationException;
 import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
@@ -100,7 +100,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	// Export
 	protected Boolean export;
-	protected String exportButtons;
+	protected String exportLinks;
 
 	// Internal common attributes
 	protected int rowNumber;
@@ -212,28 +212,57 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	/**
 	 * Register export configuration.
+	 * @throws BadExportConfigurationException 
 	 */
-	protected void registerExportConfiguration() {
+	protected void registerExportConfiguration() throws BadExportConfigurationException {
 
-		System.out.println("this.export = " + this.export);
-		if(this.export != null && this.export){
-			
+		if (this.export != null && this.export) {
+
 			table.setIsExportable(true);
-			System.out.println("this.exportButtons = " + this.exportButtons);
+
+			// Export buttons position
 			List<ExportButtonPosition> positionList = new ArrayList<ExportButtonPosition>();
-			if(StringUtils.isNotBlank(this.exportButtons)){
-				String[] positions = this.exportButtons.trim().toUpperCase().split(",");
-				for(String position : positions){
-					positionList.add(ExportButtonPosition.valueOf(position));
+			if (StringUtils.isNotBlank(this.exportLinks)) {
+				String[] positions = this.exportLinks.trim().toUpperCase().split(",");
+
+				for (String position : positions) {
+					try {
+						positionList.add(ExportButtonPosition.valueOf(position));
+					} catch (IllegalArgumentException e) {
+						logger.error("The export cannot be activated for the table {}. ", table.getId());
+						logger.error("{} is not a valid value among {}", position, ExportButtonPosition.values());
+						throw new BadExportConfigurationException(e);
+					}
 				}
-			}
-			else{
+			} else {
 				positionList.add(ExportButtonPosition.TOP_RIGHT);
 			}
-			this.table.setExportButtonPositions(positionList);			
+			this.table.setExportButtonPositions(positionList);
+
+			// Export links
+			// The exportConfMap hasn't been filled by ExportTag
+			// So we use the default configuration
+			if (table.getExportConfMap().size() == 0) {
+
+				for (ExportType exportType : table.getTableProperties().getExportTypes()) {
+					ExportConf conf = new ExportConf();
+
+					conf.setFileName("export");
+					conf.setType(exportType.toString());
+					conf.setLabel(exportType.toString());					
+					conf.setPosition(ExportButtonPosition.TOP_MIDDLE);
+					conf.setIncludeHeader(true);
+					conf.setArea("ALL");
+					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&"
+							+ ExportConstants.DT4J_EXPORT_TYPE + "="
+							+ ExportType.valueOf(conf.getType()).getUrlParameter());
+
+					table.getExportConfMap().put(exportType, conf);
+				}
+			}
 		}
 	}
-	
+
 	/**
 	 * Process the iteration over the data (only for DOM source).
 	 * 
@@ -268,75 +297,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 	}
 
-	/**
-	 * Generate all export links.
-	 * 
-	 * @throws IOException
-	 */
-	protected StringBuffer getExportLinks() {
-
-		StringBuffer exportLinks = new StringBuffer();
-
-		exportLinks.append("<br />");
-
-		for (ExportConf conf : table.getExportConfs().values()) {
-			exportLinks.append("&nbsp;");
-			exportLinks.append(getGeneratedExportLink(conf));
-		}
-
-		return exportLinks;
-	}
-
-	/**
-	 * Generate and return an export link from the export configuration.
-	 * 
-	 * @param conf
-	 *            The export configuration coming from an ExportTag.
-	 * @return a StringBuffer containing the HTML A tag.
-	 */
-	private StringBuffer getGeneratedExportLink(ExportConf conf) {
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		String currentURL = RequestHelper.getCurrentUrl(request);
-
-		StringBuffer link = new StringBuffer();
-
-		link.append("<a");
-
-		if (StringUtils.isNotBlank(conf.getId())) {
-			link.append(" id=\"");
-			link.append(conf.getId());
-			link.append("\"");
-		}
-
-		if (conf.getCssClass() != null) {
-			link.append(" class=\"");
-			link.append(conf.getCssClass());
-			link.append("\"");
-		}
-
-		if (conf.getCssStyle() != null) {
-			link.append(" style=\"");
-			link.append(conf.getCssStyle());
-			link.append("\"");
-		}
-
-		link.append(" href=\"");
-		link.append(currentURL);
-		
-		link.append("?");
-		link.append(ExportConstants.DT4J_EXPORT);
-		link.append("=1&");
-		link.append(ExportConstants.DT4J_EXPORT_TYPE);
-		link.append("=");
-		link.append(ExportType.valueOf(conf.getType()).getUrlParameter());
-		link.append("\">");
-		link.append(conf.getLabel());
-
-		link.append("</a>");
-
-		System.out.println("link = " + link);
-		return link;
-	}
 
 	/**
 	 * Test if the table if being exported thanks to a request attribute set at
@@ -348,8 +308,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		System.out.println(request.getAttribute("isExporting"));
 		System.out.println(pageContext.getRequest().getAttribute("isExporting") != null);
-		return (Boolean) (pageContext.getRequest().getAttribute("isExporting") != null ? pageContext.getRequest()
-				.getAttribute("isExporting") : false);
+		return (Boolean) (pageContext.getRequest().getAttribute("isExporting") != null ? pageContext
+				.getRequest().getAttribute("isExporting") : false);
 	}
 
 	/**
@@ -361,13 +321,15 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
-//		String exportURI = "dt4j/export/";
-//		String currentURL = RequestHelper.getCurrentUrl(request);
-//		
-//		System.out.println(" currentURL.substring(currentURL.indexOf(exportURI)) = "+  currentURL.substring(currentURL.indexOf(exportURI)));
-//		String[] test = currentURL.substring(currentURL.indexOf(exportURI)).split("/"); 
-//		System.out.println("test = " + test);
-//		
+		// String exportURI = "dt4j/export/";
+		// String currentURL = RequestHelper.getCurrentUrl(request);
+		//
+		// System.out.println(" currentURL.substring(currentURL.indexOf(exportURI)) = "+
+		// currentURL.substring(currentURL.indexOf(exportURI)));
+		// String[] test =
+		// currentURL.substring(currentURL.indexOf(exportURI)).split("/");
+		// System.out.println("test = " + test);
+		//
 		// Get the URL parameter used to identify the export type
 		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
 
@@ -400,11 +362,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected String getRowId() throws JspException {
 
 		StringBuffer rowId = new StringBuffer();
-		
+
 		if (StringUtils.isNotBlank(this.rowIdPrefix)) {
 			rowId.append(this.rowIdPrefix);
 		}
-		
+
 		if (StringUtils.isNotBlank(this.rowIdBase)) {
 			try {
 				rowId.append(PropertyUtils.getNestedProperty(this.currentObject, this.rowIdBase));
@@ -419,7 +381,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				throw new JspException(e);
 			}
 		}
-		
+
 		if (StringUtils.isNotBlank(this.rowIdSufix)) {
 			rowId.append(this.rowIdSufix);
 		}
@@ -670,12 +632,12 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.jqueryUI = jqueryUI;
 	}
 
-	public String getExportButtons() {
-		return exportButtons;
+	public String getExportLinks() {
+		return exportLinks;
 	}
 
-	public void setExportButtons(String exportButtons) {
-		this.exportButtons = exportButtons;
+	public void setExportLinks(String exportButtons) {
+		this.exportLinks = exportButtons;
 	}
 
 	public void setData(Collection<Object> data) {

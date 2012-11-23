@@ -32,11 +32,11 @@ import com.github.datatables4j.core.aggregator.ResourceAggregator;
 import com.github.datatables4j.core.api.constants.CdnConstants;
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.exception.BadExportConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.CssResource;
-import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportProperties;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -69,7 +69,8 @@ public class TableTag extends AbstractTableTag {
 
 		// Init the table with its DOM id and a generated random number
 		table = new HtmlTable(id, ResourceHelper.getRamdomNumber());
-
+		table.setCurrentUrl(RequestHelper.getCurrentUrl((HttpServletRequest)pageContext.getRequest()));
+		
 		try {
 			// Load table properties
 			PropertiesLoader.load(this.table);
@@ -119,7 +120,11 @@ public class TableTag extends AbstractTableTag {
 		registerBasicConfiguration();
 
 		// Update the HtmlTable object with the export configuration
-		registerExportConfiguration();
+		try {
+			registerExportConfiguration();
+		} catch (BadExportConfigurationException e) {
+			throw new JspException(e);
+		}
 		
 		// The table is being exported
 		if (isExporting()) {
@@ -148,9 +153,9 @@ public class TableTag extends AbstractTableTag {
 
 		ExportType currentExportType = getCurrentExportType();
 		exportProperties.setCurrentExportType(currentExportType);
-		exportProperties.setExportConf(table.getExportConfs().get(currentExportType));
-		exportProperties.setFileName(table.getExportConfs().get(currentExportType).getFileName());
-
+		exportProperties.setExportConf(table.getExportConfMap().get(currentExportType));
+		exportProperties.setFileName(table.getExportConfMap().get(currentExportType).getFileName());			
+		
 		this.table.setExportProperties(exportProperties);
 		this.table.setExporting(true);
 
@@ -165,6 +170,7 @@ public class TableTag extends AbstractTableTag {
 			request.setAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES, exportProperties);
 
 		} catch (ExportException e) {
+			logger.error("Something went wront with the DataTables4j export configuration.");
 			throw new JspException(e);
 		}
 
@@ -172,7 +178,7 @@ public class TableTag extends AbstractTableTag {
 
 		return SKIP_PAGE;
 	}
-
+	
 	/**
 	 * Set up the HTML table generation.
 	 * 
@@ -226,13 +232,6 @@ public class TableTag extends AbstractTableTag {
 
 			// HTML generation
 			pageContext.getOut().println(this.table.toHtml());
-
-			// TODO : generer les liens en fonction de la configuration de
-			// l'export (emplacement)
-			// Voir pour les ajouter en javascript
-			if (canBeExported()) {
-//				pageContext.getOut().println(getExportLinks());
-			}
 
 			// <script> HTML tag generation
 			if (this.isCdnEnable()) {

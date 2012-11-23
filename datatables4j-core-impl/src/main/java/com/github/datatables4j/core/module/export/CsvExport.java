@@ -21,7 +21,7 @@ public class CsvExport extends AbstractExport {
 	
 		StringBuffer buffer = new StringBuffer();
 		
-		if(table.getExportConfs().get(ExportType.CSV).getIncludeHeader()){
+		if(table.getExportConfMap().get(ExportType.CSV).getIncludeHeader()){
 			for(HtmlRow row : table.getHeadRows()){
 				for(HtmlColumn column : row.getColumns()){
 					buffer.append(column.getContent()).append(";");

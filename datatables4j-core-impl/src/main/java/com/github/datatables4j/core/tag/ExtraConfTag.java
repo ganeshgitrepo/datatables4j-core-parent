@@ -20,9 +20,7 @@ package com.github.datatables4j.core.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-
 import com.github.datatables4j.core.api.model.ExtraConf;
-import com.github.datatables4j.core.util.RequestHelper;
 
 /**
  * Tag used to add some extra Javascript configuration to the DataTable.

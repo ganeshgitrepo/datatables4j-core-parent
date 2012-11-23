@@ -31,7 +31,7 @@ import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
- * DataTables configuration generator.
+ * Class in charge of DataTables configuration generation.
  *
  * @author Thibault Duchateau
  */
@@ -41,7 +41,7 @@ public class ConfigGenerator {
 	private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 	
 	/**
-	 * If no custom config is specified with table attributs, DataTables
+	 * If no custom config is specified with table attributes, DataTables
 	 * will internally use default one.
 	 * 
 	 * @param table

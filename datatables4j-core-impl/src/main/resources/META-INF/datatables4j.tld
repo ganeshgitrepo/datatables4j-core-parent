@@ -199,11 +199,14 @@
         </attribute>
         <attribute>
             <name>export</name>
-            <description>(true|false) Enable or disable the export functionality</description>
+            <description>(true|false) Enable or disable the export
+                functionality</description>
         </attribute>
         <attribute>
-            <name>exportButtons</name>
-            <description>TODO</description>
+            <name>exportLinks</name>
+            <description>(TOP_LEFT|TOP_MIDDLE|TOP_RIGHT|BOTTOM_LEFT|BOTTOM_MIDDLE|BOTTOM_RIGHT)
+                Comma-separated list of positions where the export
+                links will be generated (Default : TOP_RIGHT)</description>
         </attribute>
         <attribute>
             <name>jqueryUI</name>
@@ -377,7 +380,8 @@
             <name>src</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <description></description>
+            <description>Location of the file containing the extra
+                DataTables configuration</description>
         </attribute>
     </tag>
 
@@ -419,11 +423,6 @@
             <description>(XML|CSV) Type of export (Default : XML,CSV)</description>
         </attribute>
         <attribute>
-            <name>id</name>
-            <description>DOM id of the HTML link</description>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
             <name>fileName</name>
             <rtexprvalue>true</rtexprvalue>
             <description>Name of the file containing exported data
@@ -441,10 +440,6 @@
         <attribute>
             <name>cssClass</name>
             <description>CSS class applied to the HTML link</description>
-        </attribute>
-        <attribute>
-            <name>position</name>
-            <description>Position of the HTML link</description>
         </attribute>
         <attribute>
             <name>area</name>

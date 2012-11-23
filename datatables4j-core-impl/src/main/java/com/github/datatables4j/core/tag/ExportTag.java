@@ -17,7 +17,6 @@
  */
 package com.github.datatables4j.core.tag;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -28,7 +27,6 @@ import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.model.ExportButtonPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportType;
-import com.github.datatables4j.core.util.RequestHelper;
 
 /**
  * Tag which allows to configure the table export.
@@ -86,12 +84,9 @@ public class ExportTag extends TagSupport {
 			conf.setPosition(position != null ? position : ExportButtonPosition.TOP_MIDDLE);
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
+			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&" + ExportConstants.DT4J_EXPORT_TYPE + "=" + ExportType.valueOf(conf.getType()).getUrlParameter());
 			
-			HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-			String currentURL = RequestHelper.getCurrentUrl(request);
-			conf.setUrl(currentURL + "?" + ExportConstants.DT4J_EXPORT + "=1&" + ExportConstants.DT4J_EXPORT_TYPE + "=" + ExportType.valueOf(conf.getType()).getUrlParameter());
-			
-			parent.getTable().getExportConfs().put(ExportType.valueOf(type), conf);
+			parent.getTable().getExportConfMap().put(ExportType.valueOf(type), conf);
 			
 			logger.debug("Export conf added to table {}", conf);
 		}
