@@ -297,7 +297,7 @@ public class WebResourceGenerator {
 			StringBuffer extaConf = new StringBuffer();
 			extaConf.append("$.ajax({url:\"");
 			extaConf.append(conf.getSrc());
-			extaConf.append("\",dataType: \"text\",type: \"GET\", success: function(extraProperties, xhr, response) {");
+			extaConf.append("\",dataType: \"text\",type: \"GET\", async: false, success: function(extraProperties, xhr, response) {");
 			extaConf.append("$.extend(true, oTable_");
 			extaConf.append(table.getId());
 			extaConf.append("_params, eval('(' + extraProperties + ')'));");
