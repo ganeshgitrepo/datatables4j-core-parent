@@ -114,7 +114,6 @@ public class TableTag extends AbstractTableTag {
 	 * TODO
 	 */
 	public int doEndTag() throws JspException {
-		System.out.println(" ========================== DEBUT doEndTag");
 
 		// Update the HtmlTable object configuration with the attributes
 		registerBasicConfiguration();

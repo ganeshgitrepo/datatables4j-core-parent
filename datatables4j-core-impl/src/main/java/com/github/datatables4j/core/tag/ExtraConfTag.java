@@ -21,6 +21,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import com.github.datatables4j.core.api.model.ExtraConf;
+import com.github.datatables4j.core.util.RequestHelper;
 
 /**
  * Tag used to add some extra Javascript configuration to the DataTable.
@@ -60,7 +61,7 @@ public class ExtraConfTag extends TagSupport {
 	 * @return
 	 */
 	private String getLocation(String src){
-		return pageContext.getServletContext().getRealPath(src);
+		return RequestHelper.getBaseUrl(pageContext) + src;
 	}
 
 	public String getSrc() {

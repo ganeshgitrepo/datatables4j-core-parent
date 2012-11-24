@@ -305,9 +305,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 * @return true if the table is being exported, false otherwise.
 	 */
 	protected Boolean isExporting() {
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		System.out.println(request.getAttribute("isExporting"));
-		System.out.println(pageContext.getRequest().getAttribute("isExporting") != null);
 		return (Boolean) (pageContext.getRequest().getAttribute("isExporting") != null ? pageContext
 				.getRequest().getAttribute("isExporting") : false);
 	}
@@ -321,15 +318,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
-		// String exportURI = "dt4j/export/";
-		// String currentURL = RequestHelper.getCurrentUrl(request);
-		//
-		// System.out.println(" currentURL.substring(currentURL.indexOf(exportURI)) = "+
-		// currentURL.substring(currentURL.indexOf(exportURI)));
-		// String[] test =
-		// currentURL.substring(currentURL.indexOf(exportURI)).split("/");
-		// System.out.println("test = " + test);
-		//
 		// Get the URL parameter used to identify the export type
 		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
 

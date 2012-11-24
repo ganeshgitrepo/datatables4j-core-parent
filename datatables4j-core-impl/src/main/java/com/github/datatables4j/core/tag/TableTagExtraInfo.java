@@ -35,7 +35,6 @@ public class TableTagExtraInfo extends TagExtraInfo {
 	 * TODO
 	 */
 	public VariableInfo[] getVariableInfo(TagData data) {
-		System.out.println("getId =" + data.getId());
 		
 		List<VariableInfo> variables = new ArrayList<VariableInfo>();
 		
