@@ -24,13 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportType;
 
 /**
- * Tag which allows to configure the table export.
- *
+ * Tag which allows to configure an export type for the current table.
+ * 
  * @author Thibault Duchateau
  */
 public class ExportTag extends TagSupport {
@@ -38,9 +38,8 @@ public class ExportTag extends TagSupport {
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(ExportTag.class);
-		
+
 	// Tag attributes
-	private String id;
 	private String fileName;
 	private String type;
 	private String label;
@@ -49,7 +48,7 @@ public class ExportTag extends TagSupport {
 	private ExportLinkPosition position;
 	private Boolean includeHeader;
 	private String area;// TODO
-	
+
 	/**
 	 * An ExportTag has no body but we test here that it is in the right place.
 	 */
@@ -61,45 +60,53 @@ public class ExportTag extends TagSupport {
 
 		return SKIP_BODY;
 	}
-	
+
 	/**
 	 * Process the tag updating table properties.
 	 */
 	public int doEndTag() throws JspException {
-		
+
 		// Get parent tag
 		AbstractTableTag parent = (AbstractTableTag) getParent();
 
 		// Evaluate the tag only once using the parent's isFirstRow method
-		if(parent.isFirstRow()){
-			
+		if (parent.isFirstRow()) {
+
+			ExportType exportType = null;
+			try {
+				exportType = ExportType.valueOf(type);
+			} catch (IllegalArgumentException e) {
+				logger.error("The export cannot be activated for the table {}. ", parent.getTable()
+						.getId());
+				logger.error("{} is not a valid value among {}", type, ExportType.values());
+				throw new JspException(e);
+			}
+
 			ExportConf conf = new ExportConf();
-			
-			conf.setId(id != null ? id : "");
+
 			conf.setFileName(fileName != null ? fileName : "export");
 			conf.setType(type != null ? type.toUpperCase() : "CSV");
 			conf.setLabel(label != null ? label : type.toUpperCase());
 			conf.setCssClass(cssClass != null ? new StringBuffer(cssClass) : new StringBuffer());
 			conf.setCssStyle(cssStyle != null ? new StringBuffer(cssStyle) : new StringBuffer());
 			conf.setPosition(position != null ? position : ExportLinkPosition.TOP_MIDDLE);
+
+			System.out.println("includeHeader = " + includeHeader);
+
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
-			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&" + ExportConstants.DT4J_EXPORT_TYPE + "=" + ExportType.valueOf(conf.getType()).getUrlParameter());
-			
-			parent.getTable().getExportConfMap().put(ExportType.valueOf(type), conf);
-			
+			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_TYPE
+					+ "=" + exportType.getUrlParameter() + "&" + ExportConstants.DT4J_EXPORT_ID
+					+ "=" + parent.getTable().getId());
+
+			System.out.println("conf = " + conf);
+
+			parent.getTable().getExportConfMap().put(exportType, conf);
+
 			logger.debug("Export conf added to table {}", conf);
 		}
-		
+
 		return EVAL_PAGE;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getFileName() {

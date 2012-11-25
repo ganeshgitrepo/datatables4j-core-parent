@@ -36,7 +36,7 @@ public class ExtraConfTag extends TagSupport {
 	private String src;
 
 	/**
-	 * TODO
+	 * This tag doen't have a body.
 	 */
 	public int doStartTag() throws JspException {
 		return SKIP_BODY;

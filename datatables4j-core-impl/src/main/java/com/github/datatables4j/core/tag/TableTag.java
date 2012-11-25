@@ -32,7 +32,6 @@ import com.github.datatables4j.core.aggregator.ResourceAggregator;
 import com.github.datatables4j.core.api.constants.CdnConstants;
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.exception.BadExportConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.exception.ExportException;
@@ -119,14 +118,10 @@ public class TableTag extends AbstractTableTag {
 		registerBasicConfiguration();
 
 		// Update the HtmlTable object with the export configuration
-		try {
-			registerExportConfiguration();
-		} catch (BadExportConfigurationException e) {
-			throw new JspException(e);
-		}
+		registerExportConfiguration();
 		
 		// The table is being exported
-		if (isExporting()) {
+		if (isTableBeingExported()) {
 			return setupExport();
 		}
 		// The table must be generated and displayed
@@ -136,14 +131,15 @@ public class TableTag extends AbstractTableTag {
 	}
 
 	/**
-	 * Set up the export.
+	 * Set up the export properties, before the filter intercepts the response.
 	 * 
 	 * @return allways SKIP_PAGE, because the export filter will override the
-	 *         response with the exported data.
+	 *         response with the exported data instead of displaying the page.
 	 * @throws JspException
 	 *             if something went wrong during export.
 	 */
 	private int setupExport() throws JspException {
+		
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
@@ -151,6 +147,7 @@ public class TableTag extends AbstractTableTag {
 		ExportProperties exportProperties = new ExportProperties();
 
 		ExportType currentExportType = getCurrentExportType();
+		
 		exportProperties.setCurrentExportType(currentExportType);
 		exportProperties.setExportConf(table.getExportConfMap().get(currentExportType));
 		exportProperties.setFileName(table.getExportConfMap().get(currentExportType).getFileName());			

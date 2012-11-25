@@ -470,5 +470,25 @@ public class HtmlTable {
 	public void setCurrentUrl(String currentUrl) {
 		this.currentUrl = currentUrl;
 	}
+
+	@Override
+	public String toString() {
+		return "HtmlTable [domId=" + domId + ", cssStyle=" + cssStyle + ", cssClass=" + cssClass
+				+ ", autoWidth=" + autoWidth + ", deferRender=" + deferRender + ", info=" + info
+				+ ", filterable=" + filterable + ", paginate=" + paginate + ", paginationStyle="
+				+ paginationStyle + ", lengthChange=" + lengthChange + ", processing=" + processing
+				+ ", sort=" + sort + ", stateSave=" + stateSave + ", labels=" + labels + ", cdn="
+				+ cdn + ", jqueryUI=" + jqueryUI + ", scrollY=" + scrollY + ", fixedPosition="
+				+ fixedPosition + ", fixedOffsetTop=" + fixedOffsetTop + ", head=" + head
+				+ ", body=" + body + ", foot=" + foot + ", tableProperties=" + tableProperties
+				+ ", attributes=" + attributes + ", datasourceUrl=" + datasourceUrl + ", plugins="
+				+ plugins + ", features=" + features + ", extraFiles=" + extraFiles
+				+ ", extraConfs=" + extraConfs + ", randomId=" + randomId + ", objectType="
+				+ objectType + ", currentUrl=" + currentUrl + ", exportProperties="
+				+ exportProperties + ", exporting=" + exporting + ", exportConfMap="
+				+ exportConfMap + ", exportLinkPositions=" + exportLinkPositions
+				+ ", isExportable=" + isExportable + "]";
+	}
+	
 	
 }

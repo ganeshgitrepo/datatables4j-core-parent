@@ -69,15 +69,15 @@ public class DatatablesFilter implements Filter {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
 
 			// Don't filter anything
-			 if (request.getParameter(ExportConstants.DT4J_EXPORT) == null) {
+			 if (request.getParameter(ExportConstants.DT4J_EXPORT_ID) == null) {
 
 				chain.doFilter(servletRequest, servletResponse);
 				
 			} else {
-			
-				// TODO : utiliser des constantes
-				request.setAttribute("isExporting", true);
 
+				// Flag set in request to tell the taglib to export the table instead of displaying it
+				request.setAttribute(ExportConstants.DT4J_EXPORT_ID, request.getParameter(ExportConstants.DT4J_EXPORT_ID));
+				
 				HttpServletResponse response = (HttpServletResponse) servletResponse;
 				DatatablesResponseWrapper resWrapper = new DatatablesResponseWrapper(response);
 

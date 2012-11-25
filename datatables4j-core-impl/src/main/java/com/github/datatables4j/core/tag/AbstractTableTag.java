@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadExportConfigurationException;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.feature.ui.InputFilteringFeature;
@@ -212,9 +212,10 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	/**
 	 * Register export configuration.
-	 * @throws BadExportConfigurationException 
+	 * 
+	 * @throws BadExportConfigurationException
 	 */
-	protected void registerExportConfiguration() throws BadExportConfigurationException {
+	protected void registerExportConfiguration() throws JspException {
 
 		if (this.export != null && this.export) {
 
@@ -229,9 +230,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 					try {
 						positionList.add(ExportLinkPosition.valueOf(position));
 					} catch (IllegalArgumentException e) {
-						logger.error("The export cannot be activated for the table {}. ", table.getId());
-						logger.error("{} is not a valid value among {}", position, ExportLinkPosition.values());
-						throw new BadExportConfigurationException(e);
+						logger.error("The export cannot be activated for the table {}. ",
+								table.getId());
+						logger.error("{} is not a valid value among {}", position,
+								ExportLinkPosition.values());
+						throw new JspException(e);
 					}
 				}
 			} else {
@@ -239,7 +242,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			}
 			this.table.setExportLinkPositions(positionList);
 
-			// Export links
+			// // Export links
 			// The exportConfMap hasn't been filled by ExportTag
 			// So we use the default configuration
 			if (table.getExportConfMap().size() == 0) {
@@ -249,12 +252,12 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 					conf.setFileName("export");
 					conf.setType(exportType.toString());
-					conf.setLabel(exportType.toString());					
+					conf.setLabel(exportType.toString());
 					conf.setPosition(ExportLinkPosition.TOP_MIDDLE);
 					conf.setIncludeHeader(true);
 					conf.setArea("ALL");
-					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT + "=1&"
-							+ ExportConstants.DT4J_EXPORT_TYPE + "="
+					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_ID + "="
+							+ table.getId() + "&" + ExportConstants.DT4J_EXPORT_TYPE + "="
 							+ ExportType.valueOf(conf.getType()).getUrlParameter());
 
 					table.getExportConfMap().put(exportType, conf);
@@ -297,16 +300,22 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 	}
 
-
 	/**
-	 * Test if the table if being exported thanks to a request attribute set at
-	 * the beginning of the evaluation when the user clicked on an export link.
+	 * <p>
+	 * Test if the table if being exported using the request
+	 * ExportConstants.DT4J_EXPORT_ID attribute.
+	 * 
+	 * <p>
+	 * The table's id must be tested in case of multiple tables are displayed on
+	 * the same page and exportables.
 	 * 
 	 * @return true if the table is being exported, false otherwise.
 	 */
-	protected Boolean isExporting() {
-		return (Boolean) (pageContext.getRequest().getAttribute("isExporting") != null ? pageContext
-				.getRequest().getAttribute("isExporting") : false);
+	protected Boolean isTableBeingExported() {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		return request.getAttribute(ExportConstants.DT4J_EXPORT_ID) != null ? request
+				.getAttribute(ExportConstants.DT4J_EXPORT_ID).toString().toLowerCase()
+				.equals(table.getId().toLowerCase()) : false;
 	}
 
 	/**

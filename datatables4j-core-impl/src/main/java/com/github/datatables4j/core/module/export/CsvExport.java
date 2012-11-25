@@ -20,7 +20,7 @@ public class CsvExport extends AbstractExport {
 	public Object processExport() throws ExportException {
 	
 		StringBuffer buffer = new StringBuffer();
-		
+
 		if(table.getExportConfMap().get(ExportType.CSV).getIncludeHeader()){
 			for(HtmlRow row : table.getHeadRows()){
 				for(HtmlColumn column : row.getColumns()){

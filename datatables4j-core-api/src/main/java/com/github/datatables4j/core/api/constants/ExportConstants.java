@@ -34,9 +34,9 @@ public class ExportConstants {
 
 	/** Request parameters */
 
-	// Export en cours
-	public static final String DT4J_EXPORT = "dt4je";
-
-	// Type d'export en cours
+	// Table'is being exported
+	public static final String DT4J_EXPORT_ID = "dt4ji";
+		
+	// Type of current export
 	public static final String DT4J_EXPORT_TYPE = "dt4jt";
 }

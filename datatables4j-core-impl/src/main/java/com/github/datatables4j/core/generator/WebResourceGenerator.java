@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,8 @@ import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportConf;
+import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
 import com.github.datatables4j.core.api.model.HtmlDiv;
@@ -170,10 +169,6 @@ public class WebResourceGenerator {
 			for (ExportConf conf : table.getExportConfMap().values()) {
 
 				link = new HtmlLink();
-
-				if (StringUtils.isNotBlank(conf.getId())) {
-					link.setId(conf.getId());
-				}
 
 				if (conf.getCssClass() != null) {
 					link.setCssClass(conf.getCssClass());
