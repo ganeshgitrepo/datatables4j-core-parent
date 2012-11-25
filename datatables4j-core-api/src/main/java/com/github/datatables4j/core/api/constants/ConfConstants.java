@@ -30,5 +30,8 @@ public class ConfConstants {
 	public static final String DT_COMPRESSOR_ENABLE = "compressor.enable";
 	public static final String DT_COMPRESSOR_MODE = "compressor.mode";
 	public static final String DT_COMPRESSOR_CLASS = "compressor.class";
+	public static final String DT_COMPRESSOR_MUNGE = "compressor.munge";
+	public static final String DT_COMPRESSOR_PRESERVE_SEMI = "compressor.preserveSemiColons";
+	public static final String DT_COMPRESSOR_DISABLE_OPTI = "compressor.disableOptimizations";
 	public static final String DT_EXPORT_TYPES = "export.types";
 }

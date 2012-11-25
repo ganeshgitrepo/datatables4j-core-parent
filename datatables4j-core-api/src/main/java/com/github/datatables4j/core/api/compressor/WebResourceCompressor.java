@@ -18,6 +18,7 @@
 package com.github.datatables4j.core.api.compressor;
 
 import com.github.datatables4j.core.api.exception.CompressionException;
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
  * Compressor for web resources (Javascript, Stylesheets).
@@ -29,6 +30,8 @@ public interface WebResourceCompressor {
 	/**
 	 * Return as String a compressed version of the given Javascript code.
 	 * 
+	 * @param table
+	 *            The table containing, among others, the compression options.
 	 * @param input
 	 *            The Javascript code to compress.
 	 * @return The Javascript code compressed.
@@ -36,7 +39,8 @@ public interface WebResourceCompressor {
 	 *             if the String containing Javascript code is malformed or
 	 *             cannot be evaluated.
 	 */
-	public String getCompressedJavascript(String input) throws CompressionException;
+	public String getCompressedJavascript(HtmlTable table, String input)
+			throws CompressionException;
 
 	/**
 	 * Return as String a compressed version of the given CSS code.

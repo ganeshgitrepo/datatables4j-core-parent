@@ -37,6 +37,7 @@ public class ResourceCompressorDelegate {
     // Logger
     private static Logger logger = LoggerFactory.getLogger(ResourceCompressorDelegate.class);
 
+    private HtmlTable table;
     private String compressorClassName;
 
     /**
@@ -44,6 +45,7 @@ public class ResourceCompressorDelegate {
      */
     public ResourceCompressorDelegate(HtmlTable table) {
 
+    	this.table = table;
         this.compressorClassName = table.getTableProperties().getCompressorClassName();
 
         logger.debug("ResourceCompressor loaded. About to use {} implementation", this.compressorClassName);
@@ -70,7 +72,7 @@ public class ResourceCompressorDelegate {
 
         logger.debug("Invoking method getCompressedJavascript");
         try {
-            return (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[]{input});
+            return (String) ReflectHelper.invokeMethod(obj, "getCompressedJavascript", new Object[]{table, input});
         } catch (BadConfigurationException e) {
             if (e.getCause() instanceof InvocationTargetException) {
                 throw (CompressionException) ((InvocationTargetException) e.getCause()).getTargetException();
