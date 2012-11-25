@@ -113,7 +113,10 @@ public class JsResource  {
 			
 			retval.append("\n});");		
 			
-			retval.append(this.afterAll);
+			if(this.afterAll != null){
+				retval.append("\n");
+				retval.append(this.afterAll);
+			}
 			
 			break;
 			
