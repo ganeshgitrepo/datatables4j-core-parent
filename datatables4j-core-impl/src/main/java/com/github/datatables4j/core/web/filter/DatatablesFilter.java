@@ -51,7 +51,7 @@ public class DatatablesFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		
+
 		// TODO configuration dynamique de l'urlPattern en fonction de la conf
 		// Datatables4j ?
 	}
@@ -69,15 +69,17 @@ public class DatatablesFilter implements Filter {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
 
 			// Don't filter anything
-			 if (request.getParameter(ExportConstants.DT4J_EXPORT_ID) == null) {
+			if (request.getParameter(ExportConstants.DT4J_EXPORT_ID) == null) {
 
 				chain.doFilter(servletRequest, servletResponse);
-				
+
 			} else {
 
-				// Flag set in request to tell the taglib to export the table instead of displaying it
-				request.setAttribute(ExportConstants.DT4J_EXPORT_ID, request.getParameter(ExportConstants.DT4J_EXPORT_ID));
-				
+				// Flag set in request to tell the taglib to export the table
+				// instead of displaying it
+				request.setAttribute(ExportConstants.DT4J_EXPORT_ID,
+						request.getParameter(ExportConstants.DT4J_EXPORT_ID));
+
 				HttpServletResponse response = (HttpServletResponse) servletResponse;
 				DatatablesResponseWrapper resWrapper = new DatatablesResponseWrapper(response);
 

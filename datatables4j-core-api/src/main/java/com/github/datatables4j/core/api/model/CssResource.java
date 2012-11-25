@@ -17,6 +17,11 @@
  */
 package com.github.datatables4j.core.api.model;
 
+/**
+ * POJO that symbolizes a CSS file.
+ *
+ * @author Thibault Duchateau
+ */
 public class CssResource  {
 	
 	private String name;

@@ -18,6 +18,7 @@
 package com.github.datatables4j.core.generator;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
@@ -43,12 +44,18 @@ import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.datasource.DataProvider;
 import com.github.datatables4j.core.feature.FeatureLoader;
 import com.github.datatables4j.core.plugin.InternalPluginLoader;
+import com.github.datatables4j.core.util.JsonIndentingWriter;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
 import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
+ * <p>
  * Class in charge of web resources generation.
+ * 
+ * <p>
+ * The generated JSON (DataTables configuration) is pretty printed using a
+ * custom writer written by Elad Tabak.
  * 
  * @author Thibault Duchateau
  */
@@ -57,13 +64,17 @@ public class WebResourceGenerator {
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(WebResourceGenerator.class);
 
+	// Custom writer used to pretty JSON
+	private Writer writer = new JsonIndentingWriter();
+
 	/**
 	 * The DataTables configuration generator.
 	 */
 	private static ConfigGenerator configGenerator;
 
 	/**
-	 * <p>Main method which generated the web resources (js and css files).
+	 * <p>
+	 * Main method which generated the web resources (js and css files).
 	 * 
 	 * @param pageContext
 	 *            Context of the servlet.
@@ -118,11 +129,18 @@ public class WebResourceGenerator {
 
 			mainConf.put(DTConstants.DT_DS_DATA, dataProvider.getData(table, webServiceUrl));
 
-			mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
+			// Allways pretty prints the JSON
+			JSONValue.writeJSONString(mainConf, writer);
+						
+			mainJsFile.appendToDataTablesConf(writer.toString());
 		}
 		// DOM datasource
 		else {
-			mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
+			// Allways pretty prints the JSON
+			JSONValue.writeJSONString(mainConf, writer);
+			
+			// mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
+			mainJsFile.appendToDataTablesConf(writer.toString());
 		}
 
 		if (table.isExportable()) {
@@ -307,7 +325,7 @@ public class WebResourceGenerator {
 		// TODO Old way here, trying to parse in JSON the content of extraConf
 		// file
 		// TODO using Jackson but "function" keyword is not JSON compliant
-		
+
 		// // Jackson object mapper
 		// ObjectMapper mapper = new ObjectMapper();
 		//

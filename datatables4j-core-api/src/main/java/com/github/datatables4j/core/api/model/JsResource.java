@@ -20,20 +20,21 @@ package com.github.datatables4j.core.api.model;
 import com.github.datatables4j.core.api.constants.ResourceType;
 
 /**
- * TODO
+ * POJO that symbolizes a JS file.
  *
  * @author Thibault Duchateau
  */
 public class JsResource  {
 
+	private static final String INDENTATION = "   ";
 	private String name;
 	private String content;
-	private StringBuffer beforeAll = new StringBuffer();
-	private StringBuffer beforeStartDocumentReady = new StringBuffer();
-	private StringBuffer afterStartDocumentReady = new StringBuffer();
-	private StringBuffer beforeEndDocumentReady = new StringBuffer();
-	private StringBuffer afterAll = new StringBuffer();
-	private StringBuffer dataTablesConf = new StringBuffer();
+	private StringBuffer beforeAll;
+	private StringBuffer beforeStartDocumentReady;
+	private StringBuffer afterStartDocumentReady;
+	private StringBuffer beforeEndDocumentReady;
+	private StringBuffer afterAll;
+	private StringBuffer dataTablesConf;
 	private String tableId;
 	private ResourceType type;
 
@@ -70,33 +71,47 @@ public class JsResource  {
 		switch(type){
 		case MAIN : 
 			
-			retval.append(this.beforeAll);
+			if(this.beforeAll != null){
+				retval.append(this.beforeAll);
+				retval.append(";\n");
+			}
 			
 			retval.append("var oTable_");
 			retval.append(tableId);
-			retval.append(";");
+			retval.append(";\n");
 			
 			retval.append("var oTable_");
 			retval.append(tableId);
 			retval.append("_params = ");
 			retval.append(this.dataTablesConf);
-			retval.append(";");
+			retval.append(";\n");
 			
-			retval.append(this.beforeStartDocumentReady);
+			if(this.beforeStartDocumentReady != null){
+				retval.append(this.beforeStartDocumentReady);				
+			}
 			
-			retval.append("$(document).ready(function(){");
-			retval.append(this.afterStartDocumentReady);
-			
+			retval.append("$(document).ready(function(){\n");
+			if(this.afterStartDocumentReady != null){
+				retval.append("\n");
+				retval.append(INDENTATION);
+				retval.append(this.afterStartDocumentReady);
+			}
+			retval.append(INDENTATION);
 			retval.append("oTable_");
 			retval.append(this.tableId);
-			retval.append("=$('#");
+			retval.append(" = $('#");
 			retval.append(this.tableId);
 			retval.append("').dataTable(oTable_");
 			retval.append(tableId);
 			retval.append("_params);");
-					
-			retval.append(this.beforeEndDocumentReady);
-			retval.append("});");		
+								
+			if(this.beforeEndDocumentReady != null){
+				retval.append("\n");
+				retval.append(INDENTATION);
+				retval.append(this.beforeEndDocumentReady);				
+			}
+			
+			retval.append("\n});");		
 			
 			retval.append(this.afterAll);
 			
@@ -132,6 +147,9 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeAll(String beforeAll) {
+		if(this.beforeAll == null){
+			this.beforeAll = new StringBuffer();
+		}
 		this.beforeAll.append(beforeAll);
 	}
 
@@ -140,6 +158,9 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeStartDocumentReady(String beforeStartDocumentReady) {
+		if(this.beforeStartDocumentReady == null){
+			this.beforeStartDocumentReady = new StringBuffer();
+		}
 		this.beforeStartDocumentReady.append(beforeStartDocumentReady);
 	}
 	
@@ -148,6 +169,9 @@ public class JsResource  {
 	}
 
 	public void appendToAfterStartDocumentReady(String afterStartDocumentReady) {
+		if(this.afterStartDocumentReady == null){
+			this.afterStartDocumentReady = new StringBuffer();
+		}
 		this.afterStartDocumentReady.append(afterStartDocumentReady);
 	}
 
@@ -156,6 +180,9 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeEndDocumentReady(String beforeEndDocumentReady) {
+		if(this.beforeEndDocumentReady == null){
+			this.beforeEndDocumentReady = new StringBuffer();
+		}
 		this.beforeEndDocumentReady.append(beforeEndDocumentReady);
 	}
 
@@ -164,6 +191,9 @@ public class JsResource  {
 	}
 
 	public void appendToAfterAll(String afterAll) {
+		if(this.afterAll == null){
+			this.afterAll = new StringBuffer();
+		}
 		this.afterAll.append(afterAll);
 	}
 
@@ -172,6 +202,9 @@ public class JsResource  {
 	}
 
 	public void appendToDataTablesConf(String dataTablesConf) {
+		if(this.dataTablesConf == null){
+			this.dataTablesConf = new StringBuffer();
+		}
 		this.dataTablesConf.append(dataTablesConf);
 	}
 
