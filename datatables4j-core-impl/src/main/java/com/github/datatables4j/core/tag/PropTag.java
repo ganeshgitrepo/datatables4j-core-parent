@@ -63,7 +63,7 @@ public class PropTag extends TagSupport {
 			
 			if(parent.getTable().getTableProperties().isValidProperty(name)){
 				// Override the existing properties with the new one
-				parent.getTable().getTableProperties().setProperty(name,  value);
+				parent.getTable().getTableProperties().setProperty(name, value);
 			}
 			else{
 				logger.error("The property {} doesn't exist. Please visit the documentation.", name);
