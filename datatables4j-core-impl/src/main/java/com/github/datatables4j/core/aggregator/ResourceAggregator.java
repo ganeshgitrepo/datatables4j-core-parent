@@ -94,38 +94,47 @@ public class ResourceAggregator {
 	 */
 	public static void aggregateAll(WebResources webResources) {
 
-		String jsResourceName = NameConstants.DT_AGG_ALL_JS + ResourceHelper.getRamdomNumber()
-				+ ".js";
-		String cssResourceName = NameConstants.DT_AGG_ALL_CSS + ResourceHelper.getRamdomNumber()
-				+ ".css";
+		// Only aggregate if there's more than 1 JS file
+		if (webResources.getJavascripts().size() > 1) {
 
-		JsResource aggregateJsFile = new JsResource(ResourceType.AGGREGATE, jsResourceName);
-		CssResource aggregateCssFile = new CssResource(cssResourceName);
+			String jsResourceName = NameConstants.DT_AGG_ALL_JS + ResourceHelper.getRamdomNumber()
+					+ ".js";
 
-		String aggregatedJsContent = "";
-		String aggregatedCssContent = "";
+			JsResource aggregateJsFile = new JsResource(ResourceType.AGGREGATE, jsResourceName);
+			String aggregatedJsContent = "";
 
-		for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
-			aggregatedJsContent += entry.getValue().getContent();
+			for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
+				aggregatedJsContent += entry.getValue().getContent();
+			}
+			aggregateJsFile.setContent(aggregatedJsContent);
+
+			// All existing Javascript resources are removed
+			webResources.getJavascripts().clear();
+
+			// Add aggregated Javascript resource
+			webResources.getJavascripts().put(aggregateJsFile.getName(), aggregateJsFile);
 		}
-		aggregateJsFile.setContent(aggregatedJsContent);
 
-		for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
-			aggregatedCssContent += entry.getValue().getContent();
+		// Only aggregate if there's more than 1 CSS file
+		if (webResources.getStylesheets().size() > 1) {
+			String cssResourceName = NameConstants.DT_AGG_ALL_CSS
+					+ ResourceHelper.getRamdomNumber() + ".css";
+
+			CssResource aggregateCssFile = new CssResource(cssResourceName);
+
+			String aggregatedCssContent = "";
+
+			for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
+				aggregatedCssContent += entry.getValue().getContent();
+			}
+			aggregateCssFile.setContent(aggregatedCssContent);
+
+			// All existing Stylesheets resources are removed
+			webResources.getStylesheets().clear();
+
+			// Add aggregated stylesheet resource
+			webResources.getStylesheets().put(aggregateCssFile.getName(), aggregateCssFile);
 		}
-		aggregateCssFile.setContent(aggregatedCssContent);
-
-		// All existing Javascript resources are removed
-		webResources.getJavascripts().clear();
-
-		// Add aggregated Javascript resource
-		webResources.getJavascripts().put(aggregateJsFile.getName(), aggregateJsFile);
-
-		// All existing Stylesheets resources are removed
-		webResources.getStylesheets().clear();
-
-		// Add aggregated stylesheet resource
-		webResources.getStylesheets().put(aggregateCssFile.getName(), aggregateCssFile);
 
 		logger.debug("Aggregation (ALL) completed");
 	}

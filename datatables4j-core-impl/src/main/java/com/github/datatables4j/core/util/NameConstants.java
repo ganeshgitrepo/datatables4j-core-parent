@@ -38,8 +38,8 @@ public class NameConstants {
 
 	public static final String DT_MAIN_JS = "datatables4j-";
 	public static final String DT_PLUGIN_JS = "datatables4j-";
-	public static final String DT_AGG_ALL_JS = "datatables4j-aggregated-";
-	public static final String DT_AGG_ALL_CSS = "datatables4j-aggregated-";
-	public static final String DT_AGG_PLUGINS_JS = "datatables4j-aggregated-plugins-";
-	public static final String DT_AGG_PLUGINS_CSS = "datatables4j-aggregated-plugins-";
+	public static final String DT_AGG_ALL_JS = "datatables4j-aggr-";
+	public static final String DT_AGG_ALL_CSS = "datatables4j-aggr-";
+	public static final String DT_AGG_PLUGINS_JS = "datatables4j-aggr-plugins-";
+	public static final String DT_AGG_PLUGINS_CSS = "datatables4j-aggr-plugins-";
 }
