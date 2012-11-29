@@ -88,7 +88,6 @@ public class ResourceHelper {
 	 */
 	public static String getFileContentFromClasspath(String pathToFile) throws BadConfigurationException {
 		String retval = null;
-		System.out.println(pathToFile);
 		try {
 			retval = toString(getFileFromClasspath(pathToFile));
 		} catch (IOException e) {
@@ -129,14 +128,11 @@ public class ResourceHelper {
 		InputStreamReader   in = new InputStreamReader  (input);
 		 
 		char[] buffer = new char[DEFAULT_BUFFER_SIZE];
-		int count = 0;
 		int n = 0;
 		while (-1 != (n = in.read(buffer))) {
 			sw.write(buffer, 0, n);
-			count += n;
 		}
 
-		System.out.println("================= sw = " + sw.toString());
 		return sw.toString();
 	}
 	

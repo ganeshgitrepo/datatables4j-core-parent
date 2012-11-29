@@ -191,7 +191,7 @@ public class WebResourceGenerator {
 
 		// ExportTag have been added to the TableTag
 		if (table.getExportConfMap() != null && table.getExportConfMap().size() > 0) {
-			logger.debug("ExportTag have been found. Generating export links");
+			logger.debug("Generating export links");
 
 			HtmlLink link = null;
 

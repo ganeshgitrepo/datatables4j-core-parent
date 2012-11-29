@@ -33,17 +33,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 /**
- * TODO
+ * Helper class used for all HttpServletRequest stuff.
  * 
  * @author Thibault Duchateau
  */
 public class RequestHelper {
 
 	/**
-	 * TODO
+	 * <p>
+	 * Return the base URL (context path included).
+	 * 
+	 * <p>
+	 * Example : with an URL like http://domain.com:port/context/anything, this
+	 * function returns http://domain.com:port/context.
 	 * 
 	 * @param pageContext
-	 * @return
+	 *            Context of the current JSP.
+	 * @return the base URL of the current JSP.
 	 */
 	public static String getBaseUrl(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -51,6 +57,13 @@ public class RequestHelper {
 				.replace(request.getRequestURI(), request.getContextPath());
 	}
 
+	/**
+	 * Return the current URL, used to generate the export links.
+	 * 
+	 * @param request
+	 *            The current request.
+	 * @return a String containing the current URL.
+	 */
 	public static String getCurrentUrl(HttpServletRequest request) {
 		String currentUrl = null;
 		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
@@ -60,7 +73,6 @@ public class RequestHelper {
 				&& request.getAttribute("javax.servlet.include.query_string") != null) {
 			currentUrl += "?" + request.getQueryString();
 		}
-		System.out.println("currentURL = " + currentUrl);
 		return currentUrl;
 	}
 }

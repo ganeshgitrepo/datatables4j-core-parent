@@ -102,16 +102,11 @@ public class ExportTag extends TagSupport {
 			conf.setCssClass(cssClass != null ? new StringBuffer(cssClass) : new StringBuffer());
 			conf.setCssStyle(cssStyle != null ? new StringBuffer(cssStyle) : new StringBuffer());
 			conf.setPosition(position != null ? position : ExportLinkPosition.TOP_MIDDLE);
-
-			System.out.println("includeHeader = " + includeHeader);
-
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
 			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_TYPE
 					+ "=" + exportType.getUrlParameter() + "&" + ExportConstants.DT4J_EXPORT_ID
 					+ "=" + parent.getTable().getId());
-
-			System.out.println("conf = " + conf);
 
 			parent.getTable().getExportConfMap().put(exportType, conf);
 

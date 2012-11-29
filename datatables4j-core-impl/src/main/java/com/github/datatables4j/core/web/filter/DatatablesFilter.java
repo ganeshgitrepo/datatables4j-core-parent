@@ -101,16 +101,12 @@ public class DatatablesFilter implements Filter {
 						.getAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES);
 				String fileName = exportProperties.getFileName() + "."
 						+ exportProperties.getCurrentExportType().getExtension();
-				System.out.println("fileName = " + fileName);
 
-				// TODO : variabiliser : configuration DT4J ?
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName
 						+ "\"");
 
-				// TODO : recuperer en fonction du lien d'export
 				response.setContentType(exportProperties.getCurrentExportType().getMimeType());
 
-				// TODO : utiliser des constantes
 				String content = String.valueOf(servletRequest
 						.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
 
