@@ -29,7 +29,7 @@
  */
 package com.github.datatables4j.core.module.export;
 
-import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +43,14 @@ import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.module.export.AbstractExport;
+import com.github.datatables4j.core.api.module.export.AbstractCharExport;
 
-public class XmlExport extends AbstractExport {
+/**
+ * TODO
+ *
+ * @author Thibault Duchateau
+ */
+public class XmlExport extends AbstractCharExport {
 
 	private HtmlTable table;
 
@@ -55,7 +60,7 @@ public class XmlExport extends AbstractExport {
 	}
 
 	@Override
-	public Object processExport() throws ExportException {
+	public void processExport(Writer output) throws ExportException {
 
 		// Build headers list for attributes name
 		List<String> headers = new ArrayList<String>();
@@ -68,10 +73,10 @@ public class XmlExport extends AbstractExport {
 
 		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 		XMLStreamWriter writer = null;
-		StringWriter sw = new StringWriter();
+//		StringWriter sw = new StringWriter();
 		
 		try {
-			writer = outputFactory.createXMLStreamWriter(sw);
+			writer = outputFactory.createXMLStreamWriter(output);
 			writer.writeStartDocument("1.0");
 			writer.writeStartElement(table.getObjectType().toLowerCase() + "s");
 
@@ -90,10 +95,15 @@ public class XmlExport extends AbstractExport {
 			writer.writeEndElement();
 			writer.writeEndDocument();
 			writer.flush();
+//			output.write(.toString());
 
 		} catch (XMLStreamException e) {
 			throw new ExportException(e);
-		} finally {
+		} 
+//		catch (IOException e) {
+//			throw new ExportException(e);
+//		} 
+		finally {
 			try {
 				writer.close();
 			} catch (XMLStreamException e) {
@@ -101,6 +111,6 @@ public class XmlExport extends AbstractExport {
 			}
 		}
 
-		return sw.toString();
+//		return sw.toString();
 	}
 }

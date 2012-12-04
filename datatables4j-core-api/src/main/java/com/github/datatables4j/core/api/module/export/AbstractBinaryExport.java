@@ -27,49 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.api.module.export;
+
+import java.io.OutputStream;
+
+import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
- * POJO used to wrap current export properties.
- *
+ * Contract for every binary export implementation.
+ * 
  * @author Thibault Duchateau
  */
-public class ExportProperties {
+public abstract class AbstractBinaryExport {
 
-	private String fileName = "export";
-	private ExportType currentExportType;
-	private ExportConf exportConf;
-	private Boolean isBinaryExport;
+	/**
+	 * Initialize the implementation classes with all needed informations.
+	 * Usually, only the HtmlTable is needed, because it already contains lots
+	 * of information.
+	 * 
+	 * @param table
+	 *            The HTML table containing all needed informations for the
+	 *            export.
+	 */
+	public abstract void initExport(HtmlTable table);
 
-	public ExportType getCurrentExportType() {
-		return currentExportType;
-	}
-
-	public void setCurrentExportType(ExportType currentExportType) {
-		this.currentExportType = currentExportType;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public ExportConf getExportConf() {
-		return exportConf;
-	}
-
-	public void setExportConf(ExportConf exportConf) {
-		this.exportConf = exportConf;
-	}
-
-	public Boolean isBinaryExport() {
-		return isBinaryExport;
-	}
-
-	public void setIsBinaryExport(Boolean isBinaryExport) {
-		this.isBinaryExport = isBinaryExport;
-	}
+	/**
+	 * The main export method that is called by DataTables4j in charge of
+	 * writing in the output.
+	 * 
+	 * @param output
+	 *            The stream to fill and which will override the default
+	 *            response during export.
+	 * @throws ExportException
+	 *             if something goes wrong during export
+	 */
+	public abstract void processExport(OutputStream output) throws ExportException;
 }

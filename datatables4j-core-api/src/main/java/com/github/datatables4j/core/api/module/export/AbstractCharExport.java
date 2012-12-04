@@ -29,15 +29,17 @@
  */
 package com.github.datatables4j.core.api.module.export;
 
+import java.io.Writer;
+
 import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
- * Contract for every export implementation.
+ * Contract for every export implementation based on characters.
  * 
  * @author Thibault Duchateau
  */
-public abstract class AbstractExport {
+public abstract class AbstractCharExport {
 
 	/**
 	 * Initialize the implementation classes with all needed informations.
@@ -51,11 +53,14 @@ public abstract class AbstractExport {
 	public abstract void initExport(HtmlTable table);
 
 	/**
-	 * The main export method that is called by DataTables4j.
+	 * The main export method that is called by DataTables4j in charge of
+	 * writing in the output.
 	 * 
-	 * @return the exported content to send to the client.
+	 * @param output
+	 *            The writer to fill and which will override the default
+	 *            response during export.
 	 * @throws ExportException
-	 *             if something goes wrong during export.
+	 *             if something goes wrong during export
 	 */
-	public abstract Object processExport() throws ExportException;
+	public abstract void processExport(Writer output) throws ExportException;
 }

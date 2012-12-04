@@ -60,6 +60,7 @@ public class ExportTag extends TagSupport {
 	private ExportLinkPosition position;
 	private Boolean includeHeader;
 	private String area;// TODO
+	private Boolean autoSize;
 
 	/**
 	 * An ExportTag has no body but we test here that it is in the right place.
@@ -104,6 +105,7 @@ public class ExportTag extends TagSupport {
 			conf.setPosition(position != null ? position : ExportLinkPosition.TOP_MIDDLE);
 			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
 			conf.setArea(area != null ? area : "ALL");
+			conf.setAutoSize(autoSize != null ? autoSize : false);
 			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_TYPE
 					+ "=" + exportType.getUrlParameter() + "&" + ExportConstants.DT4J_EXPORT_ID
 					+ "=" + parent.getTable().getId());
@@ -178,5 +180,13 @@ public class ExportTag extends TagSupport {
 
 	public void setArea(String area) {
 		this.area = area;
+	}
+	
+	public Boolean getAutoSize() {
+		return autoSize;
+	}
+
+	public void setAutoSize(Boolean autoSize) {
+		this.autoSize = autoSize;
 	}
 }

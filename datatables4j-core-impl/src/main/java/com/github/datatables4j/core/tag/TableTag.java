@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.aggregator.ResourceAggregator;
 import com.github.datatables4j.core.api.constants.CdnConstants;
-import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
@@ -169,13 +168,8 @@ public class TableTag extends AbstractTableTag {
 
 		try {
 			// Call the export delegate
-			ExportDelegate exportDelegate = new ExportDelegate(table);
-			Object content = exportDelegate.getExportContent(exportProperties);
-
-			// Fill the request so that the filter will intercept it and
-			// override the response
-			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, content);
-			request.setAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES, exportProperties);
+			ExportDelegate exportDelegate = new ExportDelegate(table, exportProperties, request);
+			exportDelegate.setupExport();
 
 		} catch (ExportException e) {
 			logger.error("Something went wront with the DataTables4j export configuration.");

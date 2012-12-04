@@ -38,7 +38,7 @@ public class HtmlRow {
 	private String cssClass;
 	private List<HtmlColumn> columns = new ArrayList<HtmlColumn>();
 	private Object rowData;
-	
+
 	public HtmlRow() {
 
 	}
@@ -71,18 +71,17 @@ public class HtmlRow {
 		this.columns = columns;
 	}
 
-	
-	public HtmlColumn addHeaderColumn(String columnContent){
+	public HtmlColumn addHeaderColumn(String columnContent) {
 		HtmlColumn newColumn = new HtmlColumn(true, columnContent);
 		this.columns.add(newColumn);
 		return newColumn;
 	}
-	
-	public HtmlColumn addColumn(HtmlColumn column){
+
+	public HtmlColumn addColumn(HtmlColumn column) {
 		this.columns.add(column);
 		return column;
 	}
-	
+
 	public HtmlColumn addColumn(String columnContent) {
 		HtmlColumn newColumn = new HtmlColumn(false, columnContent);
 		this.columns.add(newColumn);
@@ -95,17 +94,17 @@ public class HtmlRow {
 		}
 		return this;
 	}
-	
-	public List<HtmlColumn> getHeaderColumns(){
+
+	public List<HtmlColumn> getHeaderColumns() {
 		List<HtmlColumn> retval = new ArrayList<HtmlColumn>();
-		for(HtmlColumn column : columns){
-			if(column.isHeaderColumn()){
+		for (HtmlColumn column : columns) {
+			if (column.isHeaderColumn()) {
 				retval.add(column);
 			}
 		}
 		return retval;
 	}
-	
+
 	public HtmlRow addColumns(String... columns) {
 		for (String columnContent : columns) {
 			this.columns.add(new HtmlColumn(false, columnContent));
@@ -116,15 +115,19 @@ public class HtmlRow {
 	public String toHtml() {
 
 		StringBuffer tmpRetval = new StringBuffer("<tr");
-		if(this.id != null){
+		if (this.id != null) {
 			tmpRetval.append(" id=\"");
 			tmpRetval.append(this.id);
 			tmpRetval.append("\"");
 		}
 		tmpRetval.append(">");
-		
+
 		for (HtmlColumn column : this.columns) {
-			tmpRetval.append(column.toHtml());
+			if (column.getEnabledDisplayTypes() != null
+					&& (column.getEnabledDisplayTypes().contains(DisplayType.ALL) || column
+							.getEnabledDisplayTypes().contains(DisplayType.HTML))) {
+				tmpRetval.append(column.toHtml());
+			}
 		}
 		tmpRetval.append("</tr>");
 

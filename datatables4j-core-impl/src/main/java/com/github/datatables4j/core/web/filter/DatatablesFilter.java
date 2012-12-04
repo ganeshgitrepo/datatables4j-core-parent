@@ -30,6 +30,7 @@
 package com.github.datatables4j.core.web.filter;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.Filter;
@@ -107,15 +108,25 @@ public class DatatablesFilter implements Filter {
 
 				response.setContentType(exportProperties.getCurrentExportType().getMimeType());
 
-				String content = String.valueOf(servletRequest
-						.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
+				if(exportProperties.isBinaryExport()){
+					byte[] content = (byte[]) servletRequest.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT);
 
-				// TODO : printWriter pour flux text, outputStream pour flux
-				// binaire
-				PrintWriter out = servletResponse.getWriter();
-				out.write(content);
-				out.flush();
-				out.close();
+					//		            response.setContentLength(contentlength);
+		            OutputStream out = response.getOutputStream();
+		            out.write(content);
+		            out.flush();
+				}
+				else{
+					String content = String.valueOf(servletRequest
+							.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
+					
+					// TODO : printWriter pour flux text, outputStream pour flux
+					// binaire
+					PrintWriter out = servletResponse.getWriter();
+					out.write(content);
+					out.flush();
+					out.close();
+				}
 			}
 
 		} else {

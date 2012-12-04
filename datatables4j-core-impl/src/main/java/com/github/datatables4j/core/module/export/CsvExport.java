@@ -29,43 +29,61 @@
  */
 package com.github.datatables4j.core.module.export;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.module.export.AbstractExport;
+import com.github.datatables4j.core.api.module.export.AbstractCharExport;
 
-public class CsvExport extends AbstractExport {
+/**
+ * 
+ *
+ * @author Thibault Duchateau
+ */
+public class CsvExport extends AbstractCharExport {
 
+	private static final DisplayType CURRENT_DISPLAY_TYPE = DisplayType.CSV;
+	private static final String SEPARATOR_CHAR = ";";
 	private HtmlTable table;
-	
+
 	@Override
 	public void initExport(HtmlTable table) {
 		this.table = table;
 	}
 
 	@Override
-	public Object processExport() throws ExportException {
-	
+	public void processExport(Writer output) throws ExportException {
 		StringBuffer buffer = new StringBuffer();
 
 		if(table.getExportConfMap().get(ExportType.CSV).getIncludeHeader()){
 			for(HtmlRow row : table.getHeadRows()){
 				for(HtmlColumn column : row.getColumns()){
-					buffer.append(column.getContent()).append(";");
+					if(column.getEnabledDisplayTypes().contains(DisplayType.ALL) || column.getEnabledDisplayTypes().contains(CURRENT_DISPLAY_TYPE)){
+						buffer.append(column.getContent()).append(SEPARATOR_CHAR);						
+					}
 				}
 				buffer.append("\n");
 			}			
 		}
 		for(HtmlRow row : table.getBodyRows()){
 			for(HtmlColumn column : row.getColumns()){
-				buffer.append(column.getContent()).append(";");
+				if(column.getEnabledDisplayTypes().contains(DisplayType.ALL) || column.getEnabledDisplayTypes().contains(CURRENT_DISPLAY_TYPE)){
+					buffer.append(column.getContent()).append(SEPARATOR_CHAR);					
+				}
 			}
 			
 			buffer.append("\n");
 		}
 		
-		return buffer.toString();
+		try {
+			output.write(buffer.toString());
+		} catch (IOException e) {
+			throw new ExportException(e);
+		}
 	}
 }

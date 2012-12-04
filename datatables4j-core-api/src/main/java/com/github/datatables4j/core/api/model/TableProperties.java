@@ -97,18 +97,19 @@ public class TableProperties {
 				|| property.equals(ConfConstants.DT_AGGREGATOR_ENABLE)
 				|| property.equals(ConfConstants.DT_AGGREGATOR_MODE)
 				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS)
-				|| property.equals(ConfConstants.DT_EXPORT_TYPES);
+				|| property.equals(ConfConstants.DT_EXPORT_TYPES)
+				|| property.equals(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
 	}
 
 	/**
-	 * @return The data source provider class name.
+	 * @return The default data source provider class name.
 	 */
 	public String getDatasourceClassName() {
 		return getProperty(ConfConstants.DT_DATASOURCE_CLASS);
 	}
 
 	/**
-	 * @return the compressor class name.
+	 * @return the default compressor class name.
 	 */
 	public String getCompressorClassName() {
 		return getProperty(ConfConstants.DT_COMPRESSOR_CLASS);
@@ -193,5 +194,12 @@ public class TableProperties {
 		}
 
 		return exportTypes;
+	}
+	
+	/**
+	 * @return the default xls export class name.
+	 */
+	public String getDefaultXlsExportClassName() {
+		return getProperty(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
 	}
 }

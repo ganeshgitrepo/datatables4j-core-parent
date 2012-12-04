@@ -103,7 +103,7 @@ public class ReflectHelper {
         Object retval = null;
 
         try {
-            retval = MethodUtils.invokeExactMethod(obj, methodName, args);
+            retval = MethodUtils.invokeMethod(obj, methodName, args);
         } catch (NoSuchMethodException e) {
             logger.error("Unable to invoke method {}", methodName);
             throw new BadConfigurationException(e);

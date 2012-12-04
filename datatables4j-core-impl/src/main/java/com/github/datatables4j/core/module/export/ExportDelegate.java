@@ -29,9 +29,18 @@
  */
 package com.github.datatables4j.core.module.export;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.ExportException;
 import com.github.datatables4j.core.api.model.ExportProperties;
 import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
  * TODO
@@ -41,46 +50,81 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 public class ExportDelegate {
 
 	private HtmlTable htmlTable;
+	private ExportProperties exportProperties;
+	private HttpServletRequest request;
 	
-	public ExportDelegate(HtmlTable htmlTable){
+	public ExportDelegate(HtmlTable htmlTable, ExportProperties exportProperties, HttpServletRequest request){
 		this.htmlTable = htmlTable;
+		this.exportProperties = exportProperties;
+		this.request = request;
 	}
 	
-	/**
-	 * TODO
-	 * 
-	 * @param properties
-	 * @return
-	 * @throws ExportException
-	 */
-	public Object getExportContent(ExportProperties properties) throws ExportException{
-	
-		Object content = null;
+	public void setupExport() throws ExportException {
+		
+		OutputStream stream = null;
+		StringWriter writer = null;
 		
 		switch (htmlTable.getExportProperties().getCurrentExportType()) {
 		case CSV:
 			
+			exportProperties.setIsBinaryExport(false);
+			writer = new StringWriter();
 			CsvExport csvExport = new CsvExport();
 			csvExport.initExport(htmlTable);
-			content = String.valueOf(csvExport.processExport());
+			csvExport.processExport(writer);
 			
 			break;
 		case HTML:
 			break;
 		case PDF:
+			
+			exportProperties.setIsBinaryExport(false);
+			
 			break;
 		case XLS:
+			
+			exportProperties.setIsBinaryExport(true);
+			stream = new ByteArrayOutputStream();
+			
+			try {
+			
+				// Get the class
+				Class<?> klass = ReflectHelper.getClass(htmlTable.getTableProperties().getDefaultXlsExportClassName());
+						
+				// Get new instance of this class
+				Object obj = ReflectHelper.getNewInstance(klass);
+			
+				// Invoke methods
+				ReflectHelper.invokeMethod(obj, "initExport", new Object[]{htmlTable});
+				ReflectHelper.invokeMethod(obj, "processExport", new Object[]{stream});
+				
+			} catch (BadConfigurationException e) {
+				throw new ExportException(e);
+			}
+			
 			break;
 		case XML:
+			
+			exportProperties.setIsBinaryExport(false);
+			writer = new StringWriter();
 			XmlExport xmlExport = new XmlExport();
 			xmlExport.initExport(htmlTable);
-			content = String.valueOf(xmlExport.processExport());
+			xmlExport.processExport(writer);
+
 			break;
 		default:
 			break;
 		
-		}
+		}		
 
-		return content;
+		// Fill the request so that the filter will intercept it and
+		// override the response with the export configuration
+		if(writer != null){
+			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, writer.toString());			
+		}
+		else{
+			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, ((ByteArrayOutputStream) stream).toByteArray());			
+		}
+		request.setAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES, exportProperties);
 	}
 }

@@ -45,6 +45,7 @@ public class ExportConf {
 	private Boolean includeHeader;
 	private String area;
 	private String url;
+	private Boolean autoSize;
 
 	public String getFileName() {
 		return fileName;
@@ -123,6 +124,14 @@ public class ExportConf {
 		return "ExportConf [fileName=" + fileName + ", type=" + type + ", label=" + label
 				+ ", cssStyle=" + cssStyle + ", cssClass=" + cssClass + ", position=" + position
 				+ ", includeHeader=" + includeHeader + ", area=" + area + ", url=" + url + "]";
+	}
+
+	public Boolean getAutoSize() {
+		return autoSize;
+	}
+
+	public void setAutoSize(Boolean autoSize) {
+		this.autoSize = autoSize;
 	}
 
 }

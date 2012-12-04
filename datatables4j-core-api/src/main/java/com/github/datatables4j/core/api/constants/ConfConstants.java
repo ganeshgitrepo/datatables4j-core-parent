@@ -46,4 +46,5 @@ public class ConfConstants {
 	public static final String DT_COMPRESSOR_PRESERVE_SEMI = "compressor.preserveSemiColons";
 	public static final String DT_COMPRESSOR_DISABLE_OPTI = "compressor.disableOptimizations";
 	public static final String DT_EXPORT_TYPES = "export.types";
+	public static final String DT_EXPORT_XLS_DEFAULT_CLASS = "export.xls.default.class";
 }
