@@ -64,7 +64,7 @@ public class DataProvider {
         // Get new instance of this class
         Object obj = ReflectHelper.getNewInstance(klass);
 
-        // Inovke getData method and return result
+        // Invoke getData method and return result
         try {
             return ReflectHelper.invokeMethod(obj, "getData", new Object[]{webServiceUrl});
         } catch (BadConfigurationException e) {

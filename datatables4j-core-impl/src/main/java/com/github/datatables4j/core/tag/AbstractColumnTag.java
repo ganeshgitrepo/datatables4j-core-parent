@@ -29,11 +29,18 @@
  */
 package com.github.datatables4j.core.tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.FilterType;
+import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 
@@ -51,6 +58,9 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 	private static final long serialVersionUID = 1L;
 
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(AbstractColumnTag.class);
+		
 	// Tag attributes
 	protected String title;
 	protected String property;
@@ -65,6 +75,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	protected String filterType;
 	protected String filterCssClass = "";
 	protected String filterPlaceholder = "";
+	protected String display;
 	
 	/**
 	 * Add a column to the table.
@@ -72,7 +83,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	 * @param isHeader
 	 * @param content
 	 */
-	protected void addColumn(Boolean isHeader, String content){
+	protected void addColumn(Boolean isHeader, String content) throws JspException {
 		
 		// Init the column
 		HtmlColumn column = new HtmlColumn(isHeader, content);
@@ -81,6 +92,28 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 		column.setSortable(this.sortable);
 		
 		AbstractTableTag parent = (AbstractTableTag) getParent();
+		
+		// Enabled display types
+		List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
+		if (StringUtils.isNotBlank(this.display)) {
+			String[] displayTypes = this.display.trim().toUpperCase().split(",");
+
+			for (String displayType : displayTypes) {
+				try {
+					enabledDisplayTypes.add(DisplayType.valueOf(displayType));
+				} catch (IllegalArgumentException e) {
+					logger.error("{} is not a valid value among {}. Please choose a valid one.", displayType,
+							DisplayType.values());
+					throw new JspException(e);
+				}
+			}
+		} else {
+			// All display types are added
+			for(DisplayType type : DisplayType.values()){
+				enabledDisplayTypes.add(type);
+			}
+		}
+		column.setEnabledDisplayTypes(enabledDisplayTypes);
 		
 		// Non-header columns
 		if(!isHeader){
@@ -261,5 +294,13 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 	public void setSortInit(String sortInit) {
 		this.sortInit = sortInit;
+	}
+	
+	public String getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(String display) {
+		this.display = display;
 	}
 }

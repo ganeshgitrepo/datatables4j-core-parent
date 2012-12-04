@@ -29,7 +29,9 @@
  */
 package com.github.datatables4j.core.api.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HtmlColumn {
@@ -50,6 +52,7 @@ public class HtmlColumn {
 	private String filterType;
 	private String filterCssClass;
 	private String filterPlaceholder;
+	private List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
 	
 	public HtmlColumn() {
 	};
@@ -218,5 +221,13 @@ public class HtmlColumn {
 
 	public void setSortInit(String sortInit) {
 		this.sortInit = sortInit;
+	}
+
+	public List<DisplayType> getEnabledDisplayTypes() {
+		return enabledDisplayTypes;
+	}
+
+	public void setEnabledDisplayTypes(List<DisplayType> enabledDisplayTypes) {
+		this.enabledDisplayTypes = enabledDisplayTypes;
 	}
 }

@@ -30,6 +30,7 @@
 package com.github.datatables4j.core.generator;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import org.apache.commons.lang.StringUtils;
@@ -67,24 +68,27 @@ public class ConfigGenerator {
         Map<String, Object> tmp = null;
         List<Map<String, Object>> aoColumnsContent = new ArrayList<Map<String, Object>>();
         for (HtmlColumn column : table.getLastHeaderRow().getColumns()) {
-            tmp = new HashMap<String, Object>();
-
-            // Sortable
-            tmp.put(DTConstants.DT_SORTABLE, column.getSortable());
-
-            //
-            if (column.getProperty() != null) {
-                tmp.put(DTConstants.DT_DATA, column.getProperty());
-            }
-
-            // Sorting direction
-            if (StringUtils.isNotBlank(column.getSortDirection())) {
-                List<Object> sortDirection = new ArrayList<Object>();
-                Collections.addAll(sortDirection, column.getSortDirection().trim().toLowerCase().split(","));
-                tmp.put(DTConstants.DT_SORT_DIR, sortDirection);
-            }
-
-            aoColumnsContent.add(tmp);
+        	
+        	if(column.getEnabledDisplayTypes().contains(DisplayType.HTML)){
+        		tmp = new HashMap<String, Object>();
+        		
+        		// Sortable
+        		tmp.put(DTConstants.DT_SORTABLE, column.getSortable());
+        		
+        		//
+        		if (column.getProperty() != null) {
+        			tmp.put(DTConstants.DT_DATA, column.getProperty());
+        		}
+        		
+        		// Sorting direction
+        		if (StringUtils.isNotBlank(column.getSortDirection())) {
+        			List<Object> sortDirection = new ArrayList<Object>();
+        			Collections.addAll(sortDirection, column.getSortDirection().trim().toLowerCase().split(","));
+        			tmp.put(DTConstants.DT_SORT_DIR, sortDirection);
+        		}
+        		
+        		aoColumnsContent.add(tmp);
+        	}
         }
         mainConf.put(DTConstants.DT_AOCOLUMNS, aoColumnsContent);
 

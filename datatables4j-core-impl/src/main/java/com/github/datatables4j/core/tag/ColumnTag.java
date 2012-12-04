@@ -37,6 +37,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 
 /**
@@ -111,6 +112,11 @@ public class ColumnTag extends AbstractColumnTag {
 		} else if ("AJAX".equals(parent.getLoadingType())) {
 
 			HtmlColumn column = new HtmlColumn(true, this.title);
+			
+			// All display types are added
+			for(DisplayType type : DisplayType.values()){
+				column.getEnabledDisplayTypes().add(type);
+			}
 			column.setProperty(this.property);
 			column.setSortable(this.sortable);
 			parent.getTable().getLastHeaderRow().addColumn(column);
@@ -127,9 +133,8 @@ public class ColumnTag extends AbstractColumnTag {
 	public int doAfterBody() throws JspException {
 
 		TableTag parent = (TableTag) getParent();
-		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {
-
-			String bodyString = getBodyContent().getString();
+		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {			
+			String bodyString = getBodyContent().getString().trim().replaceAll("[\n\r]", "");
 			this.addColumn(false, bodyString);
 		}
 
