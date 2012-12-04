@@ -35,7 +35,7 @@ import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.Plugin;
-import com.github.datatables4j.core.api.model.PluginConf;
+import com.github.datatables4j.core.api.model.Configuration;
 
 /**
  * Java implementation of the DataTables ColReorder plugin.
@@ -68,6 +68,6 @@ public class ColReorderModule extends Plugin {
 	public void setup(HtmlTable table) {
 		addJsResource(new JsResource("colreorder.min.js"));
 		addCssResource(new CssResource("colreorder.css"));
-		addPluginConf(new PluginConf(DTConstants.DT_DOM, "R", PluginConf.Mode.PREPEND));
+		addPluginConf(new Configuration(DTConstants.DT_DOM, "R", Configuration.Mode.PREPEND));
 	}	
 }

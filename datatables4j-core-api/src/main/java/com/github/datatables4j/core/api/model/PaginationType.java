@@ -27,46 +27,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.plugin.ui;
-
-
-import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Plugin;
-import com.github.datatables4j.core.api.model.Configuration;
+package com.github.datatables4j.core.api.model;
 
 /**
- * Java implementation of the DataTables Scroller plugin.
- * 
- * @see <a href="http://datatables.net/extras/scroller/">Reference</a>
+ * TODO
+ *
  * @author Thibault Duchateau
  */
-public class ScrollerModule extends Plugin {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getPluginName() {
-		return "Scroller";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getPluginVersion() {
-		return "1.1.0";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("datatables.scroller.min.js"));
-		addPluginConf(new Configuration(DTConstants.DT_DOM, "S", Configuration.Mode.APPEND));
-		addPluginConf(new Configuration(DTConstants.DT_SCROLLY, table.getScrollY()));
-	}
+public enum PaginationType {
+	two_button, full_numbers, four_button, scrolling, bootstrap, input, listbox
 }

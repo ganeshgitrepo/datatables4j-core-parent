@@ -46,7 +46,7 @@ public class HtmlTable {
 	private Boolean info;
 	private Boolean filterable;
 	private Boolean paginate;
-	private String paginationStyle;
+	private PaginationType paginationType;
 	private Boolean lengthChange;
 	private Boolean processing;
 	private Boolean sort;
@@ -189,6 +189,7 @@ public class HtmlTable {
 		tmpRetval.append("</tbody>");
 
 		if (!this.foot.isEmpty()) {
+			System.out.println("Il y a qqchose dans foot !");
 			tmpRetval.append("<tfoot>");
 			for (HtmlRow row : this.foot) {
 				tmpRetval.append(row.toHtml());
@@ -283,12 +284,12 @@ public class HtmlTable {
 		this.paginate = paginate;
 	}
 
-	public String getPaginationStyle() {
-		return paginationStyle;
+	public PaginationType getPaginationType() {
+		return paginationType;
 	}
 
-	public void setPaginationStyle(String paginationStyle) {
-		this.paginationStyle = paginationStyle;
+	public void setPaginationType(PaginationType paginationStyle) {
+		this.paginationType = paginationStyle;
 	}
 
 	public Boolean getLengthChange() {
@@ -488,7 +489,7 @@ public class HtmlTable {
 		return "HtmlTable [domId=" + domId + ", cssStyle=" + cssStyle + ", cssClass=" + cssClass
 				+ ", autoWidth=" + autoWidth + ", deferRender=" + deferRender + ", info=" + info
 				+ ", filterable=" + filterable + ", paginate=" + paginate + ", paginationStyle="
-				+ paginationStyle + ", lengthChange=" + lengthChange + ", processing=" + processing
+				+ paginationType + ", lengthChange=" + lengthChange + ", processing=" + processing
 				+ ", sort=" + sort + ", stateSave=" + stateSave + ", labels=" + labels + ", cdn="
 				+ cdn + ", jqueryUI=" + jqueryUI + ", scrollY=" + scrollY + ", fixedPosition="
 				+ fixedPosition + ", fixedOffsetTop=" + fixedOffsetTop + ", head=" + head

@@ -46,7 +46,7 @@ public abstract class Plugin {
 	protected String beforeEndDocumentReady;
 	protected List<JsResource> jsResources = new LinkedList<JsResource>();
 	protected List<CssResource> cssResources = new LinkedList<CssResource>();
-	protected List<PluginConf> pluginConfs = new ArrayList<PluginConf>();
+	protected List<Configuration> pluginConfs = new ArrayList<Configuration>();
 
 	/**
 	 * Returns the plugin's name.
@@ -126,11 +126,11 @@ public abstract class Plugin {
 		this.cssResources.add(resource);
 	}
 	
-	public void addPluginConf(PluginConf pluginConf) {
+	public void addPluginConf(Configuration pluginConf) {
 		this.pluginConfs.add(pluginConf);
 	}
 
-	public List<PluginConf> getPluginConfs() {
+	public List<Configuration> getPluginConfs() {
 		return this.pluginConfs;
 	}
 }

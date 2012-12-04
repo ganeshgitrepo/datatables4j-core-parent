@@ -49,7 +49,13 @@ import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.api.model.PaginationType;
 import com.github.datatables4j.core.feature.ui.InputFilteringFeature;
+import com.github.datatables4j.core.feature.ui.PaginationTypeBootstrapFeature;
+import com.github.datatables4j.core.feature.ui.PaginationTypeFourButtonFeature;
+import com.github.datatables4j.core.feature.ui.PaginationTypeInputFeature;
+import com.github.datatables4j.core.feature.ui.PaginationTypeListboxFeature;
+import com.github.datatables4j.core.feature.ui.PaginationTypeScrollingFeature;
 import com.github.datatables4j.core.feature.ui.SelectFilteringFeature;
 import com.github.datatables4j.core.plugin.ui.ColReorderModule;
 import com.github.datatables4j.core.plugin.ui.FixedHeaderModule;
@@ -124,7 +130,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	/**
 	 * Register all common configuration with the table.
 	 */
-	protected void registerBasicConfiguration() {
+	protected void registerBasicConfiguration() throws JspException {
 
 		if (StringUtils.isNotBlank(this.cssClass)) {
 			this.table.setCssClass(this.cssClass);
@@ -151,7 +157,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			this.table.setLengthChange(this.lengthChange);
 		}
 		if (StringUtils.isNotBlank(this.paginationType)) {
-			this.table.setPaginationStyle(this.paginationType);
+			PaginationType paginationType = null;
+			try {
+				paginationType = PaginationType.valueOf(this.paginationType);
+			} catch (IllegalArgumentException e) {
+				logger.error("{} is not a valid value among {}", this.paginationType,
+						PaginationType.values());
+				throw new JspException(e);
+			}
+			
+			this.table.setPaginationType(paginationType);
 		}
 		if (this.processing != null) {
 			this.table.setProcessing(this.processing);
@@ -212,12 +227,45 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	/**
 	 * Register activated features with the table.
 	 */
-	protected void registerFeatures() {
+	protected void registerFeatures() throws JspException {
 
 		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
 			this.table.registerFeature(new InputFilteringFeature());
 			this.table.registerFeature(new SelectFilteringFeature());
+		}
+		
+		// Only register the feature if the paginationType attribute is set
+		if(StringUtils.isNotBlank(this.paginationType)){
+			PaginationType paginationType = null;
+			try {
+				paginationType = PaginationType.valueOf(this.paginationType);
+			} catch (IllegalArgumentException e) {
+				logger.error("{} is not a valid value among {}", this.paginationType,
+						PaginationType.values());
+				throw new JspException(e);
+			}
+			
+			switch(paginationType){
+			case bootstrap:
+				this.table.registerFeature(new PaginationTypeBootstrapFeature());
+				break;
+			case input:
+				this.table.registerFeature(new PaginationTypeInputFeature());
+				break;
+			case listbox:
+				this.table.registerFeature(new PaginationTypeListboxFeature());
+				break;
+			case scrolling:
+				this.table.registerFeature(new PaginationTypeScrollingFeature());
+				break;
+			case four_button :
+				this.table.registerFeature(new PaginationTypeFourButtonFeature());
+				break;
+			default:
+				break;
+				
+			}			
 		}
 	}
 

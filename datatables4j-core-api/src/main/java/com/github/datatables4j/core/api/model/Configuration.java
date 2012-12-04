@@ -29,7 +29,7 @@
  */
 package com.github.datatables4j.core.api.model;
 
-public class PluginConf {
+public class Configuration {
 
 	private String name;
 	private String value;	
@@ -38,12 +38,12 @@ public class PluginConf {
 		OVERRIDE, APPEND, PREPEND
 	}
 
-	public PluginConf(String name, String value){
+	public Configuration(String name, String value){
 		this.name = name;
 		this.value = value;
 		this.mode = Mode.OVERRIDE;
 	}
-	public PluginConf(String name, String value, PluginConf.Mode mode){
+	public Configuration(String name, String value, Configuration.Mode mode){
 		this.name = name;
 		this.value = value;
 		this.setMode(mode);

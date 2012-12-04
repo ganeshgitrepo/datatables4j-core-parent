@@ -41,7 +41,7 @@ import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.Plugin;
-import com.github.datatables4j.core.api.model.PluginConf;
+import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.ResourceHelper;
@@ -119,7 +119,7 @@ public class InternalPluginLoader {
 					mainJsFile.appendToAfterAll(plugin.getAfterAllScript());
 				}
 
-				for (PluginConf conf : plugin.getPluginConfs()) {
+				for (Configuration conf : plugin.getPluginConfs()) {
 					
 					// The module configuration already exists in the main configuration
 					if (mainConf.containsKey(conf.getName())) {

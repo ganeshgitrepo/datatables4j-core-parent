@@ -29,6 +29,7 @@
  */
 package com.github.datatables4j.core.api.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public abstract class Feature {
 	protected String afterStartDocumentReady;
 	protected String beforeEndDocumentReady;
 	protected List<JsResource> jsResources = new LinkedList<JsResource>();
+	protected List<Configuration> featureConfs = new ArrayList<Configuration>();
 
 	/**
 	 * Returns the feature's name.
@@ -109,5 +111,13 @@ public abstract class Feature {
 
 	public void addJsResource(JsResource resource) {
 		this.jsResources.add(resource);
+	}
+	
+	public void addFeatureConf(Configuration pluginConf) {
+		this.featureConfs.add(pluginConf);
+	}
+
+	public List<Configuration> getFeatureConfs() {
+		return this.featureConfs;
 	}
 }

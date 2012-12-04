@@ -123,9 +123,7 @@ public class HtmlRow {
 		tmpRetval.append(">");
 
 		for (HtmlColumn column : this.columns) {
-			if (column.getEnabledDisplayTypes() != null
-					&& (column.getEnabledDisplayTypes().contains(DisplayType.ALL) || column
-							.getEnabledDisplayTypes().contains(DisplayType.HTML))) {
+			if (column.getEnabledDisplayTypes().contains(DisplayType.HTML)) {
 				tmpRetval.append(column.toHtml());
 			}
 		}

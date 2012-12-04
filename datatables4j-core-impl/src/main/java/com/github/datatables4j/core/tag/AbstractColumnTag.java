@@ -144,11 +144,12 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 			
 			parent.getTable().getLastHeaderRow().addColumn(column);
 			
+			HtmlColumn footerColumn = null;
+
 			// Specific column filtering enabled
 			if(this.filterable){
 				
 				HtmlRow footerRow = parent.getTable().getLastFooterRow();
-				HtmlColumn footerColumn = null;
 				FilterType filterTypeChoice = null;
 				
 				// Default : INPUT filtering
@@ -165,7 +166,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 						filterTypeChoice = FilterType.SELECT;
 					}
 				}
-				
+				System.out.println("filterTypeChoice = " + filterTypeChoice);
 				switch(filterTypeChoice){
 					case INPUT :
 						String inputContent = StringUtils.isNotBlank(this.filterPlaceholder) ? this.filterPlaceholder : this.title;					
@@ -181,11 +182,14 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 						break;
 				}
 				
+				footerColumn.setEnabledDisplayTypes(enabledDisplayTypes);
 				footerRow.addColumn(footerColumn);
 			}
 			// Add a column cell in the footer anyway
 			else{
-				parent.getTable().getLastFooterRow().addColumn(new HtmlColumn());
+				footerColumn = new HtmlColumn();
+				footerColumn.setEnabledDisplayTypes(enabledDisplayTypes);
+				parent.getTable().getLastFooterRow().addColumn(footerColumn);
 			}
 		}
 	}

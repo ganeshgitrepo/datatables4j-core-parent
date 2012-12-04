@@ -135,8 +135,8 @@ public class ConfigGenerator {
         if (table.getLengthChange() != null) {
             mainConf.put(DTConstants.DT_LENGTH_CHANGE, table.getLengthChange());
         }
-        if (StringUtils.isNotBlank(table.getPaginationStyle())) {
-            mainConf.put(DTConstants.DT_PAGINATION_TYPE, table.getPaginationStyle());
+        if (table.getPaginationType() != null) {
+            mainConf.put(DTConstants.DT_PAGINATION_TYPE, table.getPaginationType().toString());
         }
         if (table.getProcessing() != null) {
             mainConf.put(DTConstants.DT_PROCESSING, table.getProcessing());
