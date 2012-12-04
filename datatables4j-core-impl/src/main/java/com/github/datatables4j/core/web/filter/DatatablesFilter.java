@@ -108,21 +108,23 @@ public class DatatablesFilter implements Filter {
 
 				response.setContentType(exportProperties.getCurrentExportType().getMimeType());
 
+				// Binary exports use an outpuStream 
 				if(exportProperties.isBinaryExport()){
 					byte[] content = (byte[]) servletRequest.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT);
 
-					//		            response.setContentLength(contentlength);
+					response.setContentLength(content.length);
 		            OutputStream out = response.getOutputStream();
 		            out.write(content);
 		            out.flush();
+		            out.close();
 				}
+				// Exports based in characters just use a writer
 				else{
 					String content = String.valueOf(servletRequest
 							.getAttribute(ExportConstants.DT4J_EXPORT_CONTENT));
 					
-					// TODO : printWriter pour flux text, outputStream pour flux
-					// binaire
 					PrintWriter out = servletResponse.getWriter();
+					response.setContentLength(content.length());
 					out.write(content);
 					out.flush();
 					out.close();
