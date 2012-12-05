@@ -35,6 +35,9 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.ExportException;
@@ -44,67 +47,92 @@ import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
  * TODO
- *
+ * 
  * @author Thibault Duchateau
  */
 public class ExportDelegate {
 
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(ExportDelegate.class);
+
 	private HtmlTable htmlTable;
 	private ExportProperties exportProperties;
 	private HttpServletRequest request;
-	
-	public ExportDelegate(HtmlTable htmlTable, ExportProperties exportProperties, HttpServletRequest request){
+
+	public ExportDelegate(HtmlTable htmlTable, ExportProperties exportProperties,
+			HttpServletRequest request) {
 		this.htmlTable = htmlTable;
 		this.exportProperties = exportProperties;
 		this.request = request;
 	}
-	
+
 	public void setupExport() throws ExportException {
-		
+
 		OutputStream stream = null;
 		StringWriter writer = null;
-		
+
 		switch (htmlTable.getExportProperties().getCurrentExportType()) {
 		case CSV:
-			
+
 			exportProperties.setIsBinaryExport(false);
 			writer = new StringWriter();
 			CsvExport csvExport = new CsvExport();
 			csvExport.initExport(htmlTable);
 			csvExport.processExport(writer);
-			
+
 			break;
 		case HTML:
 			break;
 		case PDF:
-			
-			exportProperties.setIsBinaryExport(false);
-			
-			break;
-		case XLS:
-			
+
+			checkPdfDependencies();
 			exportProperties.setIsBinaryExport(true);
 			stream = new ByteArrayOutputStream();
-			
+
 			try {
-			
+
 				// Get the class
-				Class<?> klass = ReflectHelper.getClass(htmlTable.getTableProperties().getDefaultXlsExportClassName());
-						
+				Class<?> klass = ReflectHelper
+						.getClass("com.github.datatables4j.plugins.export.itext.PdfExport");
+
 				// Get new instance of this class
 				Object obj = ReflectHelper.getNewInstance(klass);
-			
+
 				// Invoke methods
-				ReflectHelper.invokeMethod(obj, "initExport", new Object[]{htmlTable});
-				ReflectHelper.invokeMethod(obj, "processExport", new Object[]{stream});
-				
+				ReflectHelper.invokeMethod(obj, "initExport", new Object[] { htmlTable });
+				ReflectHelper.invokeMethod(obj, "processExport", new Object[] { stream });
+
 			} catch (BadConfigurationException e) {
 				throw new ExportException(e);
 			}
-			
+
+			break;
+		case XLS:
+
+			checkXlsDependencies();
+			exportProperties.setIsBinaryExport(true);
+			stream = new ByteArrayOutputStream();
+
+			try {
+
+				// Get the class
+				Class<?> klass = ReflectHelper.getClass(htmlTable.getTableProperties()
+						.getDefaultXlsExportClassName());
+
+				// Get new instance of this class
+				Object obj = ReflectHelper.getNewInstance(klass);
+
+				// Invoke methods
+				ReflectHelper.invokeMethod(obj, "initExport", new Object[] { htmlTable });
+				ReflectHelper.invokeMethod(obj, "processExport", new Object[] { stream });
+
+			} catch (BadConfigurationException e) {
+				throw new ExportException(e);
+			}
+
 			break;
 		case XML:
-			
+
 			exportProperties.setIsBinaryExport(false);
 			writer = new StringWriter();
 			XmlExport xmlExport = new XmlExport();
@@ -114,17 +142,48 @@ public class ExportDelegate {
 			break;
 		default:
 			break;
-		
-		}		
 
+		}
+
+		// System.out.println("stream = " + stream.toString());
 		// Fill the request so that the filter will intercept it and
 		// override the response with the export configuration
-		if(writer != null){
-			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, writer.toString());			
-		}
-		else{
-			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, ((ByteArrayOutputStream) stream).toByteArray());			
+		if (exportProperties.isBinaryExport()) {
+			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT,
+					((ByteArrayOutputStream) stream).toByteArray());
+		} else {
+			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, writer.toString());
 		}
 		request.setAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES, exportProperties);
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @throws ExportException
+	 */
+	private void checkXlsDependencies() throws ExportException {
+
+		if (!ReflectHelper.canBeUsed(htmlTable.getTableProperties().getDefaultXlsExportClassName())) {
+			logger.error("Did you forget to add a dependency ?");
+			throw new ExportException("Unable to export in XLS format");
+		}
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @throws ExportException
+	 */
+	private void checkPdfDependencies() throws ExportException {
+
+		if (!ReflectHelper
+				.canBeUsed(htmlTable.getTableProperties().getDefaultPdfExportClassName1())) {
+			if (!ReflectHelper.canBeUsed(htmlTable.getTableProperties()
+					.getDefaultPdfExportClassName2())) {
+				logger.error("Did you forget to add a dependency ?");
+				throw new ExportException("Unable to export in PDF format");
+			}
+		}
 	}
 }

@@ -98,7 +98,9 @@ public class TableProperties {
 				|| property.equals(ConfConstants.DT_AGGREGATOR_MODE)
 				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS)
 				|| property.equals(ConfConstants.DT_EXPORT_TYPES)
-				|| property.equals(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
+				|| property.equals(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_1)
+				|| property.equals(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_2);
 	}
 
 	/**
@@ -201,5 +203,19 @@ public class TableProperties {
 	 */
 	public String getDefaultXlsExportClassName() {
 		return getProperty(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
+	}
+	
+	/**
+	 * @return the first default pdf export class name.
+	 */
+	public String getDefaultPdfExportClassName1() {
+		return getProperty(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_1);
+	}
+	
+	/**
+	 * @return the second default pdf export class name.
+	 */
+	public String getDefaultPdfExportClassName2() {
+		return getProperty(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_2);
 	}
 }
