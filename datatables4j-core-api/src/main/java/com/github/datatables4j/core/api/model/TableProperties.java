@@ -206,6 +206,13 @@ public class TableProperties {
 	}
 	
 	/**
+	 * @return the default xlsx export class name.
+	 */
+	public String getDefaultXlsxExportClassName() {
+		return getProperty(ConfConstants.DT_EXPORT_XLSX_DEFAULT_CLASS);
+	}
+	
+	/**
 	 * @return the first default pdf export class name.
 	 */
 	public String getDefaultPdfExportClassName1() {

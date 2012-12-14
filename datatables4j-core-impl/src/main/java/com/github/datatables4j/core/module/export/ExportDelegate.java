@@ -46,7 +46,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.util.ReflectHelper;
 
 /**
- * TODO
+ * Delegate class in charge of launching export.
  * 
  * @author Thibault Duchateau
  */
@@ -131,6 +131,33 @@ public class ExportDelegate {
 			}
 
 			break;
+
+		case XLSX:
+
+			checkXlsxDependencies();
+			exportProperties.setIsBinaryExport(true);
+			stream = new ByteArrayOutputStream();
+
+			try {
+
+				// Get the class
+				// Get the class
+				Class<?> klass = ReflectHelper.getClass(htmlTable.getTableProperties()
+						.getDefaultXlsxExportClassName());
+
+				// Get new instance of this class
+				Object obj = ReflectHelper.getNewInstance(klass);
+
+				// Invoke methods
+				ReflectHelper.invokeMethod(obj, "initExport", new Object[] { htmlTable });
+				ReflectHelper.invokeMethod(obj, "processExport", new Object[] { stream });
+
+			} catch (BadConfigurationException e) {
+				throw new ExportException(e);
+			}
+
+			break;
+
 		case XML:
 
 			exportProperties.setIsBinaryExport(false);
@@ -158,9 +185,11 @@ public class ExportDelegate {
 	}
 
 	/**
-	 * TODO
+	 * Check if the default xls export class exists in the classpath. Throws an
+	 * exception otherwise.
 	 * 
 	 * @throws ExportException
+	 *             if the class cannot be instanciated.
 	 */
 	private void checkXlsDependencies() throws ExportException {
 
@@ -171,9 +200,27 @@ public class ExportDelegate {
 	}
 
 	/**
-	 * TODO
+	 * Check if the default xlsx export class exists in the classpath. Throws an
+	 * exception otherwise.
 	 * 
 	 * @throws ExportException
+	 *             if the class cannot be instanciated.
+	 */
+	private void checkXlsxDependencies() throws ExportException {
+
+		if (!ReflectHelper
+				.canBeUsed(htmlTable.getTableProperties().getDefaultXlsxExportClassName())) {
+			logger.error("Did you forget to add a dependency ?");
+			throw new ExportException("Unable to export in XLSX format");
+		}
+	}
+
+	/**
+	 * Check if the default pdf export classes exists in the classpath. Throws
+	 * an exception otherwise.
+	 * 
+	 * @throws ExportException
+	 *             if the class cannot be instanciated.
 	 */
 	private void checkPdfDependencies() throws ExportException {
 
