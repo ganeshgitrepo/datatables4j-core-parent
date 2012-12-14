@@ -27,35 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.feature.ui;
+package com.github.datatables4j.core.plugin;
+
 
 import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.Feature;
+import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
+import com.github.datatables4j.core.api.model.Plugin;
 import com.github.datatables4j.core.api.model.Configuration;
 
 /**
- * TODO
+ * Java implementation of the DataTables ColReorder plugin.
  * 
- * @see http://www.datatables.net/plug-ins/pagination
+ * @see <a href="http://datatables.net/extras/colreorder/">Reference</a>
  * @author Thibault Duchateau
  */
-public class PaginationTypeScrollingFeature extends Feature {
+public class ColReorderModule extends Plugin {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String getFeatureName() {
-		return "PaginationTypeScrolling";
+	public String getName() {
+		return "ColReorder";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String getFeatureVersion() {
-		return "1.0.0";
+	public String getVersion() {
+		return "1.0.6";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("paginationType/scrolling.js"));
-		addFeatureConf(new Configuration(DTConstants.DT_PAGINATION_TYPE, "scrolling", Configuration.Mode.OVERRIDE));
-	}
+		addJsResource(new JsResource("colreorder.min.js"));
+		addCssResource(new CssResource("colreorder.css"));
+		addConfiguration(new Configuration(DTConstants.DT_DOM, "R", Configuration.Mode.PREPEND));
+	}	
 }

@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.feature.ui;
+package com.github.datatables4j.core.feature;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.model.Feature;
@@ -41,21 +41,21 @@ import com.github.datatables4j.core.api.model.Configuration;
  * @see http://www.datatables.net/plug-ins/pagination
  * @author Thibault Duchateau
  */
-public class PaginationTypeInputFeature extends Feature {
+public class PaginationTypeListboxFeature extends Feature {
 
 	@Override
-	public String getFeatureName() {
-		return "PaginationTypeInput";
+	public String getName() {
+		return "PaginationTypeListbox";
 	}
 
 	@Override
-	public String getFeatureVersion() {
+	public String getVersion() {
 		return "1.0.0";
 	}
 
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("paginationType/input.js"));
-		addFeatureConf(new Configuration(DTConstants.DT_PAGINATION_TYPE, "input", Configuration.Mode.OVERRIDE));
+		addJsResource(new JsResource("paginationType/listbox.js"));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "listbox", Configuration.Mode.OVERRIDE));
 	}
 }

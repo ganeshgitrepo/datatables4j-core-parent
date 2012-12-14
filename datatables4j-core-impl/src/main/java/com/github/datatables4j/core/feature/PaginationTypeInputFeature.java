@@ -27,46 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.plugin.ui;
-
+package com.github.datatables4j.core.feature;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.model.Feature;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Plugin;
 import com.github.datatables4j.core.api.model.Configuration;
 
 /**
- * Java implementation of the DataTables Scroller plugin.
+ * TODO
  * 
- * @see <a href="http://datatables.net/extras/scroller/">Reference</a>
+ * @see http://www.datatables.net/plug-ins/pagination
  * @author Thibault Duchateau
  */
-public class ScrollerModule extends Plugin {
+public class PaginationTypeInputFeature extends Feature {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getPluginName() {
-		return "Scroller";
+	public String getName() {
+		return "PaginationTypeInput";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getPluginVersion() {
-		return "1.1.0";
+	public String getVersion() {
+		return "1.0.0";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("datatables.scroller.min.js"));
-		addPluginConf(new Configuration(DTConstants.DT_DOM, "S", Configuration.Mode.APPEND));
-		addPluginConf(new Configuration(DTConstants.DT_SCROLLY, table.getScrollY()));
+		addJsResource(new JsResource("paginationType/input.js"));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "input", Configuration.Mode.OVERRIDE));
 	}
 }

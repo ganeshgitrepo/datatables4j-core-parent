@@ -29,95 +29,33 @@
  */
 package com.github.datatables4j.core.api.model;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Abstract UI feature.
  * 
  * @author Thibault Duchateau
  */
-public abstract class Feature {
+public abstract class Feature extends Extension {
 
-	protected String beforeAllScript;
-	protected String afterAllScript;
-	protected String afterStartDocumentReady;
-	protected String beforeEndDocumentReady;
-	protected List<JsResource> jsResources = new LinkedList<JsResource>();
-	protected List<Configuration> featureConfs = new ArrayList<Configuration>();
-
-	/**
-	 * Returns the feature's name.
-	 */
-	public abstract String getFeatureName();
-
-	/**
-	 * Returns the feature's version.
-	 */
-	public abstract String getFeatureVersion();
-
-	/**
-	 * Setup the feature (web resources, DataTables configuration).
-	 * <p>
-	 * The HtmlTable object is available if a particular configuration is
-	 * needed.
-	 * </p>
-	 * 
-	 * @param table
-	 *            The HTML table.
-	 */
-	public abstract void setup(HtmlTable table);
-
-	public String getBeforeAllScript() {
-		return beforeAllScript;
-	}
-
-	public void setBeforeAllScript(String beforeAllScript) {
-		this.beforeAllScript = beforeAllScript;
-	}
-
-	public String getAfterAllScript() {
-		return afterAllScript;
-	}
-
-	public void setAfterAllScript(String afterAllScript) {
-		this.afterAllScript = afterAllScript;
-	}
-
-	public String getAfterStartDocumentReady() {
-		return afterStartDocumentReady;
-	}
-
-	public void setAfterStartDocumentReady(String afterStartDocumentReady) {
-		this.afterStartDocumentReady = afterStartDocumentReady;
-	}
-
-	public String getBeforeEndDocumentReady() {
-		return beforeEndDocumentReady;
-	}
-
-	public void setBeforeEndDocumentReady(String beforeEndDocumentReady) {
-		this.beforeEndDocumentReady = beforeEndDocumentReady;
-	}
-
-	public List<JsResource> getJsResources() {
-		return jsResources;
-	}
-
-	public void setJsResources(List<JsResource> jsResources) {
-		this.jsResources = jsResources;
-	}
-
-	public void addJsResource(JsResource resource) {
-		this.jsResources.add(resource);
-	}
-	
-	public void addFeatureConf(Configuration pluginConf) {
-		this.featureConfs.add(pluginConf);
-	}
-
-	public List<Configuration> getFeatureConfs() {
-		return this.featureConfs;
-	}
+//	/**
+//	 * Returns the feature's name.
+//	 */
+//	public abstract String getFeatureName();
+//
+//	/**
+//	 * Returns the feature's version.
+//	 */
+//	public abstract String getFeatureVersion();
+//
+//	/**
+//	 * Setup the feature (web resources, DataTables configuration).
+//	 * <p>
+//	 * The HtmlTable object is available if a particular configuration is
+//	 * needed.
+//	 * </p>
+//	 * 
+//	 * @param table
+//	 *            The HTML table.
+//	 */
+//	public abstract void setup(HtmlTable table);
 }

@@ -27,47 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.plugin.ui;
-
+package com.github.datatables4j.core.feature;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.model.Feature;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Plugin;
 import com.github.datatables4j.core.api.model.Configuration;
 
 /**
- * Java implementation of the DataTables ColReorder plugin.
+ * TODO
  * 
- * @see <a href="http://datatables.net/extras/colreorder/">Reference</a>
+ * @see http://www.datatables.net/plug-ins/pagination
  * @author Thibault Duchateau
  */
-public class ColReorderModule extends Plugin {
+public class PaginationTypeFourButtonFeature extends Feature {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getPluginName() {
-		return "ColReorder";
+	public String getName() {
+		return "PaginationTypeFourButton";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String getPluginVersion() {
-		return "1.0.6";
+	public String getVersion() {
+		return "1.0.0";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("colreorder.min.js"));
-		addCssResource(new CssResource("colreorder.css"));
-		addPluginConf(new Configuration(DTConstants.DT_DOM, "R", Configuration.Mode.PREPEND));
-	}	
+		addJsResource(new JsResource("paginationType/four_button.js"));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "four_button", Configuration.Mode.OVERRIDE));
+	}
 }

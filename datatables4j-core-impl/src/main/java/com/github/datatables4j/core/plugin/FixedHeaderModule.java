@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.plugin.ui;
+package com.github.datatables4j.core.plugin;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -51,7 +51,7 @@ public class FixedHeaderModule extends Plugin {
      * {@inheritDoc}
      */
     @Override
-    public String getPluginName() {
+    public String getName() {
 	return "FixedHeader";
     }
 
@@ -59,7 +59,7 @@ public class FixedHeaderModule extends Plugin {
      * {@inheritDoc}
      */
     @Override
-    public String getPluginVersion() {
+    public String getVersion() {
 	return "2.0.6";
     }
 
