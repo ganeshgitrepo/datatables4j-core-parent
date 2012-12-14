@@ -29,9 +29,12 @@
  */
 package com.github.datatables4j.core.feature;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,8 @@ import com.github.datatables4j.core.api.model.Feature;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
+import com.github.datatables4j.core.generator.ColumnFilteringGenerator;
+import com.github.datatables4j.core.util.JsonIndentingWriter;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.ResourceHelper;
 
@@ -53,6 +58,11 @@ public class FeatureLoader {
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(FeatureLoader.class);
+
+	// Custom writer used to pretty JSON
+	private static Writer writer;
+
+	private static final String FEATURE_LOCATION = "datatables/features/";
 
 	/**
 	 * Load every feature activated for the given table.
@@ -68,36 +78,64 @@ public class FeatureLoader {
 	 * @param webResources
 	 *            The wrapper POJO containing all web resources to generate.
 	 * @throws BadConfigurationException
+	 * @throws IOException 
 	 */
 	public static void loadFeatures(JsResource mainJsFile, HtmlTable table,
 			Map<String, Object> mainConf, WebResources webResources)
-			throws BadConfigurationException {
+			throws BadConfigurationException, IOException {
 
 		JsResource pluginsSourceJsFile = null;
 
 		logger.info("Check for features ...");
 
+		// Column filtering feature
+		if(table.hasOneFilterableColumn()){
+			logger.debug("Column filtering enabled");
+			
+			writer = new JsonIndentingWriter();
+			mainJsFile.appendToDataTablesExtra("columnFilter");
+			pluginsSourceJsFile = new JsResource(ResourceType.FEATURE,
+					NameConstants.DT_PLUGIN_JS + "filteringAddOn" + "-" + table.getRandomId()
+							+ ".js");
+
+			Map<String, Object> conf = new ColumnFilteringGenerator().generateConfig(table);
+			System.out.println("conf = " + conf.toString());
+			// Allways pretty prints the JSON
+			JSONValue.writeJSONString(conf, writer);
+			
+			// mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
+			mainJsFile.appendToDataTablesExtraConf(writer.toString());
+			System.out.println("dans mainJsFile, conf = " + writer.toString());
+
+			// Feature source loading (javascript)
+			pluginsSourceJsFile.setContent(ResourceHelper
+						.getFileContentFromClasspath(FEATURE_LOCATION + "filtering/filteringAddOn.js"));
+			
+			webResources.getJavascripts().put(pluginsSourceJsFile.getName(),
+					pluginsSourceJsFile);
+		}
+		
+		// Others features
 		if (!table.getFeatures().isEmpty()) {
 
 			for (Feature feature : table.getFeatures()) {
 
-				logger.debug("Loading {} v{} ...", feature.getFeatureName(),
-						feature.getFeatureVersion());
+				logger.debug("Loading {} v{} ...", feature.getName(),
+						feature.getVersion());
 
 				// Feature initialization
 				feature.setup(table);
 
 				// Feature javascript
-				if (!feature.getJsResources().isEmpty()) {
+				if (feature.getJsResources() != null && !feature.getJsResources().isEmpty()) {
 
 					pluginsSourceJsFile = new JsResource(ResourceType.FEATURE,
-							NameConstants.DT_PLUGIN_JS + feature.getFeatureName().toLowerCase() + "-" + table.getRandomId()
+							NameConstants.DT_PLUGIN_JS + feature.getName().toLowerCase() + "-" + table.getRandomId()
 									+ ".js");
 
 					// Feature source loading (javascript)
 					for (JsResource jsResource : feature.getJsResources()) {
-						String location = "datatables/features/"
-								+ jsResource.getName();
+						String location = FEATURE_LOCATION + jsResource.getName();
 						pluginsSourceJsFile.setContent(ResourceHelper
 								.getFileContentFromClasspath(location));
 					}

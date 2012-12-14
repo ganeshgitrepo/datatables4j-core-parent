@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 
 public class WebResources {
 
+	private JsResource mainJsFile;
 	private Map<String, JsResource> javascripts = new TreeMap<String, JsResource>();
 	private Map<String, CssResource> stylesheets = new TreeMap<String, CssResource>();
 
@@ -67,6 +68,14 @@ public class WebResources {
 			buffer.append(",");
 		}
 		return buffer.toString();
+	}
+
+	public JsResource getMainJsFile() {
+		return mainJsFile;
+	}
+
+	public void setMainJsFile(JsResource mainJsFile) {
+		this.mainJsFile = mainJsFile;
 	}
 
 	

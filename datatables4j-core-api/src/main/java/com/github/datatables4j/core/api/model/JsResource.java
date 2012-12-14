@@ -47,6 +47,8 @@ public class JsResource  {
 	private StringBuffer beforeEndDocumentReady;
 	private StringBuffer afterAll;
 	private StringBuffer dataTablesConf;
+	private StringBuffer dataTablesExtra;
+	private StringBuffer dataTablesExtraConf;
 	private String tableId;
 	private ResourceType type;
 
@@ -56,7 +58,7 @@ public class JsResource  {
 	public JsResource(String name) {
 		this.name = name;
 	}
-
+	
 	public JsResource(ResourceType type, String name) {
 		this.type = type;
 		this.name = name;
@@ -115,7 +117,17 @@ public class JsResource  {
 			retval.append(this.tableId);
 			retval.append("').dataTable(oTable_");
 			retval.append(tableId);
-			retval.append("_params);");
+			retval.append("_params)");
+			if(this.dataTablesExtra != null){
+				retval.append(".");
+				retval.append(this.dataTablesExtra);
+				retval.append("(");
+				if(this.dataTablesExtraConf != null){
+					retval.append(this.dataTablesExtraConf);
+				}
+				retval.append(")");
+			}
+			retval.append(";");
 								
 			if(this.beforeEndDocumentReady != null){
 				retval.append("\n");
@@ -237,5 +249,27 @@ public class JsResource  {
 
 	public void setTableId(String tableId) {
 		this.tableId = tableId;
+	}
+
+	public StringBuffer getDataTablesExtra() {
+		return dataTablesExtra;
+	}
+
+	public void appendToDataTablesExtra(String dataTablesExtra) {
+		if(this.dataTablesExtra == null){
+			this.dataTablesExtra = new StringBuffer();
+		}
+		this.dataTablesExtra.append(dataTablesExtra);
+	}
+
+	public StringBuffer getDataTablesExtraConf() {
+		return dataTablesExtraConf;
+	}
+
+	public void appendToDataTablesExtraConf(String dataTablesExtraConf) {
+		if(this.dataTablesExtraConf == null){
+			this.dataTablesExtraConf = new StringBuffer();
+		}
+		this.dataTablesExtraConf.append(dataTablesExtraConf);
 	}
 }

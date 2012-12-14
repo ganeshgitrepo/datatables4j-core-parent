@@ -84,7 +84,7 @@ public class InternalPluginLoader {
 			
 			for (Plugin plugin : table.getPlugins()) {
 	
-				logger.debug("Loading {} v{} ...", plugin.getPluginName(), plugin.getPluginVersion());
+				logger.debug("Loading {} v{} ...", plugin.getName(), plugin.getVersion());
 				
 				// Module initialization
 				plugin.setup(table);
@@ -92,11 +92,11 @@ public class InternalPluginLoader {
 				// Module javascript
 				if(!plugin.getJsResources().isEmpty()){
 					
-					pluginsSourceJsFile = new JsResource(ResourceType.PLUGIN, NameConstants.DT_PLUGIN_JS + plugin.getPluginName().toLowerCase() + ".js");
+					pluginsSourceJsFile = new JsResource(ResourceType.PLUGIN, NameConstants.DT_PLUGIN_JS + plugin.getName().toLowerCase() + ".js");
 	
 					// Module source loading (javascript)
 					for (JsResource jsResource : plugin.getJsResources()) {
-						String location = "datatables/plugins/" + plugin.getPluginName().toLowerCase() + "/js/"
+						String location = "datatables/plugins/" + plugin.getName().toLowerCase() + "/js/"
 								+ jsResource.getName();
 						pluginsSourceJsFile.setContent(ResourceHelper.getFileContentFromClasspath(location));
 					}
@@ -119,46 +119,49 @@ public class InternalPluginLoader {
 					mainJsFile.appendToAfterAll(plugin.getAfterAllScript());
 				}
 
-				for (Configuration conf : plugin.getPluginConfs()) {
-					
-					// The module configuration already exists in the main configuration
-					if (mainConf.containsKey(conf.getName())) {
-						String value = null;
-						switch (conf.getMode()) {
-						case OVERRIDE:
+				if(plugin.getConfs() != null){
+
+					for (Configuration conf : plugin.getConfs()) {
+						
+						// The module configuration already exists in the main configuration
+						if (mainConf.containsKey(conf.getName())) {
+							String value = null;
+							switch (conf.getMode()) {
+							case OVERRIDE:
+								mainConf.put(conf.getName(), conf.getValue());
+								break;
+
+							case APPEND:
+								value = (String) mainConf.get(conf.getName());
+								value = value + conf.getValue();
+								mainConf.put(conf.getName(), value);
+								break;
+
+							case PREPEND:
+								value = (String) mainConf.get(conf.getName());
+								value = conf.getValue() + value;
+								mainConf.put(conf.getName(), value);
+								break;
+							default:
+								break;
+							}
+						} 
+						// No existing configuration in the main configuration, just add it
+						else {
 							mainConf.put(conf.getName(), conf.getValue());
-							break;
-
-						case APPEND:
-							value = (String) mainConf.get(conf.getName());
-							value = value + conf.getValue();
-							mainConf.put(conf.getName(), value);
-							break;
-
-						case PREPEND:
-							value = (String) mainConf.get(conf.getName());
-							value = conf.getValue() + value;
-							mainConf.put(conf.getName(), value);
-							break;
-						default:
-							break;
 						}
-					} 
-					// No existing configuration in the main configuration, just add it
-					else {
-						mainConf.put(conf.getName(), conf.getValue());
 					}
 				}
 			
 				// Module stylesheet
-				if(!plugin.getCssResources().isEmpty()){
+				if(plugin.getCssResources() != null && !plugin.getCssResources().isEmpty()){
 					
-					pluginsSourceCssFile = new CssResource("plugin", NameConstants.DT_PLUGIN_JS + plugin.getPluginName().toLowerCase() + ".css");
+					pluginsSourceCssFile = new CssResource("plugin", NameConstants.DT_PLUGIN_JS + plugin.getName().toLowerCase() + ".css");
 					StringBuffer cssContent = new StringBuffer();
 					
 					// Module source loading (stylesheets)
 					for (CssResource cssResource : plugin.getCssResources()) {
-						String location = "datatables/plugins/" + plugin.getPluginName().toLowerCase() + "/css/"
+						String location = "datatables/plugins/" + plugin.getName().toLowerCase() + "/css/"
 								+ cssResource.getName();
 						cssContent.append(ResourceHelper.getFileContentFromClasspath(location));
 					}

@@ -59,6 +59,8 @@ public class DTConstants {
 	// Extra features
 	public static final String DT_SCROLLY = "sScrollY";
 	public static final String DT_OFFSETTOP = "offsetTop";
+	public static final String DT_FILTER_TYPE = "type";
+	
 	
 	// Column configuration
 	public static final String DT_SORTABLE = "bSortable";

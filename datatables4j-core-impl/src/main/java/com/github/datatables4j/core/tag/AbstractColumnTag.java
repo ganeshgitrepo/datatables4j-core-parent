@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import com.github.datatables4j.core.api.constants.FilterType;
 import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
-import com.github.datatables4j.core.api.model.HtmlRow;
 
 /**
  * Abstract class which contains :<br />
@@ -138,59 +137,27 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 			column.setSortDirection(this.sortDirection);
 			column.setSortInit(this.sortInit);
 			column.setFilterable(this.filterable);
-			column.setFilterType(this.filterType);
+			
+			if(StringUtils.isNotBlank(this.filterType)){
+				
+				FilterType filterType = null;
+				try {
+					filterType = FilterType.valueOf(this.filterType);
+				} catch (IllegalArgumentException e) {
+					logger.error("{} is not a valid value among {}. Please choose a valid one.", filterType,
+							FilterType.values());
+					throw new JspException(e);
+				}
+				column.setFilterType(filterType);
+			}
+			else{
+				column.setFilterType(FilterType.INPUT);
+			}
+			
 			column.setFilterCssClass(this.filterCssClass);
 			column.setFilterPlaceholder(this.filterPlaceholder);
 			
 			parent.getTable().getLastHeaderRow().addColumn(column);
-			
-			HtmlColumn footerColumn = null;
-
-			// Specific column filtering enabled
-			if(this.filterable){
-				
-				HtmlRow footerRow = parent.getTable().getLastFooterRow();
-				FilterType filterTypeChoice = null;
-				
-				// Default : INPUT filtering
-				if(StringUtils.isBlank(this.filterType)){
-					filterTypeChoice = FilterType.INPUT;
-				}
-				else{
-					// INPUT filtering
-					if(FilterType.INPUT.toString().equals(this.filterType)){
-						filterTypeChoice = FilterType.INPUT;				
-					}
-					// SELECT filtering
-					else if(FilterType.SELECT.toString().equals(this.filterType)){
-						filterTypeChoice = FilterType.SELECT;
-					}
-				}
-				System.out.println("filterTypeChoice = " + filterTypeChoice);
-				switch(filterTypeChoice){
-					case INPUT :
-						String inputContent = StringUtils.isNotBlank(this.filterPlaceholder) ? this.filterPlaceholder : this.title;					
-						footerColumn = new HtmlColumn("<input type=\"text\" name=\"search-engine\" value=\"" + inputContent + "\" class=\"search_init " + this.filterCssClass + "\">");
-						break;
-					
-					case SELECT :
-						footerColumn = new HtmlColumn().setCssClass("select-filtering");	
-						break;
-						
-					default :
-						footerColumn = new HtmlColumn();
-						break;
-				}
-				
-				footerColumn.setEnabledDisplayTypes(enabledDisplayTypes);
-				footerRow.addColumn(footerColumn);
-			}
-			// Add a column cell in the footer anyway
-			else{
-				footerColumn = new HtmlColumn();
-				footerColumn.setEnabledDisplayTypes(enabledDisplayTypes);
-				parent.getTable().getLastFooterRow().addColumn(footerColumn);
-			}
 		}
 	}
 	

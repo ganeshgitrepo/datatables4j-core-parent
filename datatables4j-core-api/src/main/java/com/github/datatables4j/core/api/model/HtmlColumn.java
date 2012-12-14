@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.datatables4j.core.api.constants.FilterType;
+
 public class HtmlColumn {
 
 	private Boolean isHeaderColumn = true;
@@ -49,7 +51,7 @@ public class HtmlColumn {
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private String property;
 	private Boolean filterable = false;
-	private String filterType;
+	private FilterType filterType;
 	private String filterCssClass;
 	private String filterPlaceholder;
 	private List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
@@ -175,7 +177,7 @@ public class HtmlColumn {
 		this.id = id;
 	}
 
-	public Boolean getFilterable() {
+	public Boolean isFilterable() {
 		return filterable;
 	}
 
@@ -183,11 +185,11 @@ public class HtmlColumn {
 		this.filterable = filterable;
 	}
 
-	public String getFilterType() {
+	public FilterType getFilterType() {
 		return filterType;
 	}
 
-	public void setFilterType(String filterType) {
+	public void setFilterType(FilterType filterType) {
 		this.filterType = filterType;
 	}
 

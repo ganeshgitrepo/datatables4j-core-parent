@@ -56,6 +56,7 @@ import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.datasource.DataProvider;
 import com.github.datatables4j.core.feature.FeatureLoader;
 import com.github.datatables4j.core.plugin.InternalPluginLoader;
+import com.github.datatables4j.core.theme.ThemeLoader;
 import com.github.datatables4j.core.util.JsonIndentingWriter;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
@@ -128,7 +129,8 @@ public class WebResourceGenerator {
 		// Internal module management
 		InternalPluginLoader.loadPlugins(mainJsFile, table, mainConf, webResources);
 		FeatureLoader.loadFeatures(mainJsFile, table, mainConf, webResources);
-
+		ThemeLoader.loadTheme(mainJsFile, table, mainConf, webResources);
+		
 		// Extra conf management
 		extraConfManagement(mainJsFile, mainConf, table);
 
@@ -159,7 +161,8 @@ public class WebResourceGenerator {
 			exportManagement(table, mainJsFile);
 		}
 
-		webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
+		webResources.setMainJsFile(mainJsFile);
+//		webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
 
 		return webResources;
 	}
