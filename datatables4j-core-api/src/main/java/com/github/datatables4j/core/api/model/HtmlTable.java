@@ -82,6 +82,9 @@ public class HtmlTable {
 	private List<ExportLinkPosition> exportLinkPositions;
 	private Boolean isExportable = false;
 	
+	// Theme
+	private Theme theme;
+	
 	public HtmlTable() {
 	};
 
@@ -216,7 +219,7 @@ public class HtmlTable {
 		
 		for(HtmlRow headerRow : this.head){
 			for(HtmlColumn headerColumn : headerRow.getHeaderColumns()){
-				if(headerColumn.getFilterable()){
+				if(headerColumn.isFilterable()){
 					retval = true;
 					break;
 				}
@@ -502,6 +505,12 @@ public class HtmlTable {
 				+ exportConfMap + ", exportLinkPositions=" + exportLinkPositions
 				+ ", isExportable=" + isExportable + "]";
 	}
-	
-	
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
+	}
 }

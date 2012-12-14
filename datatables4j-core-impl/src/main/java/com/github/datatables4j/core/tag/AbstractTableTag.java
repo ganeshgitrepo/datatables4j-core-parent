@@ -48,18 +48,18 @@ import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExportType;
+import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
-import com.github.datatables4j.core.feature.ui.InputFilteringFeature;
-import com.github.datatables4j.core.feature.ui.PaginationTypeBootstrapFeature;
-import com.github.datatables4j.core.feature.ui.PaginationTypeFourButtonFeature;
-import com.github.datatables4j.core.feature.ui.PaginationTypeInputFeature;
-import com.github.datatables4j.core.feature.ui.PaginationTypeListboxFeature;
-import com.github.datatables4j.core.feature.ui.PaginationTypeScrollingFeature;
-import com.github.datatables4j.core.feature.ui.SelectFilteringFeature;
-import com.github.datatables4j.core.plugin.ui.ColReorderModule;
-import com.github.datatables4j.core.plugin.ui.FixedHeaderModule;
-import com.github.datatables4j.core.plugin.ui.ScrollerModule;
+import com.github.datatables4j.core.feature.PaginationTypeBootstrapFeature;
+import com.github.datatables4j.core.feature.PaginationTypeFourButtonFeature;
+import com.github.datatables4j.core.feature.PaginationTypeInputFeature;
+import com.github.datatables4j.core.feature.PaginationTypeListboxFeature;
+import com.github.datatables4j.core.feature.PaginationTypeScrollingFeature;
+import com.github.datatables4j.core.plugin.ColReorderModule;
+import com.github.datatables4j.core.plugin.FixedHeaderModule;
+import com.github.datatables4j.core.plugin.ScrollerModule;
+import com.github.datatables4j.core.theme.BootstrapTheme;
 import com.github.datatables4j.core.util.RequestHelper;
 
 /**
@@ -99,7 +99,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean lengthChange;
 	protected String paginationType;
 	protected Boolean sort;
-
+	protected String footer;
+	
 	// Advanced features
 	protected Boolean deferRender;
 	protected Boolean stateSave;
@@ -119,6 +120,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean export;
 	protected String exportLinks;
 
+	// Theme
+	protected String theme;
+	
 	// Internal common attributes
 	protected int rowNumber;
 	protected HtmlTable table;
@@ -186,9 +190,31 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.jqueryUI != null) {
 			this.table.setJqueryUI(this.jqueryUI);
 		}
-
+		
+		// TODO tester si la valeur vaut "header"
+		if(StringUtils.isNotBlank(this.footer)){
+			
+			for(HtmlColumn footerColumn : table.getLastHeaderRow().getColumns()){
+				table.getLastFooterRow().addColumn(footerColumn);
+			}
+		}
 	}
 
+	/**
+	 * Register the theme if activated in the table tag.
+	 */
+	protected void registerTheme(){
+		
+		if(StringUtils.isNotBlank(this.theme)){
+			if(this.theme.trim().toLowerCase().equals("bootstrap")){
+				this.table.setTheme(new BootstrapTheme());
+			}
+			else{
+				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.", this.theme);
+			}
+		}
+	}
+	
 	/**
 	 * Register activated modules with the table.
 	 */
@@ -231,8 +257,12 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
-			this.table.registerFeature(new InputFilteringFeature());
-			this.table.registerFeature(new SelectFilteringFeature());
+//			this.table.registerFeature(new InputFilteringFeature());
+//			this.table.registerFeature(new SelectFilteringFeature());
+			
+			for(HtmlColumn column : table.getLastHeaderRow().getColumns()){
+				table.getLastFooterRow().addColumn(column);
+			}
 		}
 		
 		// Only register the feature if the paginationType attribute is set
@@ -695,6 +725,22 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.exportLinks = exportButtons;
 	}
 
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+	
+	public String getFooter() {
+		return footer;
+	}
+
+	public void setFooter(String footer) {
+		this.footer = footer;
+	}
+	
 	public void setData(Collection<Object> data) {
 		this.loadingType = "DOM";
 		this.data = data;

@@ -200,6 +200,9 @@ public class TableTag extends AbstractTableTag {
 		// Register all activated features
 		registerFeatures();
 
+		// Register theme if activated
+		registerTheme();
+		
 		try {
 			// Init the web resources generator
 			WebResourceGenerator contentGenerator = new WebResourceGenerator();
@@ -246,6 +249,10 @@ public class TableTag extends AbstractTableTag {
 						"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey()
 								+ "\"></script>");
 			}
+			servletContext.setAttribute(webResources.getMainJsFile().getName(), webResources.getMainJsFile());
+			pageContext.getOut().println(
+					"<script src=\"" + baseUrl + "/datatablesController/" + webResources.getMainJsFile().getName()
+					+ "\"></script>");
 
 			logger.debug("Web content generated successfully");
 		} catch (IOException e) {

@@ -218,6 +218,16 @@
             (Default : false, see
             http://datatables.net/ref#bJQueryUI)</description>
       </attribute>
+      <attribute>
+         <name>footer</name>
+         <description>(header) Choose if you want to have the footer appear.
+            (Default : none)</description>
+      </attribute>
+      <attribute>
+         <name>theme</name>
+         <description>Name of a theme to activate for the current table.
+            (Default : none)</description>
+      </attribute>
 
       <!-- ====================================== -->
       <!-- Extra features -->
