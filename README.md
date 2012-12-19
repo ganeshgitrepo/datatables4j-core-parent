@@ -1,4 +1,4 @@
 datatables4j-core
 =================
 
-DataTables4j Core API and implementation
+DataTables4j Core API and implementations
