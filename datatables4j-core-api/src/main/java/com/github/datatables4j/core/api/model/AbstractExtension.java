@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.generator.DataTableConfigurationGenerator;
+import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
 
 /**
  * Abstract class that defines an extension.
@@ -54,7 +54,7 @@ public abstract class AbstractExtension {
 	protected List<CssResource> cssResources;
 	protected List<Configuration> confs;
 	protected Boolean appendRandomNumber = false;
-	protected DataTableConfigurationGenerator configGenerator;
+	protected AbstractConfigurationGenerator configGenerator;
 	protected String function;
 	
 	public enum Type {
@@ -150,11 +150,11 @@ public abstract class AbstractExtension {
 		this.confs.add(conf);
 	}
 
-	public DataTableConfigurationGenerator getConfigGenerator() {
+	public AbstractConfigurationGenerator getConfigGenerator() {
 		return configGenerator;
 	}
 
-	public void setConfigGenerator(DataTableConfigurationGenerator configGenerator) {
+	public void setConfigGenerator(AbstractConfigurationGenerator configGenerator) {
 		this.configGenerator = configGenerator;
 	}
 

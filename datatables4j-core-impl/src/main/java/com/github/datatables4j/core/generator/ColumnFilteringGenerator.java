@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.generator.DataTableConfigurationGenerator;
+import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
 import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -48,7 +48,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
  *
  * @author Thibault Duchateau
  */
-public class ColumnFilteringGenerator extends DataTableConfigurationGenerator {
+public class ColumnFilteringGenerator extends AbstractConfigurationGenerator {
 
     // Logger
     private static Logger logger = LoggerFactory.getLogger(ColumnFilteringGenerator.class);
