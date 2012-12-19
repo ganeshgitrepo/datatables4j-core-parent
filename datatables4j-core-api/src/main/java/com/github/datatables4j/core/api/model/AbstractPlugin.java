@@ -29,33 +29,14 @@
  */
 package com.github.datatables4j.core.api.model;
 
-
 /**
  * Abstract UI plugin.
  * 
  * @author Thibault Duchateau
  */
-public abstract class Plugin extends Extension {
+public abstract class AbstractPlugin extends AbstractExtension {
 
-//	/**
-//	 * Returns the plugin's name.
-//	 */
-//	public abstract String getPluginName();
-//
-//	/**
-//	 * Returns the plugin's version.
-//	 */
-//	public abstract String getPluginVersion();
-//
-//	/**
-//	 * Setup the plugin (web resources, DataTables configuration).
-//	 * <p>
-//	 * The HtmlTable object is available if a particular configuration is
-//	 * needed.
-//	 * </p>
-//	 * 
-//	 * @param table
-//	 *            The HTML table.
-//	 */
-//	public abstract void setup(HtmlTable table);
+	public Type getType() {
+		return Type.PLUGIN;
+	}
 }

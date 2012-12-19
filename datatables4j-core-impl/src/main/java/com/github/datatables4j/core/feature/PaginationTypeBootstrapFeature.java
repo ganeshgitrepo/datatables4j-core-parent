@@ -30,10 +30,11 @@
 package com.github.datatables4j.core.feature;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.Feature;
+import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.model.AbstractFeature;
+import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Configuration;
 
 /**
  * TODO
@@ -41,7 +42,7 @@ import com.github.datatables4j.core.api.model.Configuration;
  * @see http://www.datatables.net/plug-ins/pagination
  * @author Thibault Duchateau
  */
-public class PaginationTypeBootstrapFeature extends Feature {
+public class PaginationTypeBootstrapFeature extends AbstractFeature {
 
 	@Override
 	public String getName() {
@@ -55,7 +56,7 @@ public class PaginationTypeBootstrapFeature extends Feature {
 
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("paginationType/bootstrap.js"));
+		addJsResource(new JsResource(ResourceType.FEATURE, "PaginationTypeBootstrap", "datatables/features/paginationType/bootstrap.js"));
 		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "bootstrap", Configuration.Mode.OVERRIDE));
 	}
 }

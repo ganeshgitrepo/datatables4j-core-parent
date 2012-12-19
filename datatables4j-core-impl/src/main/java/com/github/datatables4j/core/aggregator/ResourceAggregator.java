@@ -150,7 +150,7 @@ public class ResourceAggregator {
 
 		String jsResourceName = NameConstants.DT_AGG_PLUGINS_JS + ResourceHelper.getRamdomNumber()
 				+ ".js";
-		JsResource aggregatePluginsJsFile = new JsResource(jsResourceName);
+		JsResource aggregatePluginsJsFile = new JsResource(ResourceType.AGGREGATE, jsResourceName);
 
 		String aggregatedJsContent = "";
 

@@ -39,11 +39,14 @@ public enum ResourceType {
 	// Main DataTables javascript file
 	MAIN, 
 	
+	EXTENSION, 
 	// DataTables plugin javascript file
 	PLUGIN, 
 	
 	// DataTables4j feature javascript file
 	FEATURE, 
+	
+	THEME,
 	
 	// DataTables4j javascript aggregated file
 	AGGREGATE, 

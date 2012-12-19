@@ -51,15 +51,16 @@ import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
+import com.github.datatables4j.core.feature.FilteringFeature;
 import com.github.datatables4j.core.feature.PaginationTypeBootstrapFeature;
 import com.github.datatables4j.core.feature.PaginationTypeFourButtonFeature;
 import com.github.datatables4j.core.feature.PaginationTypeInputFeature;
 import com.github.datatables4j.core.feature.PaginationTypeListboxFeature;
 import com.github.datatables4j.core.feature.PaginationTypeScrollingFeature;
-import com.github.datatables4j.core.plugin.ColReorderModule;
-import com.github.datatables4j.core.plugin.FixedHeaderModule;
-import com.github.datatables4j.core.plugin.ScrollerModule;
-import com.github.datatables4j.core.theme.BootstrapTheme;
+import com.github.datatables4j.core.plugin.ColReorderPlugin;
+import com.github.datatables4j.core.plugin.FixedHeaderPlugin;
+import com.github.datatables4j.core.plugin.ScrollerPlugin;
+import com.github.datatables4j.core.theme.Bootstrap2Theme;
 import com.github.datatables4j.core.util.RequestHelper;
 
 /**
@@ -207,7 +208,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		
 		if(StringUtils.isNotBlank(this.theme)){
 			if(this.theme.trim().toLowerCase().equals("bootstrap")){
-				this.table.setTheme(new BootstrapTheme());
+				this.table.setTheme(new Bootstrap2Theme());
 			}
 			else{
 				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.", this.theme);
@@ -223,17 +224,17 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		// Modules activation
 		if (this.fixedHeader) {
 			logger.info("Internal module detected : fixedHeader");
-			this.table.registerPlugin(new FixedHeaderModule());
+			this.table.registerPlugin(new FixedHeaderPlugin());
 		}
 
 		if (this.scroller) {
 			logger.info("Internal module detected : scroller");
-			this.table.registerPlugin(new ScrollerModule());
+			this.table.registerPlugin(new ScrollerPlugin());
 		}
 
 		if (this.colReorder) {
 			logger.info("Internal module detected : colReorder");
-			this.table.registerPlugin(new ColReorderModule());
+			this.table.registerPlugin(new ColReorderPlugin());
 		}
 
 		// Modules configuration
@@ -263,6 +264,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			for(HtmlColumn column : table.getLastHeaderRow().getColumns()){
 				table.getLastFooterRow().addColumn(column);
 			}
+			
+			this.table.registerFeature(new FilteringFeature());
 		}
 		
 		// Only register the feature if the paginationType attribute is set

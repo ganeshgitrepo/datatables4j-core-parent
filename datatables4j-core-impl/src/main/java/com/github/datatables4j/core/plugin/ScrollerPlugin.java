@@ -31,9 +31,10 @@ package com.github.datatables4j.core.plugin;
 
 
 import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Plugin;
+import com.github.datatables4j.core.api.model.AbstractPlugin;
 import com.github.datatables4j.core.api.model.Configuration;
 
 /**
@@ -42,7 +43,7 @@ import com.github.datatables4j.core.api.model.Configuration;
  * @see <a href="http://datatables.net/extras/scroller/">Reference</a>
  * @author Thibault Duchateau
  */
-public class ScrollerModule extends Plugin {
+public class ScrollerPlugin extends AbstractPlugin {
 
 	/**
 	 * {@inheritDoc}
@@ -65,7 +66,7 @@ public class ScrollerModule extends Plugin {
 	 */
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("datatables.scroller.min.js"));
+		addJsResource(new JsResource(ResourceType.PLUGIN, "Scroller", "datatables/plugins/scroller/scroller.min.js"));
 		addConfiguration(new Configuration(DTConstants.DT_DOM, "S", Configuration.Mode.APPEND));
 		addConfiguration(new Configuration(DTConstants.DT_SCROLLY, table.getScrollY()));
 	}

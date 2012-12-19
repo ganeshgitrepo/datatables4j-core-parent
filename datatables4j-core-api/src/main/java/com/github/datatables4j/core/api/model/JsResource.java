@@ -33,14 +33,29 @@ import com.github.datatables4j.core.api.constants.ResourceType;
 
 /**
  * POJO that symbolizes a JS file.
- *
+ * 
  * @author Thibault Duchateau
  */
-public class JsResource  {
+public class JsResource {
 
 	private static final String INDENTATION = "   ";
+
+	/**
+	 * Name of the JS file.
+	 */
 	private String name;
+
+	/**
+	 * Content, ie Javascript code.
+	 */
 	private String content;
+
+	/**
+	 * Location of the JS file. Used if multiple files must be merged (e.g. from
+	 * classpath) before being served by the servlet.
+	 */
+	private String location;
+
 	private StringBuffer beforeAll;
 	private StringBuffer beforeStartDocumentReady;
 	private StringBuffer afterStartDocumentReady;
@@ -49,27 +64,35 @@ public class JsResource  {
 	private StringBuffer dataTablesConf;
 	private StringBuffer dataTablesExtra;
 	private StringBuffer dataTablesExtraConf;
+
+	/**
+	 * Id of the table to initialize. Only used if the current JsResource has
+	 * the MAIN ResourceType.
+	 */
 	private String tableId;
+
+	/**
+	 * Type of the JS resource.
+	 */
 	private ResourceType type;
 
+	/**
+	 * Public default constructor.
+	 */
 	public JsResource() {
 	}
 
-	public JsResource(String name) {
-		this.name = name;
-	}
-	
 	public JsResource(ResourceType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
-	
-	public JsResource(ResourceType type, String name, String tableId) {
+
+	public JsResource(ResourceType type, String name, String location) {
 		this.type = type;
 		this.name = name;
-		this.tableId = tableId;
+		this.location = location;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -79,33 +102,33 @@ public class JsResource  {
 	}
 
 	public String getContent() {
-		
+
 		StringBuffer retval = new StringBuffer();
-		
-		switch(type){
-		case MAIN : 
-			
-			if(this.beforeAll != null){
+
+		switch (type) {
+		case MAIN:
+
+			if (this.beforeAll != null) {
 				retval.append(this.beforeAll);
 				retval.append(";\n");
 			}
-			
+
 			retval.append("var oTable_");
 			retval.append(tableId);
 			retval.append(";\n");
-			
+
 			retval.append("var oTable_");
 			retval.append(tableId);
 			retval.append("_params = ");
 			retval.append(this.dataTablesConf);
 			retval.append(";\n");
-			
-			if(this.beforeStartDocumentReady != null){
-				retval.append(this.beforeStartDocumentReady);				
+
+			if (this.beforeStartDocumentReady != null) {
+				retval.append(this.beforeStartDocumentReady);
 			}
-			
+
 			retval.append("$(document).ready(function(){\n");
-			if(this.afterStartDocumentReady != null){
+			if (this.afterStartDocumentReady != null) {
 				retval.append("\n");
 				retval.append(INDENTATION);
 				retval.append(this.afterStartDocumentReady);
@@ -118,50 +141,53 @@ public class JsResource  {
 			retval.append("').dataTable(oTable_");
 			retval.append(tableId);
 			retval.append("_params)");
-			if(this.dataTablesExtra != null){
+			if (this.dataTablesExtra != null) {
 				retval.append(".");
 				retval.append(this.dataTablesExtra);
 				retval.append("(");
-				if(this.dataTablesExtraConf != null){
+				if (this.dataTablesExtraConf != null) {
 					retval.append(this.dataTablesExtraConf);
 				}
 				retval.append(")");
 			}
 			retval.append(";");
-								
-			if(this.beforeEndDocumentReady != null){
+
+			if (this.beforeEndDocumentReady != null) {
 				retval.append("\n");
 				retval.append(INDENTATION);
-				retval.append(this.beforeEndDocumentReady);				
+				retval.append(this.beforeEndDocumentReady);
 			}
-			
-			retval.append("\n});");		
-			
-			if(this.afterAll != null){
+
+			retval.append("\n});");
+
+			if (this.afterAll != null) {
 				retval.append("\n");
 				retval.append(this.afterAll);
 			}
-			
+
 			break;
-			
-		case PLUGIN :
-			retval.append(this.content);
-			
-			break;
-		
-		case AGGREGATE :
+
+		case EXTENSION:
 			retval.append(this.content);
 			break;
-		
-		case MINIMIFIED :
+
+		case PLUGIN:
 			retval.append(this.content);
 			break;
-			
-		default :
+
+		case AGGREGATE:
+			retval.append(this.content);
+			break;
+
+		case MINIMIFIED:
+			retval.append(this.content);
+			break;
+
+		default:
 			retval.append(this.content);
 			break;
 		}
-		
+
 		return retval.toString();
 	}
 
@@ -174,7 +200,7 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeAll(String beforeAll) {
-		if(this.beforeAll == null){
+		if (this.beforeAll == null) {
 			this.beforeAll = new StringBuffer();
 		}
 		this.beforeAll.append(beforeAll);
@@ -185,18 +211,18 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeStartDocumentReady(String beforeStartDocumentReady) {
-		if(this.beforeStartDocumentReady == null){
+		if (this.beforeStartDocumentReady == null) {
 			this.beforeStartDocumentReady = new StringBuffer();
 		}
 		this.beforeStartDocumentReady.append(beforeStartDocumentReady);
 	}
-	
+
 	public StringBuffer getAfterStartDocumentReady() {
 		return afterStartDocumentReady;
 	}
 
 	public void appendToAfterStartDocumentReady(String afterStartDocumentReady) {
-		if(this.afterStartDocumentReady == null){
+		if (this.afterStartDocumentReady == null) {
 			this.afterStartDocumentReady = new StringBuffer();
 		}
 		this.afterStartDocumentReady.append(afterStartDocumentReady);
@@ -207,7 +233,7 @@ public class JsResource  {
 	}
 
 	public void appendToBeforeEndDocumentReady(String beforeEndDocumentReady) {
-		if(this.beforeEndDocumentReady == null){
+		if (this.beforeEndDocumentReady == null) {
 			this.beforeEndDocumentReady = new StringBuffer();
 		}
 		this.beforeEndDocumentReady.append(beforeEndDocumentReady);
@@ -218,7 +244,7 @@ public class JsResource  {
 	}
 
 	public void appendToAfterAll(String afterAll) {
-		if(this.afterAll == null){
+		if (this.afterAll == null) {
 			this.afterAll = new StringBuffer();
 		}
 		this.afterAll.append(afterAll);
@@ -229,7 +255,7 @@ public class JsResource  {
 	}
 
 	public void appendToDataTablesConf(String dataTablesConf) {
-		if(this.dataTablesConf == null){
+		if (this.dataTablesConf == null) {
 			this.dataTablesConf = new StringBuffer();
 		}
 		this.dataTablesConf.append(dataTablesConf);
@@ -256,7 +282,7 @@ public class JsResource  {
 	}
 
 	public void appendToDataTablesExtra(String dataTablesExtra) {
-		if(this.dataTablesExtra == null){
+		if (this.dataTablesExtra == null) {
 			this.dataTablesExtra = new StringBuffer();
 		}
 		this.dataTablesExtra.append(dataTablesExtra);
@@ -267,9 +293,17 @@ public class JsResource  {
 	}
 
 	public void appendToDataTablesExtraConf(String dataTablesExtraConf) {
-		if(this.dataTablesExtraConf == null){
+		if (this.dataTablesExtraConf == null) {
 			this.dataTablesExtraConf = new StringBuffer();
 		}
 		this.dataTablesExtraConf.append(dataTablesExtraConf);
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

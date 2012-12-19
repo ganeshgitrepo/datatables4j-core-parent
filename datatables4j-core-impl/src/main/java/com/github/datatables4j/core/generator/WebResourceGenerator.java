@@ -31,6 +31,7 @@ package com.github.datatables4j.core.generator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
@@ -46,6 +47,7 @@ import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.model.ExportConf;
 import com.github.datatables4j.core.api.model.ExportLinkPosition;
+import com.github.datatables4j.core.api.model.AbstractExtension;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
 import com.github.datatables4j.core.api.model.HtmlDiv;
@@ -54,9 +56,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
 import com.github.datatables4j.core.datasource.DataProvider;
-import com.github.datatables4j.core.feature.FeatureLoader;
-import com.github.datatables4j.core.plugin.InternalPluginLoader;
-import com.github.datatables4j.core.theme.ThemeLoader;
+import com.github.datatables4j.core.extension.ExtensionLoader;
 import com.github.datatables4j.core.util.JsonIndentingWriter;
 import com.github.datatables4j.core.util.NameConstants;
 import com.github.datatables4j.core.util.RequestHelper;
@@ -119,17 +119,21 @@ public class WebResourceGenerator {
 		// We need to append a randomUUID in case of multiple tables exists in
 		// the same JSP
 		JsResource mainJsFile = new JsResource(ResourceType.MAIN, NameConstants.DT_MAIN_JS
-				+ table.getRandomId() + ".js", table.getId());
+				+ table.getRandomId() + ".js");
+		mainJsFile.setTableId(table.getId());
 
 		// Extra files management
 		if (!table.getExtraFiles().isEmpty()) {
 			extraFileManagement(mainJsFile, table);
 		}
 
-		// Internal module management
-		InternalPluginLoader.loadPlugins(mainJsFile, table, mainConf, webResources);
-		FeatureLoader.loadFeatures(mainJsFile, table, mainConf, webResources);
-		ThemeLoader.loadTheme(mainJsFile, table, mainConf, webResources);
+		// Extension management
+		ExtensionLoader extensionLoader = new ExtensionLoader(table, mainJsFile, mainConf, webResources);		
+		extensionLoader.load(table.getPlugins(), AbstractExtension.Type.PLUGIN);
+		extensionLoader.load(table.getFeatures(), AbstractExtension.Type.FEATURE);
+		if(table.getTheme() != null){
+			extensionLoader.load(Arrays.asList(table.getTheme()), AbstractExtension.Type.THEME);			
+		}
 		
 		// Extra conf management
 		extraConfManagement(mainJsFile, mainConf, table);

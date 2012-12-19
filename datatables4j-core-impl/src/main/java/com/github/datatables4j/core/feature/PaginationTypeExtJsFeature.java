@@ -30,7 +30,8 @@
 package com.github.datatables4j.core.feature;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.Feature;
+import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.model.AbstractFeature;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.Configuration;
@@ -42,7 +43,7 @@ import com.github.datatables4j.core.api.model.Configuration;
  * @author Thibault Duchateau
  * @author Zach Curtis (
  */
-public class PaginationTypeExtJsFeature extends Feature {
+public class PaginationTypeExtJsFeature extends AbstractFeature {
 
 	@Override
 	public String getName() {
@@ -56,7 +57,7 @@ public class PaginationTypeExtJsFeature extends Feature {
 
 	@Override
 	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("paginationType/extjs.js"));
+		addJsResource(new JsResource(ResourceType.FEATURE, "PaginationTypeExtJs", "datatables/features/paginationType/extjs.js"));
 		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "extStyle", Configuration.Mode.OVERRIDE));
 	}
 }

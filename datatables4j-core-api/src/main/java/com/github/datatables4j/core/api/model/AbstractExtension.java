@@ -34,22 +34,39 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.generator.DataTableConfigurationGenerator;
 
 /**
- * TODO
+ * Abstract class that defines an extension.
  * 
  * @author Thibault Duchateau
  */
-public abstract class Extension {
+public abstract class AbstractExtension {
 
-	protected String beforeAllScript;
-	protected String afterAllScript;
-	protected String afterStartDocumentReady;
-	protected String beforeEndDocumentReady;
+	// TODO mettre a jour les accesseurs
+	protected StringBuffer beforeAll;
+	// TODO mettre a jour les accesseurs
+	protected StringBuffer afterAll;
+	protected StringBuffer beforeStartDocumentReady;
+	protected StringBuffer afterStartDocumentReady;
+	protected StringBuffer beforeEndDocumentReady;
 	protected List<JsResource> jsResources;
 	protected List<CssResource> cssResources;
 	protected List<Configuration> confs;
-
+	protected Boolean appendRandomNumber = false;
+	protected DataTableConfigurationGenerator configGenerator;
+	protected String function;
+	
+	public enum Type {
+		MAIN, FEATURE, PLUGIN, THEME
+	}
+	
+	public abstract Type getType();
+	
+	public String getFunction(){
+		return null;
+	}
+	
 	/**
 	 * Returns the feature's name.
 	 */
@@ -61,7 +78,7 @@ public abstract class Extension {
 	public abstract String getVersion();
 
 	/**
-	 * Setup the feature (web resources, DataTables configuration).
+	 * Set the extension up.
 	 * <p>
 	 * The HtmlTable object is available if a particular configuration is
 	 * needed.
@@ -72,36 +89,20 @@ public abstract class Extension {
 	 */
 	public abstract void setup(HtmlTable table) throws BadConfigurationException;
 	
-	public String getBeforeAllScript() {
-		return beforeAllScript;
+	public StringBuffer getBeforeAllScript() {
+		return beforeAll;
+	}
+	
+	public StringBuffer getAfterAllScript() {
+		return afterAll;
 	}
 
-	public void setBeforeAllScript(String beforeAllScript) {
-		this.beforeAllScript = beforeAllScript;
-	}
-
-	public String getAfterAllScript() {
-		return afterAllScript;
-	}
-
-	public void setAfterAllScript(String afterAllScript) {
-		this.afterAllScript = afterAllScript;
-	}
-
-	public String getAfterStartDocumentReady() {
+	public StringBuffer getAfterStartDocumentReady() {
 		return afterStartDocumentReady;
 	}
 
-	public void setAfterStartDocumentReady(String afterStartDocumentReady) {
-		this.afterStartDocumentReady = afterStartDocumentReady;
-	}
-
-	public String getBeforeEndDocumentReady() {
+	public StringBuffer getBeforeEndDocumentReady() {
 		return beforeEndDocumentReady;
-	}
-
-	public void setBeforeEndDocumentReady(String beforeEndDocumentReady) {
-		this.beforeEndDocumentReady = beforeEndDocumentReady;
 	}
 
 	public List<JsResource> getJsResources() {
@@ -147,5 +148,56 @@ public abstract class Extension {
 			this.confs = new ArrayList<Configuration>();
 		}
 		this.confs.add(conf);
+	}
+
+	public DataTableConfigurationGenerator getConfigGenerator() {
+		return configGenerator;
+	}
+
+	public void setConfigGenerator(DataTableConfigurationGenerator configGenerator) {
+		this.configGenerator = configGenerator;
+	}
+
+	public Boolean getAppendRandomNumber() {
+		return appendRandomNumber;
+	}
+
+	public void setAppendRandomNumber(Boolean appendRandomNumber) {
+		this.appendRandomNumber = appendRandomNumber;
+	}
+	
+	public void appendToBeforeAll(String beforeAll) {
+		if(this.beforeAll == null){
+			this.beforeAll = new StringBuffer();
+		}
+		this.beforeAll.append(beforeAll);
+	}
+
+	public void appendToBeforeStartDocumentReady(String beforeStartDocumentReady) {
+		if(this.beforeStartDocumentReady == null){
+			this.beforeStartDocumentReady = new StringBuffer();
+		}
+		this.beforeStartDocumentReady.append(beforeStartDocumentReady);
+	}
+	
+	public void appendToAfterStartDocumentReady(String afterStartDocumentReady) {
+		if(this.afterStartDocumentReady == null){
+			this.afterStartDocumentReady = new StringBuffer();
+		}
+		this.afterStartDocumentReady.append(afterStartDocumentReady);
+	}
+
+	public void appendToBeforeEndDocumentReady(String beforeEndDocumentReady) {
+		if(this.beforeEndDocumentReady == null){
+			this.beforeEndDocumentReady = new StringBuffer();
+		}
+		this.beforeEndDocumentReady.append(beforeEndDocumentReady);
+	}
+
+	public void appendToAfterAll(String afterAll) {
+		if(this.afterAll == null){
+			this.afterAll = new StringBuffer();
+		}
+		this.afterAll.append(afterAll);
 	}
 }

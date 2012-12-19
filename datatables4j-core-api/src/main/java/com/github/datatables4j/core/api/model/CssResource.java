@@ -29,6 +29,8 @@
  */
 package com.github.datatables4j.core.api.model;
 
+import com.github.datatables4j.core.api.constants.ResourceType;
+
 /**
  * POJO that symbolizes a CSS file.
  *
@@ -39,15 +41,21 @@ public class CssResource  {
 	private String name;
 	private String location;
 	private String content;
-	private String type;
+	private ResourceType type;
 	
 	public CssResource(String name){
 		this.name = name;
 	}
 	
-	public CssResource(String type, String name){
+	public CssResource(ResourceType type, String name){
 		this.type = type;
 		this.name = name;
+	}
+	
+	public CssResource(ResourceType type, String name, String location){
+		this.type = type;
+		this.name = name;
+		this.location = location;
 	}
 	
 	public String getName() {
@@ -78,11 +86,11 @@ public class CssResource  {
 		this.content = this.content + newContent;
 	}
 
-	public String getType() {
+	public ResourceType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ResourceType type) {
 		this.type = type;
 	}
 

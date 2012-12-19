@@ -27,35 +27,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.plugin;
 
+
+import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.api.model.JsResource;
+import com.github.datatables4j.core.api.model.AbstractPlugin;
+import com.github.datatables4j.core.api.model.Configuration;
 
 /**
- * Abstract UI feature.
+ * Java implementation of the DataTables ColReorder plugin.
  * 
+ * @see <a href="http://datatables.net/extras/colreorder/">Reference</a>
  * @author Thibault Duchateau
  */
-public abstract class Feature extends Extension {
+public class ColReorderPlugin extends AbstractPlugin {
 
-//	/**
-//	 * Returns the feature's name.
-//	 */
-//	public abstract String getFeatureName();
-//
-//	/**
-//	 * Returns the feature's version.
-//	 */
-//	public abstract String getFeatureVersion();
-//
-//	/**
-//	 * Setup the feature (web resources, DataTables configuration).
-//	 * <p>
-//	 * The HtmlTable object is available if a particular configuration is
-//	 * needed.
-//	 * </p>
-//	 * 
-//	 * @param table
-//	 *            The HTML table.
-//	 */
-//	public abstract void setup(HtmlTable table);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "ColReorder";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getVersion() {
+		return "1.0.6";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setup(HtmlTable table) {
+		addJsResource(new JsResource(ResourceType.PLUGIN, "ColReorder", "datatables/plugins/colreorder/colreorder.min.js"));
+		addCssResource(new CssResource(ResourceType.PLUGIN, "ColReorder", "datatables/plugins/colreorder/colreorder.css"));
+		addConfiguration(new Configuration(DTConstants.DT_DOM, "R", Configuration.Mode.PREPEND));
+	}	
 }

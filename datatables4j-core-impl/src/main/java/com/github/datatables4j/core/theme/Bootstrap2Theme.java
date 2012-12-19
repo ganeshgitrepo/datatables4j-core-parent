@@ -27,47 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.plugin;
-
+package com.github.datatables4j.core.theme;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.model.AbstractTheme;
+import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.model.JsResource;
-import com.github.datatables4j.core.api.model.Plugin;
-import com.github.datatables4j.core.api.model.Configuration;
+import com.github.datatables4j.core.util.ResourceHelper;
 
 /**
- * Java implementation of the DataTables ColReorder plugin.
- * 
- * @see <a href="http://datatables.net/extras/colreorder/">Reference</a>
+ * Bootstrap v2 DataTables theme.
+ *
  * @author Thibault Duchateau
  */
-public class ColReorderModule extends Plugin {
+public class Bootstrap2Theme extends AbstractTheme {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getName() {
-		return "ColReorder";
+		return "bootstrap2";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getVersion() {
-		return "1.0.6";
+		return "1.0.0";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void setup(HtmlTable table) {
-		addJsResource(new JsResource("colreorder.min.js"));
-		addCssResource(new CssResource("colreorder.css"));
-		addConfiguration(new Configuration(DTConstants.DT_DOM, "R", Configuration.Mode.PREPEND));
-	}	
+	public void setup(HtmlTable table) throws BadConfigurationException {
+		// Specific theme javascript		
+		appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/themes/bootstrap2/bootstrap.js"));
+		
+		// Custom pagination type
+		appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/features/paginationType/bootstrap.js")); 
+		
+		// Specific theme css
+		addCssResource(new CssResource(ResourceType.THEME, "Bootstrap2Theme", "datatables/themes/bootstrap2/bootstrap.css"));
+
+		// Specific theme configurations
+		addConfiguration(new Configuration(DTConstants.DT_DOM, "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>", Configuration.Mode.OVERRIDE));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "bootstrap", Configuration.Mode.OVERRIDE));
+	}
 }

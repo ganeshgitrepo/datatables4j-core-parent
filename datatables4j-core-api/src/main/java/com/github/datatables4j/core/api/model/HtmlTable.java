@@ -67,8 +67,8 @@ public class HtmlTable {
 	private TableProperties tableProperties = new TableProperties();
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private String datasourceUrl;
-	private List<Plugin> plugins = new ArrayList<Plugin>();
-	private List<Feature> features = new ArrayList<Feature>();
+	private List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
+	private List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 	private List<ExtraFile> extraFiles = new ArrayList<ExtraFile>();
 	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
 	private String randomId;
@@ -83,7 +83,7 @@ public class HtmlTable {
 	private Boolean isExportable = false;
 	
 	// Theme
-	private Theme theme;
+	private AbstractTheme theme;
 	
 	public HtmlTable() {
 	};
@@ -205,11 +205,11 @@ public class HtmlTable {
 		return tmpRetval.toString();
 	}
 
-	public void registerPlugin(Plugin plugin) {
+	public void registerPlugin(AbstractPlugin plugin) {
 		this.plugins.add(plugin);
 	}
 
-	public void registerFeature(Feature feature) {
+	public void registerFeature(AbstractFeature feature) {
 		this.features.add(feature);
 	}
 	
@@ -247,6 +247,11 @@ public class HtmlTable {
 		this.attributes.put("class", cssClass);
 	}
 
+	public void addCssClass(String newCssClass){
+		this.cssClass += newCssClass;
+		this.attributes.put("class", this.cssClass);
+	}
+	
 	public Boolean getAutoWidth() {
 		return autoWidth;
 	}
@@ -359,19 +364,19 @@ public class HtmlTable {
 		this.extraConfs = extraConfs;
 	}
 
-	public List<Plugin> getPlugins() {
+	public List<AbstractPlugin> getPlugins() {
 		return plugins;
 	}
 
-	public void setPlugins(List<Plugin> plugins) {
+	public void setPlugins(List<AbstractPlugin> plugins) {
 		this.plugins = plugins;
 	}
 
-	public List<Feature> getFeatures() {
+	public List<AbstractFeature> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(List<Feature> features) {
+	public void setFeatures(List<AbstractFeature> features) {
 		this.features = features;
 	}
 	
@@ -506,11 +511,11 @@ public class HtmlTable {
 				+ ", isExportable=" + isExportable + "]";
 	}
 
-	public Theme getTheme() {
+	public AbstractTheme getTheme() {
 		return theme;
 	}
 
-	public void setTheme(Theme theme) {
+	public void setTheme(AbstractTheme theme) {
 		this.theme = theme;
 	}
 }

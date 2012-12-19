@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.generator.DataTableConfigurationGenerator;
 import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -47,7 +48,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
  *
  * @author Thibault Duchateau
  */
-public class ColumnFilteringGenerator {
+public class ColumnFilteringGenerator extends DataTableConfigurationGenerator {
 
     // Logger
     private static Logger logger = LoggerFactory.getLogger(ColumnFilteringGenerator.class);
@@ -60,7 +61,7 @@ public class ColumnFilteringGenerator {
      * @return MainConf The main configuration file associated with the HTML
      *         table.
      */
-    public Map<String, Object> generateConfig(HtmlTable table) {
+    public Map<String, Object> generate(HtmlTable table) {
 
         logger.debug("Generating Column Filtering configuration ..");
 

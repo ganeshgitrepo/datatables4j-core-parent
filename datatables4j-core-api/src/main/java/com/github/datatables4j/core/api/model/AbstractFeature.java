@@ -27,40 +27,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.theme;
-
-import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.model.Configuration;
-import com.github.datatables4j.core.api.model.Configuration.Mode;
-import com.github.datatables4j.core.api.model.CssResource;
-import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.model.Theme;
-import com.github.datatables4j.core.util.ResourceHelper;
+package com.github.datatables4j.core.api.model;
 
 /**
- * Bootstrap v2 DataTables theme.
- *
+ * Abstract UI feature.
+ * 
  * @author Thibault Duchateau
  */
-public class BootstrapTheme extends Theme {
+public abstract class AbstractFeature extends AbstractExtension {
 
-	@Override
-	public String getName() {
-		return "Bootstrap-theme";
-	}
-
-	@Override
-	public String getVersion() {
-		return "1.0.0";
-	}
-
-	@Override
-	public void setup(HtmlTable table) throws BadConfigurationException {
-		beforeAllScript = ResourceHelper.getFileContentFromClasspath("datatables/themes/bootstrap/bootstrap.js");
-		beforeAllScript += ResourceHelper.getFileContentFromClasspath("datatables/features/paginationType/bootstrap.js"); 
-		addCssResource(new CssResource("datatables/themes/bootstrap/bootstrap.css"));
-		addConfiguration(new Configuration(DTConstants.DT_DOM, "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>", Mode.OVERRIDE));
-		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "bootstrap", Configuration.Mode.OVERRIDE));
+	public Type getType() {
+		return Type.FEATURE;
 	}
 }
