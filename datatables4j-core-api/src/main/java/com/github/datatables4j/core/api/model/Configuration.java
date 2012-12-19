@@ -35,7 +35,7 @@ public class Configuration {
 	private String value;	
 	private Mode mode;
 	public enum Mode {
-		OVERRIDE, APPEND, PREPEND
+		OVERRIDE, APPEND, PREPEND, APPEND_WITH_SPACE, PREPEND_WITH_SPACE
 	}
 
 	public Configuration(String name, String value){
