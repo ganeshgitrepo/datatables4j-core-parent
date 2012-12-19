@@ -27,71 +27,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.thymeleaf.processor;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.ProcessorResult;
+import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+
+import com.github.datatables4j.core.thymeleaf.util.Constants;
 
 /**
- * POJO that symbolizes a CSS file.
+ * 
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
+public class TableAutoWidthAttrProcessor extends AbstractAttrProcessor {
+
+	public TableAutoWidthAttrProcessor(){
+		super(Constants.ATTR_AUTOWIDTH);
 	}
 	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
+	@Override
+	public int getPrecedence() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -27,71 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.theme;
 
+import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.model.AbstractTheme;
+import com.github.datatables4j.core.api.model.Configuration;
+import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.base.util.ResourceHelper;
 
 /**
- * POJO that symbolizes a CSS file.
+ * Bootstrap v2 DataTables theme.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
+public class Bootstrap2Theme extends AbstractTheme {
+
+	@Override
 	public String getName() {
-		return name;
+		return "bootstrap2";
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public String getVersion() {
+		return "1.0.0";
 	}
 
-	public String getLocation() {
-		return location;
-	}
+	@Override
+	public void setup(HtmlTable table) throws BadConfigurationException {
+		// Specific theme javascript		
+		appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/themes/bootstrap2/bootstrap.js"));
+		
+		// Custom pagination type
+		appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/features/paginationType/bootstrap.js")); 
+		
+		// Specific theme css
+		addCssResource(new CssResource(ResourceType.THEME, "Bootstrap2Theme", "datatables/themes/bootstrap2/bootstrap.css"));
 
-	public void setLocation(String location) {
-		this.location = location;
+		// Specific theme configurations
+		addConfiguration(new Configuration(DTConstants.DT_DOM, "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>", Configuration.Mode.OVERRIDE));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "bootstrap", Configuration.Mode.OVERRIDE));
 	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

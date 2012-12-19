@@ -27,35 +27,63 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.jsp.tag;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * POJO that symbolizes a CSS file.
+ * Tag used to locally override the DataTables4j global configuration.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
+public class PropTag extends TagSupport {
+	private static final long serialVersionUID = -3453884184847355817L;
+
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(PropTag.class);
+		
+	// Tag attributes
 	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
+	private String value;
 	
-	public CssResource(String name){
-		this.name = name;
+	/**
+	 * A PropTag has no body but we test here that the PropTag is in the right place.
+	 */
+	public int doStartTag() throws JspException {
+
+		if (!(getParent() instanceof AbstractTableTag)) {
+			throw new JspException("PropTag must be inside AbstractTableTag");
+		}
+
+		return SKIP_BODY;
 	}
 	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
+	/**
+	 * Process the tag updating table properties.
+	 */
+	public int doEndTag() throws JspException {
+		
+		// Get parent tag
+		AbstractTableTag parent = (AbstractTableTag) getParent();
+
+		// Evaluate the tag only once using the isFirstRow method
+		if(parent.isFirstRow()){
+			
+			if(parent.getTable().getTableProperties().isValidProperty(name)){
+				// Override the existing properties with the new one
+				parent.getTable().getTableProperties().setProperty(name, value);
+			}
+			else{
+				logger.error("The property {} doesn't exist. Please visit the documentation.", name);
+				throw new JspException(name + " is not a valid property");
+			}
+		}
+		
+		return EVAL_PAGE;
 	}
 	
 	public String getName() {
@@ -66,32 +94,11 @@ public class CssResource  {
 		this.name = name;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getValue() {
+		return value;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setValue(String value) {
+		this.value = value;
 	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

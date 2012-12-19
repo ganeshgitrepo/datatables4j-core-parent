@@ -27,71 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
-
-import com.github.datatables4j.core.api.constants.ResourceType;
+package com.github.datatables4j.core.thymeleaf.util;
 
 /**
- * POJO that symbolizes a CSS file.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
+public class Constants {
+
+	// Table attributes
+	public static final String ATTR_AUTOWIDTH = "autoWidth";
+	public static final String ATTR_CDN = "cdn";
+	public static final String ATTR_FILTER = "filter";
+	public static final String ATTR_INFO = "info";
+	public static final String ATTR_LENGTHCHANGE = "lengthChange";
+	public static final String ATTR_PAGINATE = "paginate";
+	public static final String ATTR_PAGINATIONTYPE = "paginationType";
+	public static final String ATTR_SORT = "sort";
 	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
+	// Td attributes
+	public static final String ATTR_FILTERABLE = "filterable";
+	public static final String ATTR_FILTERTYPE = "filterType";
+	public static final String ATTR_SORTABLE = "sortable";
+	public static final String ATTR_SORTDIRECTION = "sortDirection";
+	public static final String ATTR_SORTINIT = "sortInit";
 	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
+	// Thead attributes
+	public static final String ATTR_COLREORDER = "colReorder";
+	public static final String ATTR_FIXEDHEADER = "fixedHeader";
+	public static final String ATTR_FIXEDPOSITION = "fixedPosition";
+	public static final String ATTR_OFFSETTOP = "offsetTop";
+	public static final String ATTR_SCROLLER = "scroller";
+	public static final String ATTR_SCROLLY = "scrollY";
 }

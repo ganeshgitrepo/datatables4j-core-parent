@@ -27,71 +27,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.util;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import java.io.StringWriter;
 
 /**
- * POJO that symbolizes a CSS file.
- *
- * @author Thibault Duchateau
+ * Custom writer that pretty prints a JSON object as a String.
+ * 
+ * @author Elad Tabak
+ * @since 28-Nov-2011
+ * @version 0.1
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
+public class JsonIndentingWriter extends StringWriter {
+
+	private int indent = 0;
+
+	@Override
+	public void write(int c) {
+		if (((char) c) == '[' || ((char) c) == '{') {
+			super.write(c);
+			super.write('\n');
+			indent++;
+			writeIndentation();
+		} else if (((char) c) == ',') {
+			super.write(c);
+			super.write('\n');
+			writeIndentation();
+		} else if (((char) c) == ']' || ((char) c) == '}') {
+			super.write('\n');
+			indent--;
+			writeIndentation();
+			super.write(c);
+		} else {
+			super.write(c);
+		}
+
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	private void writeIndentation() {
+		for (int i = 0; i < indent; i++) {
+			super.write("   ");
+		}
 	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

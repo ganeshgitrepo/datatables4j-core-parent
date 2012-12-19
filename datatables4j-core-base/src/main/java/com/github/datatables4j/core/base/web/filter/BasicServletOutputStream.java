@@ -27,71 +27,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.web.filter;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.servlet.ServletOutputStream;
 
 /**
- * POJO that symbolizes a CSS file.
+ * TODO
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
+public class BasicServletOutputStream extends ServletOutputStream {
+
+	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
+	@Override
+	public void write(int b) throws IOException {
+		this.outputStream.write(b);
 	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

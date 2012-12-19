@@ -27,71 +27,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.web.filter;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * POJO that symbolizes a CSS file.
+ * TODO
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
+public class DatatablesResponseWrapper extends HttpServletResponseWrapper {
+
+	protected HttpServletResponse originalResponse = null;
+	protected ServletOutputStream stream = null;
+
+	public DatatablesResponseWrapper(HttpServletResponse response) {
+		super(response);
+		originalResponse = response;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public ServletOutputStream createOutputStream() throws IOException {
+		return (new BasicServletOutputStream());
 	}
 
-	public String getLocation() {
-		return location;
+	public ServletOutputStream getOutputStream() throws IOException {
+		stream = createOutputStream();
+		return stream;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public PrintWriter getWriter() throws IOException {
+		stream = createOutputStream();
+		return new PrintWriter(stream);
 	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

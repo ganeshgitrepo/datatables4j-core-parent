@@ -27,71 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.feature;
 
+import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
+import com.github.datatables4j.core.api.model.AbstractFeature;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.api.model.JsResource;
+import com.github.datatables4j.core.api.model.Configuration;
 
 /**
- * POJO that symbolizes a CSS file.
- *
+ * TODO
+ * 
+ * @see http://www.datatables.net/plug-ins/pagination
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
+public class PaginationTypeFourButtonFeature extends AbstractFeature {
+
+	@Override
 	public String getName() {
-		return name;
+		return "PaginationTypeFourButton";
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public String getVersion() {
+		return "1.0.0";
 	}
 
-	public String getLocation() {
-		return location;
+	@Override
+	public void setup(HtmlTable table) {
+		addJsResource(new JsResource(ResourceType.FEATURE, "PaginationTypeExtJs", "datatables/features/paginationType/four_button.js"));
+		addConfiguration(new Configuration(DTConstants.DT_PAGINATION_TYPE, "four_button", Configuration.Mode.OVERRIDE));
 	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

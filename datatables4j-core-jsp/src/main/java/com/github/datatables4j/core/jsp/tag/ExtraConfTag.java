@@ -27,71 +27,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.jsp.tag;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import com.github.datatables4j.core.api.model.ExtraConf;
+import com.github.datatables4j.core.jsp.util.JspHelper;
 
 /**
- * POJO that symbolizes a CSS file.
+ * Tag used to add some extra Javascript configuration to the DataTable.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
+public class ExtraConfTag extends TagSupport {
+
+	private static final long serialVersionUID = 7656056513635184779L;
+
+	// Tag attributes
+	private String src;
+
+	/**
+	 * This tag doen't have a body.
+	 */
+	public int doStartTag() throws JspException {
+		return SKIP_BODY;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * TODO
+	 */
+	public int doEndTag() throws JspException {
+
+		AbstractTableTag parent = (AbstractTableTag) getParent();
+
+		if (parent.isFirstRow()) {
+			parent.getTable().getExtraConfs().add(new ExtraConf(getLocation(this.src)));
+		}
+		return EVAL_PAGE;
 	}
 
-	public String getLocation() {
-		return location;
+	/**
+	 * TODO
+	 * @param src
+	 * @return
+	 */
+	private String getLocation(String src){
+		return JspHelper.getBaseUrl(pageContext) + src;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public String getSrc() {
+		return src;
 	}
 
-	public String getContent() {
-		return content;
+	public void setSrc(String src) {
+		this.src = src;
 	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

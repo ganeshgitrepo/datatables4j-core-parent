@@ -27,71 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.jsp.util;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
 /**
- * POJO that symbolizes a CSS file.
- *
+ * Helper class used for all HttpServletRequest stuff.
+ * 
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
+public class JspHelper {
 
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * <p>
+	 * Return the base URL (context path included).
+	 * 
+	 * <p>
+	 * Example : with an URL like http://domain.com:port/context/anything, this
+	 * function returns http://domain.com:port/context.
+	 * 
+	 * @param pageContext
+	 *            Context of the current JSP.
+	 * @return the base URL of the current JSP.
+	 */
+	public static String getBaseUrl(PageContext pageContext) {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		return request.getRequestURL().toString()
+				.replace(request.getRequestURI(), request.getContextPath());
 	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

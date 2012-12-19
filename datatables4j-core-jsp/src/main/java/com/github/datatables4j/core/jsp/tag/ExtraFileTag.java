@@ -27,71 +27,75 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.jsp.tag;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.datatables4j.core.api.constants.InsertMode;
+import com.github.datatables4j.core.api.model.ExtraFile;
 
 /**
- * POJO that symbolizes a CSS file.
+ * Tag used to add an extra Javascript configuration file.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
+public class ExtraFileTag extends TagSupport {
+	private static final long serialVersionUID = -287813095911386884L;
+
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(AbstractTableTag.class);
+
+	// Tag attributes
+	private String src;
+	private InsertMode insert = InsertMode.BEFOREALL;
 	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
+	/**
+	 * TODO
+	 */
+	public int doStartTag() throws JspException {
+		return SKIP_BODY;
 	}
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
+	/**
+	 * TODO
+	 */
+	public int doEndTag() throws JspException {
+		
+		AbstractTableTag parent = (AbstractTableTag) getParent();
+		
+		if(parent.isFirstRow()){
+			parent.getTable().getExtraFiles().add(new ExtraFile(getRealSource(this.src), this.insert));
+		}
+		return EVAL_PAGE;
 	}
 	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
+	/**
+	 * TODO
+	 * @param tmpSource
+	 * @return
+	 */
+	private String getRealSource(String tmpSource){
+		logger.debug("getRealSource = {}", pageContext.getServletContext().getRealPath(tmpSource));
+		return pageContext.getServletContext().getRealPath(tmpSource);
+	}
+	
+	public String getSrc() {
+		return src;
 	}
 
-	public void setType(ResourceType type) {
-		this.type = type;
+	public void setSrc(String src) {
+		this.src = src;
 	}
 
+	public InsertMode getInsert() {
+		return insert;
+	}
+
+	public void setInsert(InsertMode insert) {
+		this.insert = insert;
+	}
 }

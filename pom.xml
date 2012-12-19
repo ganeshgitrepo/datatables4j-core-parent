@@ -22,8 +22,10 @@
 
     <modules>
         <module>datatables4j-core-api</module>
-        <module>datatables4j-core-impl</module>
-        <module>datatables4j-core</module>
+        <module>datatables4j-core-base</module>
+        <module>datatables4j-core-jsp</module>
+        <module>datatables4j-core-thymeleaf</module>
+        <module>datatables4j-core-wrapper</module>
     </modules>
 
     <properties>

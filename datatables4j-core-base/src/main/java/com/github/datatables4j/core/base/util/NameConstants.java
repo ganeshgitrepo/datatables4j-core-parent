@@ -27,71 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
-
-import com.github.datatables4j.core.api.constants.ResourceType;
+package com.github.datatables4j.core.base.util;
 
 /**
- * POJO that symbolizes a CSS file.
+ * TODO
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
+public class NameConstants {
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
+	public static final String DT_MAIN_JS = "datatables4j-";
+	public static final String DT_PLUGIN_JS = "datatables4j-";
+	public static final String DT_AGG_ALL_JS = "datatables4j-aggr-";
+	public static final String DT_AGG_ALL_CSS = "datatables4j-aggr-";
+	public static final String DT_AGG_PLUGINS_JS = "datatables4j-aggr-plugins-";
+	public static final String DT_AGG_PLUGINS_CSS = "datatables4j-aggr-plugins-";
 }

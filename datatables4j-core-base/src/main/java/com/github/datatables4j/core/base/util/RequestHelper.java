@@ -27,71 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.base.util;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * POJO that symbolizes a CSS file.
- *
+ * Helper class used for all HttpServletRequest stuff.
+ * 
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
+public class RequestHelper {
 
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * Return the current URL, used to generate the export links.
+	 * 
+	 * @param request
+	 *            The current request.
+	 * @return a String containing the current URL.
+	 */
+	public static String getCurrentUrl(HttpServletRequest request) {
+		String currentUrl = null;
+		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
+			currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
+		}
+		if (currentUrl != null
+				&& request.getAttribute("javax.servlet.include.query_string") != null) {
+			currentUrl += "?" + request.getQueryString();
+		}
+		return currentUrl;
 	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }

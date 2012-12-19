@@ -27,71 +27,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.api.model;
+package com.github.datatables4j.core.jsp.tag;
 
-import com.github.datatables4j.core.api.constants.ResourceType;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.VariableInfo;
 
 /**
- * POJO that symbolizes a CSS file.
+ * TEI for TableTag.
  *
  * @author Thibault Duchateau
  */
-public class CssResource  {
-	
-	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
-	
-	public CssResource(String name){
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name){
-		this.type = type;
-		this.name = name;
-	}
-	
-	public CssResource(ResourceType type, String name, String location){
-		this.type = type;
-		this.name = name;
-		this.location = location;
-	}
-	
-	public String getName() {
-		return name;
-	}
+public class TableTagExtraInfo extends TagExtraInfo {
 
-	public void setName(String name) {
-		this.name = name;
-	}
+	/**
+	 * TODO
+	 */
+	public VariableInfo[] getVariableInfo(TagData data) {
+		
+		List<VariableInfo> variables = new ArrayList<VariableInfo>();
+		
+		if(data.getAttributeString("row") != null){
+			variables.add(new VariableInfo(data.getAttributeString("row"), "java.lang.Object",
+					true, VariableInfo.NESTED));		
+		}
 
-	public String getLocation() {
-		return location;
+		return (VariableInfo[]) variables.toArray(new VariableInfo[]{});
 	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public void updateContent(String newContent){
-		this.content = this.content + newContent;
-	}	
-
-	public ResourceType getType() {
-		return type;
-	}
-
-	public void setType(ResourceType type) {
-		this.type = type;
-	}
-
 }
