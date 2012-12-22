@@ -29,31 +29,68 @@
  */
 package com.github.datatables4j.core.api.model;
 
+/**
+ * Abstract superclass for all HTML tags.
+ * 
+ * @author Thibault Duchateau
+ */
 public abstract class HtmlTag {
 
+	/**
+	 * Plain old HTML <code>id</code> attribute.
+	 */
+	protected String id;
+	
+	/**
+	 * Plain old HTML <code>class</code> attribute.
+	 */
 	protected StringBuffer cssClass;
+
+	/**
+	 * Plain old HTML <code>style</code> attribute.
+	 */
 	protected StringBuffer cssStyle;
+
+	/**
+	 * Render the tag in HTML code.
+	 * 
+	 * @return the HTML code corresponding to the tag.
+	 */
+	public abstract StringBuffer toHtml();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	public StringBuffer getCssClass() {
 		return cssClass;
 	}
+
 	public void setCssClass(StringBuffer cssClass) {
 		this.cssClass = cssClass;
 	}
+
 	public StringBuffer getCssStyle() {
 		return cssStyle;
 	}
+
 	public void setCssStyle(StringBuffer cssStyle) {
 		this.cssStyle = cssStyle;
 	}
-	public void addCssClass(String cssClass){
-		if(this.cssClass == null){
+
+	public void addCssClass(String cssClass) {
+		if (this.cssClass == null) {
 			this.cssClass = new StringBuffer();
 		}
 		this.cssClass.append(cssClass);
 	}
-	public void addCssStyle(String cssStyle){
-		if(this.cssStyle == null){
+
+	public void addCssStyle(String cssStyle) {
+		if (this.cssStyle == null) {
 			this.cssStyle = new StringBuffer();
 		}
 		this.cssStyle.append(cssStyle);

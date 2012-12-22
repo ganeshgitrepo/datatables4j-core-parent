@@ -30,40 +30,27 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * POJO representing a HTML <strong>A</strong> tag (link). 
- *
+ * Plain old HTML <code>a</code> tag (link).
+ * 
  * @author Thibault Duchateau
+ * @since 0.7.0
  */
 public class HtmlLink extends HtmlTag {
 
-	private String id;
+	/**
+	 * Plain old HTML <code>href</code> attribute.
+	 */
 	private String href;
-	private String label;
-	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getHref() {
-		return href;
-	}
-	public void setHref(String href) {
-		this.href = href;
-	}
-	public String getLabel() {
-		return label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
 	
 	/**
-	 * Render the tag in HTML.
-	 * 
-	 * @return a StringBuffer containing the HTML code.
+	 * Link's label.
 	 */
+	private String label;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public StringBuffer toHtml(){
 		StringBuffer html = new StringBuffer();
 		html.append("<a");
@@ -97,5 +84,18 @@ public class HtmlLink extends HtmlTag {
 		html.append("</a>");
 		
 		return html;
+	}
+	
+	public String getHref() {
+		return href;
+	}
+	public void setHref(String href) {
+		this.href = href;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

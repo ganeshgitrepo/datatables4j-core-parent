@@ -35,12 +35,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class HtmlTable {
+import com.github.datatables4j.core.api.export.ExportConf;
+import com.github.datatables4j.core.api.export.ExportLinkPosition;
+import com.github.datatables4j.core.api.export.ExportProperties;
+import com.github.datatables4j.core.api.export.ExportType;
+
+/**
+ * Plain old HTML <code>table</code> tag.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.1.0
+ */
+public class HtmlTable extends HtmlTag {
 
 	// HTML attributes
-	private String domId;
-	private String cssStyle;
-	private String cssClass;
 	private Boolean autoWidth;
 	private Boolean deferRender;
 	private Boolean info;
@@ -54,7 +62,7 @@ public class HtmlTable {
 	private String labels;
 	private Boolean cdn;
 	private Boolean jqueryUI;
-	
+
 	// Extra features
 	private String scrollY;
 	private String fixedPosition;
@@ -65,55 +73,110 @@ public class HtmlTable {
 	private List<HtmlRow> body = new LinkedList<HtmlRow>();
 	private List<HtmlRow> foot = new LinkedList<HtmlRow>();
 	private TableProperties tableProperties = new TableProperties();
-	private Map<String, String> attributes = new HashMap<String, String>();
 	private String datasourceUrl;
-	private List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
-	private List<AbstractFeature> features = new ArrayList<AbstractFeature>();
-	private List<ExtraFile> extraFiles = new ArrayList<ExtraFile>();
-	private List<ExtraConf> extraConfs = new ArrayList<ExtraConf>();
+	private List<AbstractPlugin> plugins;
+	private List<AbstractFeature> features;
+	private List<ExtraFile> extraFiles;
+	private List<ExtraConf> extraConfs;
 	private String randomId;
+	
+	/**
+	 * Class of the iterated objects. Only used in XML export.
+	 */
 	private String objectType;
 	private String currentUrl;
-	
+
 	// Export
 	private ExportProperties exportProperties;
 	private Boolean exporting;
 	private Map<ExportType, ExportConf> exportConfMap = new HashMap<ExportType, ExportConf>();
 	private List<ExportLinkPosition> exportLinkPositions;
 	private Boolean isExportable = false;
-	
+
 	// Theme
 	private AbstractTheme theme;
-	
-	public HtmlTable() {
-	};
 
-	public HtmlTable(String domId) {
-		this.domId = domId;
-	}
-
-	public HtmlTable(String domId, String randomId) {
-		this.domId = domId;
+	public HtmlTable(String id, String randomId) {
+		init();
+		this.id = id;
 		this.randomId = randomId;
 	}
+
+	/**
+	 * Initialize the default values.
+	 */
+	private void init(){
+		// Basic attributes
+		this.cdn = false;
+
+		// Export
+		this.isExportable = false;
+		
+		// Export links position
+		List<ExportLinkPosition> exportLinkPositions = new ArrayList<ExportLinkPosition>();
+		exportLinkPositions.add(ExportLinkPosition.TOP_RIGHT);
+		this.exportLinkPositions = exportLinkPositions;
+	}
 	
-	public String getId() {
-		return this.domId;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public StringBuffer toHtml() {
+		StringBuffer html = new StringBuffer();
+
+		html.append("<table id=\"");
+		html.append(this.id);
+		html.append("\"");
+
+		if (this.cssClass != null) {
+			html.append(" class=\"");
+			html.append(this.cssClass);
+			html.append("\"");
+		}
+
+		if (this.cssStyle != null) {
+			html.append(" style=\"");
+			html.append(this.cssStyle);
+			html.append("\"");
+		}
+
+		html.append(">");
+		html.append("<thead>");
+
+		for (HtmlRow row : this.head) {
+			html.append(row.toHtml());
+		}
+		html.append("</thead>");
+		html.append("<tbody>");
+
+		for (HtmlRow row : this.body) {
+			html.append(row.toHtml());
+		}
+
+		html.append("</tbody>");
+
+		if (!this.foot.isEmpty()) {
+			html.append("<tfoot>");
+			for (HtmlRow row : this.foot) {
+				html.append(row.toHtml());
+			}
+
+			html.append("</tfoot>");
+		}
+		html.append("</table>");
+
+		return html;
 	}
 
-	public void setDomId(String domId) {
-		this.domId = domId;
-		this.attributes.put("id", domId);
-	}
-
-	public List<HtmlRow> getHeadRows(){
+	public List<HtmlRow> getHeadRows() {
 		return head;
 	}
-	
-	public List<HtmlRow> getBodyRows(){
+
+	public List<HtmlRow> getBodyRows() {
 		return body;
 	}
-	
+
 	public HtmlRow addHeaderRow() {
 		HtmlRow row = new HtmlRow();
 		this.head.add(row);
@@ -131,7 +194,7 @@ public class HtmlTable {
 		this.foot.add(row);
 		return row;
 	}
-	
+
 	public HtmlRow addRow(String rowId) {
 		HtmlRow row = new HtmlRow(rowId);
 		this.body.add(row);
@@ -145,14 +208,10 @@ public class HtmlTable {
 		return this;
 	}
 
-	public void addAttribute(String name, String value) {
-		this.attributes.put(name, value);
-	}
-
 	public HtmlRow getLastFooterRow() {
 		return ((LinkedList<HtmlRow>) this.foot).getLast();
 	}
-	
+
 	public HtmlRow getLastHeaderRow() {
 		return ((LinkedList<HtmlRow>) this.head).getLast();
 	}
@@ -161,97 +220,57 @@ public class HtmlTable {
 		return ((LinkedList<HtmlRow>) this.body).getLast();
 	}
 
-	public String toHtml() {
-		StringBuffer tmpRetval = new StringBuffer();
-		
-		tmpRetval.append("<table id=\"");
-		tmpRetval.append(this.domId);
-		tmpRetval.append("\"");
-
-		for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
-			tmpRetval.append(" ");
-			tmpRetval.append(entry.getKey());
-			tmpRetval.append("=\"");
-			tmpRetval.append(entry.getValue());
-			tmpRetval.append("\"");
-		}
-
-		tmpRetval.append(">");
-		tmpRetval.append("<thead>");
-
-		for (HtmlRow row : this.head) {
-			tmpRetval.append(row.toHtml());
-		}
-		tmpRetval.append("</thead>");
-		tmpRetval.append("<tbody>");
-
-		for (HtmlRow row : this.body) {
-			tmpRetval.append(row.toHtml());
-		}
-
-		tmpRetval.append("</tbody>");
-
-		if (!this.foot.isEmpty()) {
-			System.out.println("Il y a qqchose dans foot !");
-			tmpRetval.append("<tfoot>");
-			for (HtmlRow row : this.foot) {
-				tmpRetval.append(row.toHtml());
-			}
-
-			tmpRetval.append("</tfoot>");
-		}
-		tmpRetval.append("</table>");
-
-		return tmpRetval.toString();
-	}
-
+	/**
+	 * Register a plugin to the table.
+	 * 
+	 * @param plugin
+	 *            The plugin to activate.
+	 */
 	public void registerPlugin(AbstractPlugin plugin) {
+		if (this.plugins == null) {
+			this.plugins = new ArrayList<AbstractPlugin>();
+		}
 		this.plugins.add(plugin);
 	}
 
+	/**
+	 * Register a feature to the table.
+	 * 
+	 * @param feature
+	 *            The feature to activate.
+	 */
 	public void registerFeature(AbstractFeature feature) {
+		if (this.features == null) {
+			this.features = new ArrayList<AbstractFeature>();
+		}
 		this.features.add(feature);
 	}
-	
-	public Boolean hasOneFilterableColumn(){
-		
+
+	/**
+	 * Returns <code>true</code> if the table has one filterable column,
+	 * <code>false</code> otherwise. This way, the {@link FilteringFeature} will
+	 * be activated or not.
+	 * 
+	 * @return <code>true</code> if the table has one filterable column,
+	 *         <code>false</code> otherwise
+	 */
+	public Boolean hasOneFilterableColumn() {
+
 		Boolean retval = false;
-		
-		for(HtmlRow headerRow : this.head){
-			for(HtmlColumn headerColumn : headerRow.getHeaderColumns()){
-				if(headerColumn.isFilterable()){
+
+		for (HtmlRow headerRow : this.head) {
+			for (HtmlColumn headerColumn : headerRow.getHeaderColumns()) {
+				System.out.println("headerColumn = " + headerColumn.toString());
+				if (headerColumn.isFilterable() != null && headerColumn.isFilterable()) {
 					retval = true;
 					break;
 				}
 			}
 		}
-		
+
 		return retval;
 	}
-	
-	public String getCssStyle() {
-		return cssStyle;
-	}
 
-	public void setCssStyle(String cssStyle) {
-		this.cssStyle = cssStyle;
-		this.attributes.put("style", cssStyle);
-	}
-
-	public String getCssClass() {
-		return cssClass;
-	}
-
-	public void setCssClass(String cssClass) {
-		this.cssClass = cssClass;
-		this.attributes.put("class", cssClass);
-	}
-
-	public void addCssClass(String newCssClass){
-		this.cssClass += newCssClass;
-		this.attributes.put("class", this.cssClass);
-	}
-	
 	public Boolean getAutoWidth() {
 		return autoWidth;
 	}
@@ -352,16 +371,22 @@ public class HtmlTable {
 		return extraFiles;
 	}
 
-	public void setExtraFiles(List<ExtraFile> extraFiles) {
-		this.extraFiles = extraFiles;
+	public void addExtraFile(ExtraFile extraFile){
+		if(this.extraFiles == null){
+			this.extraFiles = new ArrayList<ExtraFile>();
+		}
+		this.extraFiles.add(extraFile);
 	}
 
 	public List<ExtraConf> getExtraConfs() {
 		return extraConfs;
 	}
 
-	public void setExtraConfs(List<ExtraConf> extraConfs) {
-		this.extraConfs = extraConfs;
+	public void addExtraConf(ExtraConf extraConf){
+		if(this.extraConfs == null){
+			this.extraConfs = new ArrayList<ExtraConf>();
+		}
+		this.extraConfs.add(extraConf);
 	}
 
 	public List<AbstractPlugin> getPlugins() {
@@ -379,7 +404,7 @@ public class HtmlTable {
 	public void setFeatures(List<AbstractFeature> features) {
 		this.features = features;
 	}
-	
+
 	public String getFixedPosition() {
 		return fixedPosition;
 	}
@@ -494,7 +519,7 @@ public class HtmlTable {
 
 	@Override
 	public String toString() {
-		return "HtmlTable [domId=" + domId + ", cssStyle=" + cssStyle + ", cssClass=" + cssClass
+		return "HtmlTable [id=" + id + ", cssStyle=" + cssStyle + ", cssClass=" + cssClass
 				+ ", autoWidth=" + autoWidth + ", deferRender=" + deferRender + ", info=" + info
 				+ ", filterable=" + filterable + ", paginate=" + paginate + ", paginationStyle="
 				+ paginationType + ", lengthChange=" + lengthChange + ", processing=" + processing
@@ -502,13 +527,12 @@ public class HtmlTable {
 				+ cdn + ", jqueryUI=" + jqueryUI + ", scrollY=" + scrollY + ", fixedPosition="
 				+ fixedPosition + ", fixedOffsetTop=" + fixedOffsetTop + ", head=" + head
 				+ ", body=" + body + ", foot=" + foot + ", tableProperties=" + tableProperties
-				+ ", attributes=" + attributes + ", datasourceUrl=" + datasourceUrl + ", plugins="
-				+ plugins + ", features=" + features + ", extraFiles=" + extraFiles
-				+ ", extraConfs=" + extraConfs + ", randomId=" + randomId + ", objectType="
-				+ objectType + ", currentUrl=" + currentUrl + ", exportProperties="
-				+ exportProperties + ", exporting=" + exporting + ", exportConfMap="
-				+ exportConfMap + ", exportLinkPositions=" + exportLinkPositions
-				+ ", isExportable=" + isExportable + "]";
+				+ ", datasourceUrl=" + datasourceUrl + ", plugins=" + plugins + ", features="
+				+ features + ", extraFiles=" + extraFiles + ", extraConfs=" + extraConfs
+				+ ", randomId=" + randomId + ", objectType=" + objectType + ", currentUrl="
+				+ currentUrl + ", exportProperties=" + exportProperties + ", exporting="
+				+ exporting + ", exportConfMap=" + exportConfMap + ", exportLinkPositions="
+				+ exportLinkPositions + ", isExportable=" + isExportable + "]";
 	}
 
 	public AbstractTheme getTheme() {

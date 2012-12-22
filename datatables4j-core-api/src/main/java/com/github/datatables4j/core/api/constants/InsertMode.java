@@ -34,8 +34,8 @@ package com.github.datatables4j.core.api.constants;
  * 
  * @author Thibault Duchateau
  */
+// TODO MANQUE UNE VALEUR
 public enum InsertMode {
-	
 	// The javascript is inserted before all instruction.
 	BEFOREALL, 
 	

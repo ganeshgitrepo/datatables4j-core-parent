@@ -32,32 +32,51 @@ package com.github.datatables4j.core.api.model;
 import com.github.datatables4j.core.api.constants.ResourceType;
 
 /**
- * POJO that symbolizes a CSS file.
- *
+ * <p>
+ * POJO for a CSS file, which will be served by the DataTables4j servlet to the
+ * client.
+ * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
-public class CssResource  {
-	
+public class CssResource {
+
+	/**
+	 * Name of the CSS file.
+	 */
 	private String name;
-	private String location;
-	private String content;
-	private ResourceType type;
 	
-	public CssResource(String name){
+	/**
+	 * Content, i.e. CSS code.
+	 */
+	private String content;
+	
+	/**
+	 * Location of the CSS file. Used if multiple files must be merged (e.g. from
+	 * classpath) before being served by the servlet.
+	 */
+	private String location;
+	
+	/**
+	 * Type of the CSS resource.
+	 */
+	private ResourceType type;
+
+	public CssResource(String name) {
 		this.name = name;
 	}
-	
-	public CssResource(ResourceType type, String name){
+
+	public CssResource(ResourceType type, String name) {
 		this.type = type;
 		this.name = name;
 	}
-	
-	public CssResource(ResourceType type, String name, String location){
+
+	public CssResource(ResourceType type, String name, String location) {
 		this.type = type;
 		this.name = name;
 		this.location = location;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -81,10 +100,10 @@ public class CssResource  {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	public void updateContent(String newContent){
+
+	public void updateContent(String newContent) {
 		this.content = this.content + newContent;
-	}	
+	}
 
 	public ResourceType getType() {
 		return type;
@@ -93,5 +112,4 @@ public class CssResource  {
 	public void setType(ResourceType type) {
 		this.type = type;
 	}
-
 }

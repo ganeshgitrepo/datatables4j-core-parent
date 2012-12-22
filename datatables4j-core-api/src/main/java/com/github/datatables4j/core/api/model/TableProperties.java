@@ -37,6 +37,7 @@ import java.util.Properties;
 import com.github.datatables4j.core.api.aggregator.AggregatorMode;
 import com.github.datatables4j.core.api.compressor.CompressorMode;
 import com.github.datatables4j.core.api.constants.ConfConstants;
+import com.github.datatables4j.core.api.export.ExportType;
 
 /**
  * POJO that contains all the table-specific properties.

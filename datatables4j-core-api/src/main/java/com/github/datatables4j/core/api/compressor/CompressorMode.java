@@ -33,15 +33,16 @@ package com.github.datatables4j.core.api.compressor;
  * Enum containing the available modes of compression.
  * 
  * @author Thibault Duchateau
+ * @since 0.2.0
  */
 public enum CompressorMode {
 
-	// JS and CSS are compressed
+	// Both JS and CSS resources are compressed
 	ALL, 
 	
-	// Only JS is compressed
+	// Only JS resources are compressed
 	JS, 
 	
-	// Only CSS is compressed
+	// Only CSS resources are compressed
 	CSS
 }

@@ -30,37 +30,53 @@
 package com.github.datatables4j.core.api.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class HtmlRow {
+/**
+ * Plain old HTML <code>tr</code> tag.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.1.0
+ */
+public class HtmlRow extends HtmlTag {
 
-	private String id;
-	private String cssClass;
-	private List<HtmlColumn> columns = new ArrayList<HtmlColumn>();
-	private Object rowData;
+	/**
+	 * List of columns (<code>td</code> tag) inside the row (<code>tr</code>
+	 * tag)
+	 */
+	private List<HtmlColumn> columns = new LinkedList<HtmlColumn>();
 
 	public HtmlRow() {
-
 	}
 
 	public HtmlRow(String id) {
 		this.id = id;
 	}
 
-	public String getId() {
-		return id;
-	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public StringBuffer toHtml() {
 
-	public void setId(String id) {
-		this.id = id;
-	}
+		StringBuffer html = new StringBuffer("<tr");
 
-	public String getCssClass() {
-		return cssClass;
-	}
+		if (this.id != null) {
+			html.append(" id=\"");
+			html.append(this.id);
+			html.append("\"");
+		}
+		html.append(">");
 
-	public void setCssClass(String cssClass) {
-		this.cssClass = cssClass;
+		for (HtmlColumn column : this.columns) {
+			if (column.getEnabledDisplayTypes().contains(DisplayType.HTML)) {
+				html.append(column.toHtml());
+			}
+		}
+		html.append("</tr>");
+
+		return html;
 	}
 
 	public List<HtmlColumn> getColumns() {
@@ -71,6 +87,11 @@ public class HtmlRow {
 		this.columns = columns;
 	}
 
+	public HtmlColumn addHeaderColumn(HtmlColumn headerColumn){
+		this.columns.add(headerColumn);
+		return headerColumn;
+	}
+	
 	public HtmlColumn addHeaderColumn(String columnContent) {
 		HtmlColumn newColumn = new HtmlColumn(true, columnContent);
 		this.columns.add(newColumn);
@@ -111,32 +132,8 @@ public class HtmlRow {
 		}
 		return this;
 	}
-
-	public String toHtml() {
-
-		StringBuffer tmpRetval = new StringBuffer("<tr");
-		if (this.id != null) {
-			tmpRetval.append(" id=\"");
-			tmpRetval.append(this.id);
-			tmpRetval.append("\"");
-		}
-		tmpRetval.append(">");
-
-		for (HtmlColumn column : this.columns) {
-			if (column.getEnabledDisplayTypes().contains(DisplayType.HTML)) {
-				tmpRetval.append(column.toHtml());
-			}
-		}
-		tmpRetval.append("</tr>");
-
-		return tmpRetval.toString();
-	}
-
-	public Object getRowData() {
-		return rowData;
-	}
-
-	public void setRowData(Object rowData) {
-		this.rowData = rowData;
+	
+	public HtmlColumn getLastColumn() {
+		return ((LinkedList<HtmlColumn>) this.columns).getLast();
 	}
 }

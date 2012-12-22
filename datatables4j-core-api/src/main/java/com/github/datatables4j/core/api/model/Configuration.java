@@ -29,40 +29,95 @@
  */
 package com.github.datatables4j.core.api.model;
 
+/**
+ * <p>
+ * A configuration can be seen as a name/value pair in the DataTables
+ * configuration Javascript object.
+ * <p>
+ * Some extension may need to modify the DataTables configuration object, that's
+ * why there's a Mode attribute, which defines the way the configuration will
+ * affect this object.
+ * <p>
+ * For example, in order to use the {@link ScrollerPlugin}, you need to modify
+ * the <tt>sDom</tt> parameter, adding a <tt>S</tt> to the default value (which
+ * is <tt>lfrtip</tt>). That's why in the <code>setup</code> method, you will
+ * find among others :
+ * 
+ * <pre>
+ * addConfiguration(new Configuration(DTConstants.DT_DOM, &quot;S&quot;, Configuration.Mode.APPEND));
+ * </pre>
+ * <p>
+ * So the final value of the <tt>sDom</tt> parameter will be <tt>lfrtipS</tt>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.5.0
+ */
 public class Configuration {
 
+	/**
+	 * DataTables parameter's name
+	 */
 	private String name;
-	private String value;	
+
+	/**
+	 * DataTables parameter's value
+	 */
+	private String value;
+
+	/**
+	 * DataTables parameter's updating mode
+	 */
 	private Mode mode;
+
 	public enum Mode {
-		OVERRIDE, APPEND, PREPEND, APPEND_WITH_SPACE, PREPEND_WITH_SPACE
+		// Override the existing parameter with the new one
+		OVERRIDE,
+
+		// Append the new parameter to the old one
+		APPEND,
+
+		// Prepend the new parameter to the old one
+		PREPEND,
+
+		// Append the new parameter to the old one, with a separating space
+		APPEND_WITH_SPACE,
+
+		// Prepend the new parameter to the old one, with a separating space
+		PREPEND_WITH_SPACE
 	}
 
-	public Configuration(String name, String value){
+	public Configuration(String name, String value) {
 		this.name = name;
 		this.value = value;
 		this.mode = Mode.OVERRIDE;
 	}
-	public Configuration(String name, String value, Configuration.Mode mode){
+
+	public Configuration(String name, String value, Configuration.Mode mode) {
 		this.name = name;
 		this.value = value;
 		this.setMode(mode);
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getValue() {
 		return value;
 	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
+
 	public Mode getMode() {
 		return mode;
 	}
+
 	public void setMode(Mode mode) {
 		this.mode = mode;
 	}

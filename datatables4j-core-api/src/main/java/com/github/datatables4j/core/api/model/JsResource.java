@@ -32,9 +32,40 @@ package com.github.datatables4j.core.api.model;
 import com.github.datatables4j.core.api.constants.ResourceType;
 
 /**
- * POJO that symbolizes a JS file.
+ * <p>
+ * POJO for a JS file, which will be served by the DataTables4j servlet to the
+ * client.
+ * <p>
+ * Only the JsResource (or main JS file) which handles the main DataTables
+ * configuration is organized. Several attributes are used :
+ * 
+ * <ul>
+ * <li>beforeAll</li>
+ * <li>beforeStartDocumentReady</li>
+ * <li>afterStartDocumentReady</li>
+ * <li>beforeEndDocumentReady</li>
+ * <li>afterAll</li>
+ * <li>dataTablesConf</li>
+ * <li>dataTablesExtra</li>
+ * <li>dataTablesExtraConf</li>
+ * </ul>
+ * These attributes can be visualized in the following Javascript snippet :
+ * 
+ * <pre>
+ * => <b>BEFOREALL</b>
+ * var oTable_tableId;
+ * var oTable_tableId_params = {<b>DATATABLESCONF</b>};
+ * => <b>BEFORESTARTDOCUMENTREADY</b>
+ * $(document).ready(function(){
+ *    => <b>AFTERSTARTDOCUMENTREADY</b>
+ *    oTable_myTableId = $('#myTableId').dataTable(oTable_myTableId_params).<b>DATATABLESEXTRA</b>({<b>DATATABLESEXTRACONF</b>});
+ *    => <b>BEFOREENDDOCUMENTREADY</b>
+ * });
+ * => <b>AFTERALL</b>
+ * </pre>
  * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
 public class JsResource {
 
@@ -46,7 +77,7 @@ public class JsResource {
 	private String name;
 
 	/**
-	 * Content, ie Javascript code.
+	 * Content, i.e. Javascript code.
 	 */
 	private String content;
 
@@ -55,15 +86,6 @@ public class JsResource {
 	 * classpath) before being served by the servlet.
 	 */
 	private String location;
-
-	private StringBuffer beforeAll;
-	private StringBuffer beforeStartDocumentReady;
-	private StringBuffer afterStartDocumentReady;
-	private StringBuffer beforeEndDocumentReady;
-	private StringBuffer afterAll;
-	private StringBuffer dataTablesConf;
-	private StringBuffer dataTablesExtra;
-	private StringBuffer dataTablesExtraConf;
 
 	/**
 	 * Id of the table to initialize. Only used if the current JsResource has
@@ -75,6 +97,15 @@ public class JsResource {
 	 * Type of the JS resource.
 	 */
 	private ResourceType type;
+
+	private StringBuffer beforeAll;
+	private StringBuffer beforeStartDocumentReady;
+	private StringBuffer afterStartDocumentReady;
+	private StringBuffer beforeEndDocumentReady;
+	private StringBuffer afterAll;
+	private StringBuffer dataTablesConf;
+	private StringBuffer dataTablesExtra;
+	private StringBuffer dataTablesExtraConf;
 
 	/**
 	 * Public default constructor.
@@ -93,14 +124,13 @@ public class JsResource {
 		this.location = location;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	/**
+	 * <p>
+	 * Returns the content of the Js resource, i.e. the Javascript code used by
+	 * DataTables.
+	 * 
+	 * @return the Javascript code contained in the current Js resource.
+	 */
 	public String getContent() {
 
 		StringBuffer retval = new StringBuffer();
@@ -189,6 +219,14 @@ public class JsResource {
 		}
 
 		return retval.toString();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setContent(String content) {

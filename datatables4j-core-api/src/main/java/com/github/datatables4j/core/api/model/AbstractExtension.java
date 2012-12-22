@@ -37,15 +37,67 @@ import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
 
 /**
- * Abstract class that defines an extension.
+ * <p>
+ * Abstract superclass for all extensions. An extension can be a plugin (e.g.
+ * Scroller, ColReorder), a feature (e.g. Bootstrap pagination type, filtering
+ * add-on) or a theme (e.g. Bootstrap 2 theme).
+ * <p>
+ * An extension can be composed of :
+ * <ul>
+ * <li>one or more JsResource, i.e. Javascript code externalized in a file</li>
+ * <li>one or more CssResource, i.e. CSS code externalized in a file</li>
+ * <li>one or more Configuration, i.e. one or more specific DataTables
+ * parameters that will be used during the DataTables initialization</li>
+ * <li>an AbstractConfigurationGenerator if the extension needs its proper
+ * configuration generator. The one used for the main DataTables configuration
+ * is the {@link MainGenerator}. You can also take a look at the
+ * {@link ColumnFilteringGenerator} to see the configuration generated for the
+ * Column Filtering add-on.</li>
+ * <li>a potential Javascript function name that will be called after DataTables
+ * initialization. <br>
+ * Example : columnFilter <blockquote>
+ * 
+ * <pre>
+ * oTable_myTableId = $('#myTableId').dataTable(oTable_myTableId_params).columnFilter({...});
+ * </pre>
+ * 
+ * </blockquote></li>
+ * <li>specific Javascript snippets to add in the main JS resource, i.e. the
+ * resource that contains the DataTables initilization Javascript code. You can
+ * add snippet at multiple locations in this file thanks to the following
+ * attributes :
+ * <ul>
+ * <li>beforeAll</li>
+ * <li>beforeStartDocumentReady</li>
+ * <li>afterStartDocumentReady</li>
+ * <li>beforeEndDocumentReady</li>
+ * <li>afterAll</li>
+ * </ul>
+ * These attributes can be visualized in the following Javascript snippet :
+ * <blockquote>
+ * 
+ * <pre>
+ * => <b>BEFOREALL</b>
+ * var oTable_tableId;
+ * var oTable_tableId_params = {...};
+ * => <b>BEFORESTARTDOCUMENTREADY</b>
+ * $(document).ready(function(){
+ *    => <b>AFTERSTARTDOCUMENTREADY</b>
+ *    oTable_myTableId = $('#myTableId').dataTable(oTable_myTableId_params);
+ *    => <b>BEFOREENDDOCUMENTREADY</b>
+ * });
+ * => <b>AFTERALL</b>
+ * </pre>
+ * 
+ * </blockquote></li>
+ * </ul>
  * 
  * @author Thibault Duchateau
+ * @since 0.7.1
  */
 public abstract class AbstractExtension {
 
-	// TODO mettre a jour les accesseurs
 	protected StringBuffer beforeAll;
-	// TODO mettre a jour les accesseurs
 	protected StringBuffer afterAll;
 	protected StringBuffer beforeStartDocumentReady;
 	protected StringBuffer afterStartDocumentReady;
@@ -53,27 +105,17 @@ public abstract class AbstractExtension {
 	protected List<JsResource> jsResources;
 	protected List<CssResource> cssResources;
 	protected List<Configuration> confs;
-	protected Boolean appendRandomNumber = false;
 	protected AbstractConfigurationGenerator configGenerator;
+	protected Boolean appendRandomNumber = false;
 	protected String function;
-	
-	public enum Type {
-		MAIN, FEATURE, PLUGIN, THEME
-	}
-	
-	public abstract Type getType();
-	
-	public String getFunction(){
-		return null;
-	}
-	
+
 	/**
-	 * Returns the feature's name.
+	 * Returns the extension's name.
 	 */
 	public abstract String getName();
 
 	/**
-	 * Returns the feature's version.
+	 * Returns the extension's version.
 	 */
 	public abstract String getVersion();
 
@@ -88,12 +130,12 @@ public abstract class AbstractExtension {
 	 *            The HTML table.
 	 */
 	public abstract void setup(HtmlTable table) throws BadConfigurationException;
-	
-	public StringBuffer getBeforeAllScript() {
+
+	public StringBuffer getBeforeAll() {
 		return beforeAll;
 	}
-	
-	public StringBuffer getAfterAllScript() {
+
+	public StringBuffer getAfterAll() {
 		return afterAll;
 	}
 
@@ -142,7 +184,7 @@ public abstract class AbstractExtension {
 		}
 		this.cssResources.add(resource);
 	}
-	
+
 	public void addConfiguration(Configuration conf) {
 		if (this.confs == null) {
 			this.confs = new ArrayList<Configuration>();
@@ -165,39 +207,47 @@ public abstract class AbstractExtension {
 	public void setAppendRandomNumber(Boolean appendRandomNumber) {
 		this.appendRandomNumber = appendRandomNumber;
 	}
-	
+
 	public void appendToBeforeAll(String beforeAll) {
-		if(this.beforeAll == null){
+		if (this.beforeAll == null) {
 			this.beforeAll = new StringBuffer();
 		}
 		this.beforeAll.append(beforeAll);
 	}
 
 	public void appendToBeforeStartDocumentReady(String beforeStartDocumentReady) {
-		if(this.beforeStartDocumentReady == null){
+		if (this.beforeStartDocumentReady == null) {
 			this.beforeStartDocumentReady = new StringBuffer();
 		}
 		this.beforeStartDocumentReady.append(beforeStartDocumentReady);
 	}
-	
+
 	public void appendToAfterStartDocumentReady(String afterStartDocumentReady) {
-		if(this.afterStartDocumentReady == null){
+		if (this.afterStartDocumentReady == null) {
 			this.afterStartDocumentReady = new StringBuffer();
 		}
 		this.afterStartDocumentReady.append(afterStartDocumentReady);
 	}
 
 	public void appendToBeforeEndDocumentReady(String beforeEndDocumentReady) {
-		if(this.beforeEndDocumentReady == null){
+		if (this.beforeEndDocumentReady == null) {
 			this.beforeEndDocumentReady = new StringBuffer();
 		}
 		this.beforeEndDocumentReady.append(beforeEndDocumentReady);
 	}
 
 	public void appendToAfterAll(String afterAll) {
-		if(this.afterAll == null){
+		if (this.afterAll == null) {
 			this.afterAll = new StringBuffer();
 		}
 		this.afterAll.append(afterAll);
+	}
+
+	public String getFunction() {
+		return function;
+	}
+
+	public void setFunction(String function) {
+		this.function = function;
 	}
 }

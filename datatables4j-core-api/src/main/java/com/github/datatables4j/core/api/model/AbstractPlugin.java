@@ -36,7 +36,4 @@ package com.github.datatables4j.core.api.model;
  */
 public abstract class AbstractPlugin extends AbstractExtension {
 
-	public Type getType() {
-		return Type.PLUGIN;
-	}
 }

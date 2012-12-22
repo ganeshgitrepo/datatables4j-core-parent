@@ -30,107 +30,131 @@
 package com.github.datatables4j.core.api.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.github.datatables4j.core.api.constants.FilterType;
 
-public class HtmlColumn {
+/**
+ * Plain old HTML <code>td</code> and <code>th</code> tags.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.1.0
+ */
+public class HtmlColumn extends HtmlTag {
 
-	private Boolean isHeaderColumn = true;
-	private String id;
-	private String cssClass;
+	private Boolean isHeaderColumn;
 	private String cssCellClass;
-	private String cssStyle;
 	private String cssCellStyle;
-	private String content = "";
+	private String content;
 	private Boolean sortable;
 	private String sortDirection;
 	private String sortInit;
-	private Map<String, String> attributes = new HashMap<String, String>();
 	private String property;
-	private Boolean filterable = false;
+	private Boolean filterable;
+
+	/**
+	 * <p>
+	 * Type of filtering for the current column.
+	 * 
+	 * <p>
+	 * Default value is <code>FilterType.INPUT</code>.
+	 */
 	private FilterType filterType;
 	private String filterCssClass;
 	private String filterPlaceholder;
+	// TODO retirer l'instanciation
 	private List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
-	
+
 	public HtmlColumn() {
+		init();
 	};
 
-	public HtmlColumn(String content) {
-		this.content = content;
-	}
+	public HtmlColumn(Boolean isHeaderColumn) {
+		init();
+		this.isHeaderColumn = isHeaderColumn;
+	};
 
 	public HtmlColumn(Boolean isHeader, String content) {
+		init();
 		this.isHeaderColumn = isHeader;
 		this.content = content;
 	}
 	
-	public String getCssClass() {
-		return cssClass;
+	/**
+	 * Default values
+	 */
+	private void init(){
+		// Sortable
+		this.sortable = true;
+		
+		// Filterable
+		this.filterable = false;
+		
+		// FilterType
+		this.filterType = FilterType.INPUT;
+		
+		// DisplayType default value : all display types are added
+		for (DisplayType type : DisplayType.values()) {
+			this.enabledDisplayTypes.add(type);
+		}
 	}
 
-	public HtmlColumn setCssClass(String cssClass) {
-		this.cssClass = cssClass;
-		this.attributes.put("class", cssClass);
-		return this;
-	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public StringBuffer toHtml() {
+		StringBuffer html = new StringBuffer();
+		if (this.isHeaderColumn) {
+			html.append("<th");
 
-	public String getCssStyle() {
-		return cssStyle;
-	}
+			if (this.cssClass != null) {
+				html.append(" class=\"");
+				html.append(this.cssClass);
+				html.append("\"");
+			}
 
-	public HtmlColumn setCssStyle(String cssStyle) {
-		this.cssStyle = cssStyle;
-		this.attributes.put("style", cssStyle);
-		return this;
+			if (this.cssStyle != null) {
+				html.append(" style=\"");
+				html.append(this.cssStyle);
+				html.append("\"");
+			}
+		} else {
+			html.append("<td");
+
+			if (this.cssCellClass != null) {
+				html.append(" class=\"");
+				html.append(this.cssCellClass);
+				html.append("\"");
+			}
+
+			if (this.cssCellStyle != null) {
+				html.append(" style=\"");
+				html.append(this.cssCellStyle);
+				html.append("\"");
+			}
+		}
+
+		html.append(">");
+		if (this.content != null) {
+			html.append(content);
+		}
+
+		if (this.isHeaderColumn) {
+			html.append("</th>");
+		} else {
+			html.append("</td>");
+		}
+
+		return html;
 	}
 
 	public Boolean isHeaderColumn() {
 		return isHeaderColumn;
 	}
 
-	public HtmlColumn setIsHeaderColumn(Boolean isHeaderColumn) {
-		this.isHeaderColumn = isHeaderColumn;
-		return this;
-	}
-
 	public String getContent() {
 		return content;
-	}
-
-	public HtmlColumn setContent(String content) {
-		this.content = content;
-		return this;
-	}
-
-	public String toHtml() {
-		StringBuffer tmpRetval = new StringBuffer();
-		if (this.isHeaderColumn) {
-			tmpRetval.append("<th");
-		} else {
-			tmpRetval.append("<td");
-		}
-		
-		for(Map.Entry<String, String> entry : this.attributes.entrySet()){
-			tmpRetval.append(" ");
-			tmpRetval.append(entry.getKey());
-			tmpRetval.append("=\"");
-			tmpRetval.append(entry.getValue());
-			tmpRetval.append("\"");
-		}
-		
-		tmpRetval.append(">");
-		tmpRetval.append(content);
-		if (this.isHeaderColumn) {
-			tmpRetval.append("</th>");
-		} else {
-			tmpRetval.append("</td>");
-		}
-
-		return tmpRetval.toString();
 	}
 
 	public String getCssCellClass() {
@@ -139,21 +163,15 @@ public class HtmlColumn {
 
 	public HtmlColumn setCssCellClass(String cssCellClass) {
 		this.cssCellClass = cssCellClass;
-		this.attributes.put("class", cssCellClass);
 		return this;
-	}
-
-	public String getCssCellStyle() {
-		return this.cssCellStyle;
 	}
 
 	public HtmlColumn setCssCellStyle(String cssCellStyle) {
 		this.cssCellStyle = cssCellStyle;
-		this.attributes.put("style", cssCellStyle);
 		return this;
 	}
 
-	public Boolean getSortable() {
+	public Boolean isSortable() {
 		return this.sortable;
 	}
 
@@ -167,14 +185,6 @@ public class HtmlColumn {
 
 	public void setProperty(String property) {
 		this.property = property;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public Boolean isFilterable() {
