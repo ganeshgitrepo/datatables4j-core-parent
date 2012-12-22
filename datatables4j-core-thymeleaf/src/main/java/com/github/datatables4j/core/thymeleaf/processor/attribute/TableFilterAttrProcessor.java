@@ -27,37 +27,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 
 /**
+ * Attribute processor for the <code>autoWidth</code> attribute.
  * 
- *
  * @author Thibault Duchateau
  */
-public class TheadScrollerAttrProcessor extends AbstractAttrProcessor {
+public class TableFilterAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TheadScrollerAttrProcessor(){
-		super(Constants.ATTR_SCROLLER);
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TableFilterAttrProcessor.class);
+		
+	public TableFilterAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
+	}
+	
+	@Override
+	public int getPrecedence() {
+		return 8000;
 	}
 	
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		logger.debug("{} attribute found", attributeName);
+		
+		// Get HtmlTable POJO from local variables
+		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
 
-	@Override
-	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
 
+		// HtmlTable update
+		if(htmlTable != null){
+			htmlTable.setFilterable(attrValue);			
+		}
+		
+        return nonLenientOK(element, attributeName);
+	}
 }

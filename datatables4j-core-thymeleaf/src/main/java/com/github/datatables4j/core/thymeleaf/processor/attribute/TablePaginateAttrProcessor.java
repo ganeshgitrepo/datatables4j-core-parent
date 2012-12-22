@@ -27,61 +27,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IContext;
-import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Text;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-public class TableIdAttrProcessor extends AbstractAttrProcessor {
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 
-	public TableIdAttrProcessor() {
-		// Only execute this processor for 'sayto' attributes.
-		super("tableid");
-	}
+/**
+ * Attribute processor for the <code>paginate</code> attribute.
+ * 
+ * @author Thibault Duchateau
+ */
+public class TablePaginateAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public int getPrecedence() {
-		// A value of 10000 is higher than any attribute in the
-		// SpringStandard dialect. So this attribute will execute
-		// after all other attributes from that dialect, if in the
-		// same tag.
-		return 10000;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TablePaginateAttrProcessor.class);
+		
+	public TablePaginateAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
+	public int getPrecedence() {
+		return 8000;
+	}
+	
+	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
 		
-		// Comment recuperer le context web
-		final IContext context = arguments.getContext();
-		final IWebContext webContext = (IWebContext) context;
-        
-        final HttpServletRequest request = webContext.getHttpServletRequest();
-        final ServletContext servletContext = webContext.getServletContext();
-        
-		System.out.println("arguments = " + arguments);
-		System.out.println("element = " + element.getOriginalName());
-		System.out.println("attributeName = " + attributeName);
-		
-		String attributeValue = element.getAttributeValue(attributeName);
-		System.out.println("attributeValue = " + attributeValue);
-		
-		System.out.println("Table id = " + ((Element)element.getParent()).getAttributeValue("id"));
-		
-		Element script = new Element("script");
-		script.addChild(new Text("$(document).ready(function() {$('#myTable').dataTable();});", false));
-        element.getParent().insertAfter(element, script);
+		// Get HtmlTable POJO from local variables
+		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		htmlTable.setPaginate(attrValue);
 		
 		// Housekeeping
         element.removeAttribute(attributeName);
         
-		return ProcessorResult.OK;
+        return nonLenientOK(element, attributeName);
 	}
 }

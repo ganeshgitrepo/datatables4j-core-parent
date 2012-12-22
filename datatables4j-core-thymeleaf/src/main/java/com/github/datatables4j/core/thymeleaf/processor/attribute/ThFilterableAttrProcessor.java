@@ -27,32 +27,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 
-public class TableFilterAttrProcessor extends AbstractAttrProcessor {
+/**
+ * Attribute processor applied to the <code>th</code> tag for the
+ * <code>filterable</code> attribute.
+ * 
+ * @author Thibault Duchateau
+ */
+public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TableFilterAttrProcessor(){
-		super(Constants.ATTR_FILTER);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(ThFilterableAttrProcessor.class);
+
+	public ThFilterableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 8000;
 	}
 
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+
+		// Get HtmlTable POJO from local variables
+		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// Override default value with the attribute's one
+		if (htmlTable != null) {
+			htmlTable.getLastHeaderRow().getLastColumn().setFilterable(attrValue);
+		}
+
+		return nonLenientOK(element, attributeName);
+	}
 }

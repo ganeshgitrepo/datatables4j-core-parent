@@ -29,37 +29,53 @@
  */
 package com.github.datatables4j.core.thymeleaf.dialect;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.thymeleaf.dialect.AbstractDialect;
+import org.thymeleaf.processor.AttributeNameProcessorMatcher;
 import org.thymeleaf.processor.IProcessor;
 
-import com.github.datatables4j.core.thymeleaf.processor.TableCdnAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TableFilterAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TableIdAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TableInfoAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TableLengthChangeAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TablePaginateAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TablePaginationTypeAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.TableSortAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.CustomEachAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableAutoWidthAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableCdnAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.EnablingDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableExportAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableFilterAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableInfoAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TablePaginateAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableSortAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TableThemeAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.ThFilterTypeAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.ThFilterableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.ThSortableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.TheadScrollerAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.TableFinalizerElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.TableInitializerElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.ColumnInitializerElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.matcher.ElementNameWithoutPrefixProcessorMatcher;
 
 /**
  * TODO
- *
+ * 
  * @author Thibault Duchateau
  */
 public class DataTablesDialect extends AbstractDialect {
 
 	public static final String LAYOUT_NAMESPACE = "http://github.com/datatables4j/thymeleaf/dt4j";
-	public static final String PREFIX = "dt";
-	
+
+	/**
+	 * DataTablesDialect has no prefix, in order to be able to match native HTML
+	 * tags as <code>table</code> or <code>tbody</code>.
+	 */
 	public String getPrefix() {
-		return PREFIX;
+		return "dt";
 	}
 
 	public boolean isLenient() {
-		return true;
+		return false;
 	}
 
 	/*
@@ -69,20 +85,32 @@ public class DataTablesDialect extends AbstractDialect {
 	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
 		
-		// Table attribute processor
-		processors.add(new TableCdnAttrProcessor());
-		processors.add(new TableFilterAttrProcessor());
-		processors.add(new TableInfoAttrProcessor());
-		processors.add(new TableLengthChangeAttrProcessor());
-		processors.add(new TablePaginateAttrProcessor());
-		processors.add(new TablePaginationTypeAttrProcessor());
-		processors.add(new TableSortAttrProcessor());
-		processors.add(new TableIdAttrProcessor());
+		processors.add(new TableInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("table", "dt:table", "true")));
+		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
+		processors.add(new ColumnInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("th")));
+
+//		processors.add(new CustomEachAttrProcessor(new AttributeNameProcessorMatcher("tr", "each")));
 		
-		// Thead attribute processor
+		processors.add(new EnablingDatatableAttrProcessor(new AttributeNameProcessorMatcher("table", "table")));
+		processors.add(new TableAutoWidthAttrProcessor(new AttributeNameProcessorMatcher("autoWidth", "table")));
+		processors.add(new TableCdnAttrProcessor(new AttributeNameProcessorMatcher("cdn", "table")));
+		processors.add(new TableFilterAttrProcessor(new AttributeNameProcessorMatcher("filter", "table")));
+		processors.add(new TableInfoAttrProcessor(new AttributeNameProcessorMatcher("info", "table")));
+//		processors.add(new TableLengthChangeAttrProcessor(new AttributeNameProcessorMatcher("lengthPaginate", "table")));
+		processors.add(new TablePaginateAttrProcessor(new AttributeNameProcessorMatcher("paginate", "table")));
+//		processors.add(new TablePaginationTypeAttrProcessor(new AttributeNameProcessorMatcher("paginationType", "table")));
+		processors.add(new TableSortAttrProcessor(new AttributeNameProcessorMatcher("sort", "table")));
+		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));
+
+		//		processors.add(new TableExportAttrProcessor(new AttributeNameProcessorMatcher("export", "table")));
+
+		// Plugins attributes
+		processors.add(new TheadScrollerAttrProcessor(new AttributeNameProcessorMatcher("scroller", "thead")));
 		
-		
-		// Td attribute processor
+		// Header column attributes
+		processors.add(new ThSortableAttrProcessor(new AttributeNameProcessorMatcher("sortable", "th")));
+		processors.add(new ThFilterableAttrProcessor(new AttributeNameProcessorMatcher("filterable", "th")));
+		processors.add(new ThFilterTypeAttrProcessor(new AttributeNameProcessorMatcher("filterType", "th")));
 		
 		return processors;
 	}

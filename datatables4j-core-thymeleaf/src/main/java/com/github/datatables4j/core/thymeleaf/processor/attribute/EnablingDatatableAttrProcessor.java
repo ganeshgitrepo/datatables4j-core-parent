@@ -27,37 +27,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 
 /**
+ * Attribute processor for the <code>datatable</code> attribute.
  * 
- *
  * @author Thibault Duchateau
  */
-public class TdFilterableAttrProcessor extends AbstractAttrProcessor {
+public class EnablingDatatableAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TdFilterableAttrProcessor(){
-		super(Constants.ATTR_FILTERABLE);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	public EnablingDatatableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 8000;
 	}
-
+	
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {		
+        return nonLenientOK(element, attributeName);
+	}
 }

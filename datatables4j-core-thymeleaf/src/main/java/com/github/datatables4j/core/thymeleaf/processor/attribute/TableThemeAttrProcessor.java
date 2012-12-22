@@ -27,37 +27,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.base.theme.Bootstrap2Theme;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 
 /**
+ * Attribute processor for the <code>theme</code> attribute.
  * 
- *
  * @author Thibault Duchateau
  */
-public class TdFilterTypeAttrProcessor extends AbstractAttrProcessor {
+public class TableThemeAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TdFilterTypeAttrProcessor(){
-		super(Constants.ATTR_CDN);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TableThemeAttrProcessor.class);
+
+	public TableThemeAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 8000;
 	}
 
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+
+		// Get HtmlTable POJO from local variables
+		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+
+		// Get attribute value
+		String attrValue = element.getAttributeValue(attributeName);
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		if (htmlTable != null) {
+			if (attrValue.trim().toLowerCase().equals("bootstrap")) {
+				htmlTable.setTheme(new Bootstrap2Theme());
+			} else {
+				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.",
+						attrValue);
+			}
+		}
+
+		return nonLenientOK(element, attributeName);
+	}
 }

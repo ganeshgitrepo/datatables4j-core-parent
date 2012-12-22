@@ -31,22 +31,26 @@ package com.github.datatables4j.core.thymeleaf.processor;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
-
 /**
+ * Custom abstract attribute processor that just provides the utility
+ * nonLenientOK method.
  * 
- *
  * @author Thibault Duchateau
  */
-public class TdSortableAttrProcessor extends AbstractAttrProcessor {
+public class AbstractDatatableAttrProcessor extends AbstractAttrProcessor {
 
-	public TdSortableAttrProcessor(){
-		super(Constants.ATTR_SORTABLE);
+	public AbstractDatatableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
-	
+
+	public AbstractDatatableAttrProcessor(String attributeName) {
+		super(attributeName);
+	}
+
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
@@ -60,4 +64,17 @@ public class TdSortableAttrProcessor extends AbstractAttrProcessor {
 		return 0;
 	}
 
+	/**
+	 * Remove the processed attribute, cause the dialect is non lenient.
+	 * 
+	 * @param element
+	 *            The element from which the attribute has to be removed.
+	 * @param attributeName
+	 *            The attribute to remove.
+	 * @return ProcessorResult.OK
+	 */
+	protected ProcessorResult nonLenientOK(Element element, String attributeName) {
+		element.removeAttribute(attributeName);
+		return ProcessorResult.OK;
+	}
 }

@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -36,10 +36,15 @@ import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
 import com.github.datatables4j.core.thymeleaf.util.Constants;
 
-public class TableLengthChangeAttrProcessor extends AbstractAttrProcessor {
+/**
+ * 
+ *
+ * @author Thibault Duchateau
+ */
+public class TheadFixedHeaderAttrProcessor extends AbstractAttrProcessor {
 
-	public TableLengthChangeAttrProcessor(){
-		super(Constants.ATTR_LENGTHCHANGE);
+	public TheadFixedHeaderAttrProcessor(){
+		super(Constants.ATTR_FIXEDHEADER);
 	}
 	
 	@Override
@@ -51,8 +56,7 @@ public class TableLengthChangeAttrProcessor extends AbstractAttrProcessor {
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 9000;
 	}
 
 }

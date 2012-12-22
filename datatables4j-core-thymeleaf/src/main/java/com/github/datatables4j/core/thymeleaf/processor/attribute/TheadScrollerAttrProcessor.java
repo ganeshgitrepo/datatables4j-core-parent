@@ -27,37 +27,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
 
 /**
  * 
- *
+ * 
  * @author Thibault Duchateau
  */
-public class TheadScrollYAttrProcessor extends AbstractAttrProcessor {
+public class TheadScrollerAttrProcessor extends AbstractAttrProcessor {
 
-	public TheadScrollYAttrProcessor(){
-		super(Constants.ATTR_SCROLLY);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TheadScrollerAttrProcessor.class);
+
+	public TheadScrollerAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 9000;
 	}
 
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+
+		// Get HtmlTable POJO from local variables
+		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		if(attrValue && htmlTable != null){
+			htmlTable.registerPlugin(new ScrollerPlugin());
+		}
+
+		// Housekeeping
+		element.removeAttribute(attributeName);
+
+		return ProcessorResult.OK;
+	}
 }

@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor;
+package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -41,10 +41,10 @@ import com.github.datatables4j.core.thymeleaf.util.Constants;
  *
  * @author Thibault Duchateau
  */
-public class TdSortDirectionAttrProcessor extends AbstractAttrProcessor {
+public class TheadScrollYAttrProcessor extends AbstractAttrProcessor {
 
-	public TdSortDirectionAttrProcessor(){
-		super(Constants.ATTR_SORTDIRECTION);
+	public TheadScrollYAttrProcessor(){
+		super(Constants.ATTR_SCROLLY);
 	}
 	
 	@Override
@@ -56,8 +56,7 @@ public class TdSortDirectionAttrProcessor extends AbstractAttrProcessor {
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 9000;
 	}
 
 }
