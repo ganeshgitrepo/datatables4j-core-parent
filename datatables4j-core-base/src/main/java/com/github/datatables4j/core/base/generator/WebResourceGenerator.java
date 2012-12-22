@@ -43,9 +43,8 @@ import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
-import com.github.datatables4j.core.api.model.AbstractExtension;
-import com.github.datatables4j.core.api.model.ExportConf;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
+import com.github.datatables4j.core.api.export.ExportConf;
+import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
 import com.github.datatables4j.core.api.model.HtmlDiv;
@@ -80,7 +79,7 @@ public class WebResourceGenerator {
 	/**
 	 * The DataTables configuration generator.
 	 */
-	private static ConfigGenerator configGenerator;
+	private static MainGenerator configGenerator;
 
 	/**
 	 * <p>
@@ -107,7 +106,7 @@ public class WebResourceGenerator {
 
 		// Init the "configuration" map with the table informations
 		// The configuration may be updated depending on the user's choices
-		configGenerator = new ConfigGenerator();
+		configGenerator = new MainGenerator();
 		Map<String, Object> mainConf = configGenerator.generateConfig(table);
 
 		/**
@@ -120,20 +119,22 @@ public class WebResourceGenerator {
 		mainJsFile.setTableId(table.getId());
 
 		// Extra files management
-		if (!table.getExtraFiles().isEmpty()) {
+		if (table.getExtraFiles() != null && !table.getExtraFiles().isEmpty()) {
 			extraFileManagement(mainJsFile, table);
 		}
 
 		// Extension management
 		ExtensionLoader extensionLoader = new ExtensionLoader(table, mainJsFile, mainConf, webResources);		
-		extensionLoader.load(table.getPlugins(), AbstractExtension.Type.PLUGIN);
-		extensionLoader.load(table.getFeatures(), AbstractExtension.Type.FEATURE);
+		extensionLoader.load(table.getPlugins());
+		extensionLoader.load(table.getFeatures());
 		if(table.getTheme() != null){
-			extensionLoader.load(Arrays.asList(table.getTheme()), AbstractExtension.Type.THEME);			
+			extensionLoader.load(Arrays.asList(table.getTheme()));			
 		}
 		
 		// Extra conf management
-		extraConfManagement(mainJsFile, mainConf, table);
+		if(table.getExtraConfs() != null){
+			extraConfManagement(mainJsFile, mainConf, table);			
+		}
 
 		// AJAX datasource : data must be added in the configuration file
 		if (table.getDatasourceUrl() != null) {

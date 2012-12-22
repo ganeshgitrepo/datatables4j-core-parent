@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
-import com.github.datatables4j.core.api.model.ExportProperties;
+import com.github.datatables4j.core.api.export.ExportProperties;
 
 /**
  * TODO
@@ -58,6 +58,7 @@ import com.github.datatables4j.core.api.model.ExportProperties;
  * getOutputStream()|getWriter() has already been called for this response.<br />
  * 
  * @author Thibault Duchateau
+ * @since 0.7.0
  */
 @WebFilter(filterName = "DataTables4jFilter", value = { "/*" })
 public class DatatablesFilter implements Filter {

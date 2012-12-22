@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.ExportException;
-import com.github.datatables4j.core.api.model.ExportProperties;
+import com.github.datatables4j.core.api.export.ExportProperties;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.base.util.ReflectHelper;
 

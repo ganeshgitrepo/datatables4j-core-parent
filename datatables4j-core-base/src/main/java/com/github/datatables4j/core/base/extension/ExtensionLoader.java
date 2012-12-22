@@ -51,7 +51,11 @@ import com.github.datatables4j.core.base.util.NameConstants;
 import com.github.datatables4j.core.base.util.ResourceHelper;
 
 /**
- * TODO
+ * <p>
+ * Loader for all extensions : features, plugins, themes.
+ * <p>
+ * teteete
+ * 
  * 
  * @author Thibault Duchateau
  */
@@ -94,15 +98,11 @@ public class ExtensionLoader {
 	 * 
 	 * @param extensions
 	 *            The collection of extensions to load.
-	 * @param type
-	 *            The type of extension to load.
 	 * @throws BadConfigurationException
 	 * @throws IOException
 	 */
-	public void load(List<? extends AbstractExtension> extensions, AbstractExtension.Type type)
+	public void load(List<? extends AbstractExtension> extensions)
 			throws BadConfigurationException, IOException {
-
-		String extensionBasePath = getPath(type);
 
 		if (extensions != null && !extensions.isEmpty()) {
 
@@ -113,10 +113,10 @@ public class ExtensionLoader {
 				extension.setup(table);
 
 				// TODO
-				loadJsResources(extension, extensionBasePath, type);
+				loadJsResources(extension);
 
 				// TODO
-				loadCssResources(extension, extensionBasePath, type);
+				loadCssResources(extension);
 
 				// TODO
 				injectIntoMainJsFile(extension);
@@ -128,14 +128,13 @@ public class ExtensionLoader {
 	}
 
 	/**
+	 * Load potential JS resource of the current extension.
 	 * 
 	 * @param extension
-	 * @param extensionBasePath
-	 * @param type
+	 *            The extension to load.
 	 * @throws BadConfigurationException
 	 */
-	private void loadJsResources(AbstractExtension extension, String extensionBasePath, AbstractExtension.Type type)
-			throws BadConfigurationException {
+	private void loadJsResources(AbstractExtension extension) throws BadConfigurationException {
 
 		JsResource extensionJsFile = null;
 		String resourceName = null;
@@ -143,16 +142,18 @@ public class ExtensionLoader {
 		// Extension javascript
 		if (extension.getJsResources() != null && !extension.getJsResources().isEmpty()) {
 
-			resourceName = extension.getAppendRandomNumber() 
-					? extension.getName().toLowerCase() + "-" + table.getRandomId() + ".js" 
-					: extension.getName().toLowerCase() + ".js";
+			resourceName = extension.getAppendRandomNumber() ? extension.getName().toLowerCase()
+					+ "-" + table.getRandomId() + ".js" : extension.getName().toLowerCase() + ".js";
+
+			//
 			extensionJsFile = new JsResource(ResourceType.EXTENSION, resourceName);
+
 			StringBuffer jsContent = new StringBuffer();
 
-			// Feature source loading (javascript)
+			// All JS resources are merged
 			for (JsResource jsResource : extension.getJsResources()) {
-				System.out.println("location = " + jsResource.getLocation());
-				jsContent.append(ResourceHelper.getFileContentFromClasspath(jsResource.getLocation()));
+				jsContent.append(ResourceHelper.getFileContentFromClasspath(jsResource
+						.getLocation()));
 			}
 
 			extensionJsFile.setContent(jsContent.toString());
@@ -161,14 +162,13 @@ public class ExtensionLoader {
 	}
 
 	/**
+	 * Load potential CSS resource of the current extension.
 	 * 
 	 * @param extension
-	 * @param extensionBasePath
-	 * @param type
+	 *            The extension to load.
 	 * @throws BadConfigurationException
 	 */
-	private void loadCssResources(AbstractExtension extension, String extensionBasePath, AbstractExtension.Type type)
-			throws BadConfigurationException {
+	private void loadCssResources(AbstractExtension extension) throws BadConfigurationException {
 
 		CssResource pluginsSourceCssFile = null;
 		String resourceName = null;
@@ -179,13 +179,15 @@ public class ExtensionLoader {
 			resourceName = extension.getAppendRandomNumber() ? NameConstants.DT_PLUGIN_JS
 					+ extension.getName().toLowerCase() + "-" + table.getRandomId() + ".css"
 					: NameConstants.DT_PLUGIN_JS + extension.getName().toLowerCase() + ".css";
+
 			pluginsSourceCssFile = new CssResource(ResourceType.EXTENSION, resourceName);
+
 			StringBuffer cssContent = new StringBuffer();
 
 			// Module source loading (stylesheets)
 			for (CssResource cssResource : extension.getCssResources()) {
-				System.out.println("location = " + cssResource.getLocation());
-				cssContent.append(ResourceHelper.getFileContentFromClasspath(cssResource.getLocation()));
+				cssContent.append(ResourceHelper.getFileContentFromClasspath(cssResource
+						.getLocation()));
 			}
 
 			pluginsSourceCssFile.setContent(cssContent.toString());
@@ -193,7 +195,6 @@ public class ExtensionLoader {
 		}
 	}
 
-	
 	/**
 	 * 
 	 * @param extension
@@ -202,8 +203,8 @@ public class ExtensionLoader {
 	private void injectIntoMainJsFile(AbstractExtension extension) throws IOException {
 
 		// Extension configuration loading
-		if (extension.getBeforeAllScript() != null) {
-			mainJsFile.appendToBeforeAll(extension.getBeforeAllScript().toString());
+		if (extension.getBeforeAll() != null) {
+			mainJsFile.appendToBeforeAll(extension.getBeforeAll().toString());
 		}
 		if (extension.getAfterStartDocumentReady() != null) {
 			mainJsFile.appendToAfterStartDocumentReady(extension.getAfterStartDocumentReady()
@@ -213,8 +214,8 @@ public class ExtensionLoader {
 			mainJsFile.appendToBeforeEndDocumentReady(extension.getBeforeEndDocumentReady()
 					.toString());
 		}
-		if (extension.getAfterAllScript() != null) {
-			mainJsFile.appendToAfterAll(extension.getAfterAllScript().toString());
+		if (extension.getAfterAll() != null) {
+			mainJsFile.appendToAfterAll(extension.getAfterAll().toString());
 		}
 
 		// TODO
@@ -237,7 +238,6 @@ public class ExtensionLoader {
 		}
 	}
 
-	
 	/**
 	 * 
 	 * @param extension
@@ -293,26 +293,6 @@ public class ExtensionLoader {
 					mainConfig.put(conf.getName(), conf.getValue());
 				}
 			}
-		}
-	}
-
-	/**
-	 * TODO
-	 * 
-	 * @param type
-	 * @return
-	 */
-	private String getPath(AbstractExtension.Type type) {
-
-		switch (type) {
-		case FEATURE:
-			return "datatables/features/";
-		case PLUGIN:
-			return "datatables/plugins/";
-		case THEME:
-			return "datatables/themes/";
-		default:
-			return "";
 		}
 	}
 }

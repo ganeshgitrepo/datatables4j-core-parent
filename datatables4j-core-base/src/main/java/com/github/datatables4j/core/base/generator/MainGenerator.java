@@ -44,10 +44,10 @@ import java.util.*;
  *
  * @author Thibault Duchateau
  */
-public class ConfigGenerator {
+public class MainGenerator {
 
     // Logger
-    private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
+    private static Logger logger = LoggerFactory.getLogger(MainGenerator.class);
 
     /**
      * If no custom config is specified with table attributes, DataTables
@@ -73,7 +73,7 @@ public class ConfigGenerator {
         		tmp = new HashMap<String, Object>();
         		
         		// Sortable
-        		tmp.put(DTConstants.DT_SORTABLE, column.getSortable());
+        		tmp.put(DTConstants.DT_SORTABLE, column.isSortable());
         		
         		//
         		if (column.getProperty() != null) {

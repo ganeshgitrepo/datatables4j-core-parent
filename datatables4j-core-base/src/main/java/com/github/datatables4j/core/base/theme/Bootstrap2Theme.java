@@ -42,6 +42,7 @@ import com.github.datatables4j.core.base.util.ResourceHelper;
  * Bootstrap v2 DataTables theme.
  *
  * @author Thibault Duchateau
+ * @since 0.7.1
  */
 public class Bootstrap2Theme extends AbstractTheme {
 
@@ -55,6 +56,9 @@ public class Bootstrap2Theme extends AbstractTheme {
 		return "1.0.0";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setup(HtmlTable table) throws BadConfigurationException {
 		// Specific theme javascript		

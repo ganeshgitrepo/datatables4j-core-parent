@@ -33,12 +33,12 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.export.AbstractCharExport;
+import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.DisplayType;
-import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.module.export.AbstractCharExport;
 
 /**
  * 

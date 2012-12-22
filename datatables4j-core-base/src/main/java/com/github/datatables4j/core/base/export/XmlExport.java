@@ -40,10 +40,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringUtils;
 
 import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.export.AbstractCharExport;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.module.export.AbstractCharExport;
 
 /**
  * TODO
