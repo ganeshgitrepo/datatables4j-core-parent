@@ -45,9 +45,9 @@ import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
 import com.github.datatables4j.core.api.exception.ExportException;
+import com.github.datatables4j.core.api.export.ExportProperties;
+import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.CssResource;
-import com.github.datatables4j.core.api.model.ExportProperties;
-import com.github.datatables4j.core.api.model.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
@@ -58,12 +58,13 @@ import com.github.datatables4j.core.base.generator.WebResourceGenerator;
 import com.github.datatables4j.core.base.properties.PropertiesLoader;
 import com.github.datatables4j.core.base.util.RequestHelper;
 import com.github.datatables4j.core.base.util.ResourceHelper;
-import com.github.datatables4j.core.jsp.util.JspHelper;
 
 /**
+ * <p>
  * Tag used to generate a HTML table.
  * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
 public class TableTag extends AbstractTableTag {
 	private static final long serialVersionUID = 4528524566511084446L;
@@ -80,8 +81,9 @@ public class TableTag extends AbstractTableTag {
 
 		// Init the table with its DOM id and a generated random number
 		table = new HtmlTable(id, ResourceHelper.getRamdomNumber());
-		table.setCurrentUrl(RequestHelper.getCurrentUrl((HttpServletRequest) pageContext.getRequest()));
-		
+		table.setCurrentUrl(RequestHelper.getCurrentUrl((HttpServletRequest) pageContext
+				.getRequest()));
+
 		try {
 			// Load table properties
 			PropertiesLoader.load(this.table);
@@ -93,7 +95,7 @@ public class TableTag extends AbstractTableTag {
 		if ("AJAX".equals(this.loadingType)) {
 
 			this.table.addFooterRow();
-			this.table.setDatasourceUrl(JspHelper.getBaseUrl(pageContext) + url);
+			this.table.setDatasourceUrl(RequestHelper.getBaseUrl(pageContext.getRequest()) + url);
 			this.table.addHeaderRow();
 			this.table.addRow();
 
@@ -131,9 +133,9 @@ public class TableTag extends AbstractTableTag {
 
 		// Update the HtmlTable object with the export configuration
 		registerExportConfiguration();
-		
+
 		// The table is being exported
-		if (isTableBeingExported()) {
+		if (RequestHelper.isTableBeingExported(pageContext.getRequest(), table)) {
 			return setupExport();
 		}
 		// The table must be generated and displayed
@@ -151,7 +153,7 @@ public class TableTag extends AbstractTableTag {
 	 *             if something went wrong during export.
 	 */
 	private int setupExport() throws JspException {
-		
+
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
@@ -159,11 +161,11 @@ public class TableTag extends AbstractTableTag {
 		ExportProperties exportProperties = new ExportProperties();
 
 		ExportType currentExportType = getCurrentExportType();
-		
+
 		exportProperties.setCurrentExportType(currentExportType);
 		exportProperties.setExportConf(table.getExportConfMap().get(currentExportType));
-		exportProperties.setFileName(table.getExportConfMap().get(currentExportType).getFileName());			
-		
+		exportProperties.setFileName(table.getExportConfMap().get(currentExportType).getFileName());
+
 		this.table.setExportProperties(exportProperties);
 		this.table.setExporting(true);
 
@@ -181,7 +183,7 @@ public class TableTag extends AbstractTableTag {
 
 		return SKIP_PAGE;
 	}
-	
+
 	/**
 	 * Set up the HTML table generation.
 	 * 
@@ -190,25 +192,26 @@ public class TableTag extends AbstractTableTag {
 	 *             if something went wrong during the processing.
 	 */
 	private int setupHtmlGeneration() throws JspException {
-		String baseUrl = JspHelper.getBaseUrl(pageContext);
+		String baseUrl = RequestHelper.getBaseUrl(pageContext.getRequest());
 		ServletContext servletContext = pageContext.getServletContext();
 
 		this.table.setExporting(false);
 
 		// Register all activated modules
-		registerModules();
+		registerPlugins();
 
 		// Register all activated features
 		registerFeatures();
 
 		// Register theme if activated
 		registerTheme();
-		
+
 		try {
 			// Init the web resources generator
 			WebResourceGenerator contentGenerator = new WebResourceGenerator();
 
-			// Generate the web resources (JS, CSS) and wrap them into a WebResources POJO
+			// Generate the web resources (JS, CSS) and wrap them into a
+			// WebResources POJO
 			WebResources webResources = contentGenerator.generateWebResources(this.table);
 
 			// Aggregation
@@ -224,7 +227,7 @@ public class TableTag extends AbstractTableTag {
 			}
 
 			// <link> HTML tag generation
-			if (this.isCdnEnable()) {
+			if (this.table.getCdn()) {
 				pageContext.getOut().println(
 						"<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");
 			}
@@ -239,7 +242,7 @@ public class TableTag extends AbstractTableTag {
 			pageContext.getOut().println(this.table.toHtml());
 
 			// <script> HTML tag generation
-			if (this.isCdnEnable()) {
+			if (this.table.getCdn()) {
 				pageContext.getOut().println(
 						"<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
 			}
@@ -249,10 +252,11 @@ public class TableTag extends AbstractTableTag {
 						"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey()
 								+ "\"></script>");
 			}
-			servletContext.setAttribute(webResources.getMainJsFile().getName(), webResources.getMainJsFile());
+			servletContext.setAttribute(webResources.getMainJsFile().getName(),
+					webResources.getMainJsFile());
 			pageContext.getOut().println(
-					"<script src=\"" + baseUrl + "/datatablesController/" + webResources.getMainJsFile().getName()
-					+ "\"></script>");
+					"<script src=\"" + baseUrl + "/datatablesController/"
+							+ webResources.getMainJsFile().getName() + "\"></script>");
 
 			logger.debug("Web content generated successfully");
 		} catch (IOException e) {

@@ -41,9 +41,11 @@ import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 
 /**
+ * <p>
  * Tag used to generate a HTML table's column.
  * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
 public class ColumnTag extends AbstractColumnTag {
 
@@ -112,9 +114,9 @@ public class ColumnTag extends AbstractColumnTag {
 		} else if ("AJAX".equals(parent.getLoadingType())) {
 
 			HtmlColumn column = new HtmlColumn(true, this.title);
-			
+
 			// All display types are added
-			for(DisplayType type : DisplayType.values()){
+			for (DisplayType type : DisplayType.values()) {
 				column.getEnabledDisplayTypes().add(type);
 			}
 			column.setProperty(this.property);
@@ -133,7 +135,7 @@ public class ColumnTag extends AbstractColumnTag {
 	public int doAfterBody() throws JspException {
 
 		TableTag parent = (TableTag) getParent();
-		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {			
+		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {
 			String bodyString = getBodyContent().getString().trim().replaceAll("[\n\r]", "");
 			this.addColumn(false, bodyString);
 		}

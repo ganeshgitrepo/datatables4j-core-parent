@@ -56,12 +56,8 @@ public class FilteringFeature extends AbstractFeature {
 	}
 
 	@Override
-	public String getFunction() {
-		return "columnFilter";
-	}
-
-	@Override
 	public void setup(HtmlTable table) throws BadConfigurationException {
+		setFunction("columnFilter");
 		setConfigGenerator(new ColumnFilteringGenerator());
 		addJsResource(new JsResource(ResourceType.FEATURE, "FilteringAddOn", "datatables/features/filtering/filteringaddon.js"));
 	}

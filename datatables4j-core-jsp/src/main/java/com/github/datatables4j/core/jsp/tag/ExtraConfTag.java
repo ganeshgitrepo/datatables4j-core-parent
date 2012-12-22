@@ -33,7 +33,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import com.github.datatables4j.core.api.model.ExtraConf;
-import com.github.datatables4j.core.jsp.util.JspHelper;
+import com.github.datatables4j.core.base.util.RequestHelper;
 
 /**
  * Tag used to add some extra Javascript configuration to the DataTable.
@@ -62,7 +62,7 @@ public class ExtraConfTag extends TagSupport {
 		AbstractTableTag parent = (AbstractTableTag) getParent();
 
 		if (parent.isFirstRow()) {
-			parent.getTable().getExtraConfs().add(new ExtraConf(getLocation(this.src)));
+			parent.getTable().addExtraConf(new ExtraConf(getLocation(this.src)));
 		}
 		return EVAL_PAGE;
 	}
@@ -73,7 +73,7 @@ public class ExtraConfTag extends TagSupport {
 	 * @return
 	 */
 	private String getLocation(String src){
-		return JspHelper.getBaseUrl(pageContext) + src;
+		return RequestHelper.getBaseUrl(pageContext.getRequest()) + src;
 	}
 
 	public String getSrc() {

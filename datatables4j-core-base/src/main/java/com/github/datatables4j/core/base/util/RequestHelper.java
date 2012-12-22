@@ -29,7 +29,11 @@
  */
 package com.github.datatables4j.core.base.util;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
  * Helper class used for all HttpServletRequest stuff.
@@ -47,13 +51,56 @@ public class RequestHelper {
 	 */
 	public static String getCurrentUrl(HttpServletRequest request) {
 		String currentUrl = null;
+		System.out.println("requestURI = " + request.getRequestURI());
+		System.out.println("requestURL = " + request.getRequestURL());
 		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
 			currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
+		}
+		else{
+			currentUrl = request.getRequestURL().toString();
 		}
 		if (currentUrl != null
 				&& request.getAttribute("javax.servlet.include.query_string") != null) {
 			currentUrl += "?" + request.getQueryString();
 		}
 		return currentUrl;
+	}
+	
+	
+	/**
+	 * <p>
+	 * Return the base URL (context path included).
+	 * 
+	 * <p>
+	 * Example : with an URL like http://domain.com:port/context/anything, this
+	 * function returns http://domain.com:port/context.
+	 * 
+	 * @param pageContext
+	 *            Context of the current JSP.
+	 * @return the base URL of the current JSP.
+	 */
+	public static String getBaseUrl(ServletRequest servletRequest) {
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+		return request.getRequestURL().toString()
+				.replace(request.getRequestURI(), request.getContextPath());
+	}
+	
+	
+	/**
+	 * <p>
+	 * Test if the table if being exported using the request
+	 * ExportConstants.DT4J_EXPORT_ID attribute.
+	 * 
+	 * <p>
+	 * The table's id must be tested in case of multiple tables are displayed on
+	 * the same page and exportables.
+	 * 
+	 * @return true if the table is being exported, false otherwise.
+	 */
+	public static Boolean isTableBeingExported(ServletRequest servletRequest, HtmlTable table) {
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+		return request.getAttribute(ExportConstants.DT4J_EXPORT_ID) != null ? request
+				.getAttribute(ExportConstants.DT4J_EXPORT_ID).toString().toLowerCase()
+				.equals(table.getId().toLowerCase()) : false;
 	}
 }

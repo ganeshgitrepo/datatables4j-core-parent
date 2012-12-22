@@ -68,6 +68,6 @@ public class ScrollerPlugin extends AbstractPlugin {
 	public void setup(HtmlTable table) {
 		addJsResource(new JsResource(ResourceType.PLUGIN, "Scroller", "datatables/plugins/scroller/scroller.min.js"));
 		addConfiguration(new Configuration(DTConstants.DT_DOM, "S", Configuration.Mode.APPEND));
-		addConfiguration(new Configuration(DTConstants.DT_SCROLLY, table.getScrollY()));
+		addConfiguration(new Configuration(DTConstants.DT_SCROLLY, table.getScrollY() != null ? table.getScrollY() : "300px"));
 	}
 }

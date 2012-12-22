@@ -76,7 +76,7 @@ public class ColumnFilteringGenerator extends AbstractConfigurationGenerator {
         	if(column.getEnabledDisplayTypes().contains(DisplayType.HTML)){
         		tmp = new HashMap<String, Object>();
         		
-        		if(column.isFilterable() && column.getFilterType() != null){
+        		if(column.isFilterable() != null && column.isFilterable() && column.getFilterType() != null){
         		
         			switch(column.getFilterType()){
 					case INPUT:

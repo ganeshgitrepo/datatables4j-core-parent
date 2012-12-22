@@ -45,9 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
-import com.github.datatables4j.core.api.model.ExportConf;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
-import com.github.datatables4j.core.api.model.ExportType;
+import com.github.datatables4j.core.api.export.ExportConf;
+import com.github.datatables4j.core.api.export.ExportLinkPosition;
+import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
@@ -61,10 +61,11 @@ import com.github.datatables4j.core.base.plugin.ColReorderPlugin;
 import com.github.datatables4j.core.base.plugin.FixedHeaderPlugin;
 import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
 import com.github.datatables4j.core.base.theme.Bootstrap2Theme;
-import com.github.datatables4j.core.jsp.util.JspHelper;
+import com.github.datatables4j.core.base.util.RequestHelper;
 
 /**
- * Abstract class which contains :<br />
+ * <p>
+ * Abstract class which contains :
  * <ul>
  * <li>all the boring technical stuff needed by Java tags (getters and setters
  * for all Table tag attributes)</li>
@@ -72,6 +73,7 @@ import com.github.datatables4j.core.jsp.util.JspHelper;
  * </ul>
  * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
 public abstract class AbstractTableTag extends BodyTagSupport {
 
@@ -100,8 +102,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean lengthChange;
 	protected String paginationType;
 	protected Boolean sort;
+	protected Boolean cdn;
 	protected String footer;
-	
+
 	// Advanced features
 	protected Boolean deferRender;
 	protected Boolean stateSave;
@@ -123,14 +126,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	// Theme
 	protected String theme;
-	
+
 	// Internal common attributes
 	protected int rowNumber;
 	protected HtmlTable table;
 	protected Iterator<Object> iterator;
 	protected Object currentObject;
 	protected String loadingType;
-	protected Boolean cdn = false;
 
 	/**
 	 * Register all common configuration with the table.
@@ -138,10 +140,10 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected void registerBasicConfiguration() throws JspException {
 
 		if (StringUtils.isNotBlank(this.cssClass)) {
-			this.table.setCssClass(this.cssClass);
+			this.table.setCssClass(new StringBuffer(this.cssClass));
 		}
 		if (StringUtils.isNotBlank(this.cssStyle)) {
-			this.table.setCssStyle(this.cssStyle);
+			this.table.setCssStyle(new StringBuffer(this.cssStyle));
 		}
 		if (this.autoWidth != null) {
 			this.table.setAutoWidth(this.autoWidth);
@@ -170,7 +172,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 						PaginationType.values());
 				throw new JspException(e);
 			}
-			
+
 			this.table.setPaginationType(paginationType);
 		}
 		if (this.processing != null) {
@@ -186,16 +188,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			this.table.setCdn(this.cdn);
 		}
 		if (StringUtils.isNotBlank(this.labels)) {
-			this.table.setLabels(JspHelper.getBaseUrl(pageContext) + this.labels);
+			this.table.setLabels(RequestHelper.getBaseUrl(pageContext.getRequest()) + this.labels);
 		}
 		if (this.jqueryUI != null) {
 			this.table.setJqueryUI(this.jqueryUI);
 		}
-		
+
 		// TODO tester si la valeur vaut "header"
-		if(StringUtils.isNotBlank(this.footer)){
-			
-			for(HtmlColumn footerColumn : table.getLastHeaderRow().getColumns()){
+		if (StringUtils.isNotBlank(this.footer)) {
+
+			for (HtmlColumn footerColumn : table.getLastHeaderRow().getColumns()) {
 				table.getLastFooterRow().addColumn(footerColumn);
 			}
 		}
@@ -204,22 +206,22 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	/**
 	 * Register the theme if activated in the table tag.
 	 */
-	protected void registerTheme(){
-		
-		if(StringUtils.isNotBlank(this.theme)){
-			if(this.theme.trim().toLowerCase().equals("bootstrap")){
+	protected void registerTheme() {
+
+		if (StringUtils.isNotBlank(this.theme)) {
+			if (this.theme.trim().toLowerCase().equals("bootstrap")) {
 				this.table.setTheme(new Bootstrap2Theme());
-			}
-			else{
-				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.", this.theme);
+			} else {
+				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.",
+						this.theme);
 			}
 		}
 	}
-	
+
 	/**
-	 * Register activated modules with the table.
+	 * Register activated plugins with the table.
 	 */
-	protected void registerModules() {
+	protected void registerPlugins() {
 
 		// Modules activation
 		if (this.fixedHeader) {
@@ -258,18 +260,18 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
-//			this.table.registerFeature(new InputFilteringFeature());
-//			this.table.registerFeature(new SelectFilteringFeature());
-			
-			for(HtmlColumn column : table.getLastHeaderRow().getColumns()){
+			// this.table.registerFeature(new InputFilteringFeature());
+			// this.table.registerFeature(new SelectFilteringFeature());
+
+			for (HtmlColumn column : table.getLastHeaderRow().getColumns()) {
 				table.getLastFooterRow().addColumn(column);
 			}
-			
+
 			this.table.registerFeature(new FilteringFeature());
 		}
-		
+
 		// Only register the feature if the paginationType attribute is set
-		if(StringUtils.isNotBlank(this.paginationType)){
+		if (StringUtils.isNotBlank(this.paginationType)) {
 			PaginationType paginationType = null;
 			try {
 				paginationType = PaginationType.valueOf(this.paginationType);
@@ -278,8 +280,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 						PaginationType.values());
 				throw new JspException(e);
 			}
-			
-			switch(paginationType){
+
+			switch (paginationType) {
 			case bootstrap:
 				this.table.registerFeature(new PaginationTypeBootstrapFeature());
 				break;
@@ -292,13 +294,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			case scrolling:
 				this.table.registerFeature(new PaginationTypeScrollingFeature());
 				break;
-			case four_button :
+			case four_button:
 				this.table.registerFeature(new PaginationTypeFourButtonFeature());
 				break;
 			default:
 				break;
-				
-			}			
+
+			}
 		}
 	}
 
@@ -334,8 +336,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			}
 			this.table.setExportLinkPositions(positionList);
 
-			// // Export links
-			// The exportConfMap hasn't been filled by ExportTag
+			// If the exportConfMap hasn't been filled by ExportTag
 			// So we use the default configuration
 			if (table.getExportConfMap().size() == 0) {
 
@@ -345,7 +346,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 					conf.setFileName("export");
 					conf.setType(exportType.toString());
 					conf.setLabel(exportType.toString());
-					conf.setPosition(ExportLinkPosition.TOP_MIDDLE);
+					conf.setPosition(ExportLinkPosition.TOP_RIGHT);
 					conf.setIncludeHeader(true);
 					conf.setArea("ALL");
 					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_ID + "="
@@ -390,24 +391,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		} else {
 			return SKIP_BODY;
 		}
-	}
-
-	/**
-	 * <p>
-	 * Test if the table if being exported using the request
-	 * ExportConstants.DT4J_EXPORT_ID attribute.
-	 * 
-	 * <p>
-	 * The table's id must be tested in case of multiple tables are displayed on
-	 * the same page and exportables.
-	 * 
-	 * @return true if the table is being exported, false otherwise.
-	 */
-	protected Boolean isTableBeingExported() {
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		return request.getAttribute(ExportConstants.DT4J_EXPORT_ID) != null ? request
-				.getAttribute(ExportConstants.DT4J_EXPORT_ID).toString().toLowerCase()
-				.equals(table.getId().toLowerCase()) : false;
 	}
 
 	/**
@@ -683,10 +666,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.fixedOffsetTop = fixedOffsetTop;
 	}
 
-	public Boolean isCdnEnable() {
-		return cdn;
-	}
-
 	public void setCdn(Boolean cdn) {
 		this.cdn = cdn;
 	}
@@ -735,7 +714,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setTheme(String theme) {
 		this.theme = theme;
 	}
-	
+
 	public String getFooter() {
 		return footer;
 	}
@@ -743,7 +722,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	public void setFooter(String footer) {
 		this.footer = footer;
 	}
-	
+
 	public void setData(Collection<Object> data) {
 		this.loadingType = "DOM";
 		this.data = data;

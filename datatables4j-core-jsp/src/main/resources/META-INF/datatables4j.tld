@@ -17,8 +17,8 @@
    <!-- ====================================== -->
    <tag>
       <name>table</name>
-      <tag-class>com.github.datatables4j.core.tag.TableTag</tag-class>
-      <tei-class>com.github.datatables4j.core.tag.TableTagExtraInfo</tei-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.TableTag</tag-class>
+      <tei-class>com.github.datatables4j.core.jsp.tag.TableTagExtraInfo</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
          DataTables jQuery plugin.</description>
@@ -279,7 +279,7 @@
    <!-- ====================================== -->
    <tag>
       <name>column</name>
-      <tag-class>com.github.datatables4j.core.tag.ColumnTag</tag-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.ColumnTag</tag-class>
       <body-content>JSP</body-content>
       <description>Describe a column of the HTML table.</description>
       <attribute>
@@ -371,7 +371,7 @@
    <tag>
       <description></description>
       <name>extraFile</name>
-      <tag-class>com.github.datatables4j.core.tag.ExtraFileTag</tag-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.ExtraFileTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>src</name>
@@ -395,7 +395,7 @@
    <tag>
       <description></description>
       <name>extraConf</name>
-      <tag-class>com.github.datatables4j.core.tag.ExtraConfTag</tag-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.ExtraConfTag</tag-class>
       <body-content>empty</body-content>
       <description>Allow to specify the location of a file containing
          a
@@ -418,7 +418,7 @@
          the
          DataTables4j properties file.</description>
       <name>prop</name>
-      <tag-class>com.github.datatables4j.core.tag.PropTag</tag-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.PropTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
          <name>name</name>
@@ -438,7 +438,7 @@
    <tag>
       <description></description>
       <name>export</name>
-      <tag-class>com.github.datatables4j.core.tag.ExportTag</tag-class>
+      <tag-class>com.github.datatables4j.core.jsp.tag.ExportTag</tag-class>
       <body-content>empty</body-content>
       <description>Configure the HTML link and properties for a given
          export type.</description>

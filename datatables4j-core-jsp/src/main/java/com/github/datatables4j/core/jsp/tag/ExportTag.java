@@ -36,9 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
-import com.github.datatables4j.core.api.model.ExportConf;
-import com.github.datatables4j.core.api.model.ExportLinkPosition;
-import com.github.datatables4j.core.api.model.ExportType;
+import com.github.datatables4j.core.api.export.ExportConf;
+import com.github.datatables4j.core.api.export.ExportLinkPosition;
+import com.github.datatables4j.core.api.export.ExportType;
 
 /**
  * Tag which allows to configure an export type for the current table.

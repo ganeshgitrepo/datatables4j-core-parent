@@ -44,7 +44,8 @@ import com.github.datatables4j.core.api.model.DisplayType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
 
 /**
- * Abstract class which contains :<br />
+ * <p>
+ * Abstract class which contains :
  * <ul>
  * <li>all the boring technical stuff needed by Java tags (getters and setters
  * for all Column tag attributes)</li>
@@ -52,6 +53,7 @@ import com.github.datatables4j.core.api.model.HtmlColumn;
  * </ul>
  * 
  * @author Thibault Duchateau
+ * @since 0.1.0
  */
 public abstract class AbstractColumnTag extends BodyTagSupport {
 
@@ -59,7 +61,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(AbstractColumnTag.class);
-		
+
 	// Tag attributes
 	protected String title;
 	protected String property;
@@ -67,7 +69,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	protected String cssCellStyle;
 	protected String cssClass;
 	protected String cssCellClass;
-	protected Boolean sortable = true;
+	protected Boolean sortable;
 	protected String sortDirection;
 	protected String sortInit;
 	protected Boolean filterable = false;
@@ -75,7 +77,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	protected String filterCssClass = "";
 	protected String filterPlaceholder = "";
 	protected String display;
-	
+
 	/**
 	 * Add a column to the table.
 	 * 
@@ -83,86 +85,82 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	 * @param content
 	 */
 	protected void addColumn(Boolean isHeader, String content) throws JspException {
-		
+
+		// Get the parent tag to access the HtmlTable
+		AbstractTableTag parent = (AbstractTableTag) getParent();
+
 		// Init the column
 		HtmlColumn column = new HtmlColumn(isHeader, content);
 
-		// Common configuration (between header and non-header columns)
-		column.setSortable(this.sortable);
-		
-		AbstractTableTag parent = (AbstractTableTag) getParent();
-		
+		// Sortable
+		if(this.sortable != null){
+			column.setSortable(this.sortable);			
+		}
+
 		// Enabled display types
-		List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
 		if (StringUtils.isNotBlank(this.display)) {
+			List<DisplayType> enabledDisplayTypes = new ArrayList<DisplayType>();
 			String[] displayTypes = this.display.trim().toUpperCase().split(",");
 
 			for (String displayType : displayTypes) {
 				try {
 					enabledDisplayTypes.add(DisplayType.valueOf(displayType));
 				} catch (IllegalArgumentException e) {
-					logger.error("{} is not a valid value among {}. Please choose a valid one.", displayType,
-							DisplayType.values());
+					logger.error("{} is not a valid value among {}. Please choose a valid one.",
+							displayType, DisplayType.values());
 					throw new JspException(e);
 				}
 			}
-		} else {
-			// All display types are added
-			for(DisplayType type : DisplayType.values()){
-				enabledDisplayTypes.add(type);
-			}
-		}
-		column.setEnabledDisplayTypes(enabledDisplayTypes);
-		
+
+			column.setEnabledDisplayTypes(enabledDisplayTypes);
+		} 
+
 		// Non-header columns
-		if(!isHeader){
-			if(StringUtils.isNotBlank(this.cssCellClass)){
+		if (!isHeader) {
+			if (StringUtils.isNotBlank(this.cssCellClass)) {
 				column.setCssCellClass(this.cssCellClass);
 			}
-			if(StringUtils.isNotBlank(this.cssCellStyle)){
+			if (StringUtils.isNotBlank(this.cssCellStyle)) {
 				column.setCssCellStyle(this.cssCellStyle);
 			}
 
-			parent.getTable().getLastRow().addColumn(column);			
+			parent.getTable().getLastRow().addColumn(column);
 		}
 		// Header columns
-		else{
-			if(StringUtils.isNotBlank(this.cssClass)){
-				column.setCssClass(this.cssClass);
+		else {
+			if (StringUtils.isNotBlank(this.cssClass)) {
+				column.setCssClass(new StringBuffer(this.cssClass));
 			}
-			if(StringUtils.isNotBlank(this.cssStyle)){
-				column.setCssStyle(this.cssStyle);
+			if (StringUtils.isNotBlank(this.cssStyle)) {
+				column.setCssStyle(new StringBuffer(this.cssStyle));
 			}
 
 			column.setSortDirection(this.sortDirection);
 			column.setSortInit(this.sortInit);
 			column.setFilterable(this.filterable);
-			
-			if(StringUtils.isNotBlank(this.filterType)){
-				
+
+			if (StringUtils.isNotBlank(this.filterType)) {
+
 				FilterType filterType = null;
 				try {
 					filterType = FilterType.valueOf(this.filterType);
 				} catch (IllegalArgumentException e) {
-					logger.error("{} is not a valid value among {}. Please choose a valid one.", filterType,
-							FilterType.values());
+					logger.error("{} is not a valid value among {}. Please choose a valid one.",
+							filterType, FilterType.values());
 					throw new JspException(e);
 				}
 				column.setFilterType(filterType);
 			}
-			else{
-				column.setFilterType(FilterType.INPUT);
-			}
-			
+
 			column.setFilterCssClass(this.filterCssClass);
 			column.setFilterPlaceholder(this.filterPlaceholder);
-			
+
 			parent.getTable().getLastHeaderRow().addColumn(column);
 		}
 	}
-	
+
 	/** Getters and setters */
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -250,7 +248,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	public void setFilterPlaceholder(String filterPlaceholder) {
 		this.filterPlaceholder = filterPlaceholder;
 	}
-	
+
 	public String getSortDirection() {
 		return sortDirection;
 	}
@@ -258,7 +256,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
 	}
-	
+
 	public String getSortInit() {
 		return sortInit;
 	}
@@ -266,7 +264,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	public void setSortInit(String sortInit) {
 		this.sortInit = sortInit;
 	}
-	
+
 	public String getDisplay() {
 		return display;
 	}
