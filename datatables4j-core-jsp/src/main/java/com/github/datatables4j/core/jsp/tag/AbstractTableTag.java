@@ -209,7 +209,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected void registerTheme() {
 
 		if (StringUtils.isNotBlank(this.theme)) {
-			if (this.theme.trim().toLowerCase().equals("bootstrap")) {
+			if (this.theme.trim().toLowerCase().equals("bootstrap2")) {
 				this.table.setTheme(new Bootstrap2Theme());
 			} else {
 				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.",

@@ -73,7 +73,7 @@ public class TableThemeAttrProcessor extends AbstractDatatableAttrProcessor {
 
 		// HtmlTable update
 		if (htmlTable != null) {
-			if (attrValue.trim().toLowerCase().equals("bootstrap")) {
+			if (attrValue.trim().toLowerCase().equals("bootstrap2")) {
 				htmlTable.setTheme(new Bootstrap2Theme());
 			} else {
 				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.",
