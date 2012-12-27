@@ -124,7 +124,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 				column.setCssCellStyle(this.cssCellStyle);
 			}
 
-			parent.getTable().getLastRow().addColumn(column);
+			parent.getTable().getLastBodyRow().addColumn(column);
 		}
 		// Header columns
 		else {

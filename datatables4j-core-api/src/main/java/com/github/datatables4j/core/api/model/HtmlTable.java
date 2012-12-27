@@ -214,7 +214,7 @@ public class HtmlTable extends HtmlTag {
 		return ((LinkedList<HtmlRow>) this.head).getLast();
 	}
 
-	public HtmlRow getLastRow() {
+	public HtmlRow getLastBodyRow() {
 		return ((LinkedList<HtmlRow>) this.body).getLast();
 	}
 
