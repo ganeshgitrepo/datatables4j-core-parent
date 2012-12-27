@@ -80,9 +80,7 @@ public class HtmlTable extends HtmlTag {
 	private List<ExtraConf> extraConfs;
 	private String randomId;
 	
-	/**
-	 * Class of the iterated objects. Only used in XML export.
-	 */
+	// Class of the iterated objects. Only used in XML export.
 	private String objectType;
 	private String currentUrl;
 

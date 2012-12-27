@@ -99,8 +99,8 @@ public class RequestHelper {
 	 */
 	public static Boolean isTableBeingExported(ServletRequest servletRequest, HtmlTable table) {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		return request.getAttribute(ExportConstants.DT4J_EXPORT_ID) != null ? request
-				.getAttribute(ExportConstants.DT4J_EXPORT_ID).toString().toLowerCase()
+		return request.getAttribute(ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID) != null ? request
+				.getAttribute(ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID).toString().toLowerCase()
 				.equals(table.getId().toLowerCase()) : false;
 	}
 }

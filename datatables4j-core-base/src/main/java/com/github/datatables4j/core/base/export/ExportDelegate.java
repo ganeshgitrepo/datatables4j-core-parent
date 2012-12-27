@@ -176,12 +176,12 @@ public class ExportDelegate {
 		// Fill the request so that the filter will intercept it and
 		// override the response with the export configuration
 		if (exportProperties.isBinaryExport()) {
-			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT,
+			request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_CONTENT,
 					((ByteArrayOutputStream) stream).toByteArray());
 		} else {
-			request.setAttribute(ExportConstants.DT4J_EXPORT_CONTENT, writer.toString());
+			request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_CONTENT, writer.toString());
 		}
-		request.setAttribute(ExportConstants.DT4J_EXPORT_PROPERTIES, exportProperties);
+		request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_PROPERTIES, exportProperties);
 	}
 
 	/**

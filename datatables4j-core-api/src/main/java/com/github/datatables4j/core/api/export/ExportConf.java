@@ -29,7 +29,6 @@
  */
 package com.github.datatables4j.core.api.export;
 
-
 /**
  * POJO that stores an export type configuration.
  * 
@@ -38,15 +37,36 @@ package com.github.datatables4j.core.api.export;
 public class ExportConf {
 
 	private String fileName;
-	private String type;
+	private ExportType type;
 	private String label;
 	private StringBuffer cssStyle;
 	private StringBuffer cssClass;
-	private ExportLinkPosition position;
 	private Boolean includeHeader;
 	private String area;
 	private String url;
 	private Boolean autoSize;
+
+	public ExportConf(ExportType type){
+		this.type = type;
+		init();
+	}
+	
+	public ExportConf(ExportType type, String url) {
+		this.type = type;
+		this.url = url;
+		init();
+	}
+
+	/**
+	 * Initialize the default values.
+	 */
+	private void init() {
+		this.fileName = "export";
+		this.label = this.type.toString();
+		this.includeHeader = true;
+		this.area = "ALL";
+		this.autoSize = false;
+	}
 
 	public String getFileName() {
 		return fileName;
@@ -56,11 +76,11 @@ public class ExportConf {
 		this.fileName = fileName;
 	}
 
-	public String getType() {
+	public ExportType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ExportType type) {
 		this.type = type;
 	}
 
@@ -86,14 +106,6 @@ public class ExportConf {
 
 	public void setCssClass(StringBuffer cssClass) {
 		this.cssClass = cssClass;
-	}
-
-	public ExportLinkPosition getPosition() {
-		return position;
-	}
-
-	public void setPosition(ExportLinkPosition position) {
-		this.position = position;
 	}
 
 	public Boolean getIncludeHeader() {
@@ -123,8 +135,8 @@ public class ExportConf {
 	@Override
 	public String toString() {
 		return "ExportConf [fileName=" + fileName + ", type=" + type + ", label=" + label
-				+ ", cssStyle=" + cssStyle + ", cssClass=" + cssClass + ", position=" + position
-				+ ", includeHeader=" + includeHeader + ", area=" + area + ", url=" + url + "]";
+				+ ", cssStyle=" + cssStyle + ", cssClass=" + cssClass + ", includeHeader="
+				+ includeHeader + ", area=" + area + ", url=" + url + "]";
 	}
 
 	public Boolean getAutoSize() {
@@ -135,4 +147,25 @@ public class ExportConf {
 		this.autoSize = autoSize;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExportConf other = (ExportConf) obj;
+		if (type != other.type)
+			return false;
+		return true;
+	}
 }

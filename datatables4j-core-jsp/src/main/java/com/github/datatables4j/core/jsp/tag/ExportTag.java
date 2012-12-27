@@ -32,6 +32,7 @@ package com.github.datatables4j.core.jsp.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,20 +96,35 @@ public class ExportTag extends TagSupport {
 				throw new JspException(e);
 			}
 
-			ExportConf conf = new ExportConf();
+			// Export URL build
+			String url = parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE
+					+ "=" + exportType.getUrlParameter() + "&" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID
+					+ "=" + parent.getTable().getId();
 
-			conf.setFileName(fileName != null ? fileName : "export");
-			conf.setType(type != null ? type.toUpperCase() : "CSV");
-			conf.setLabel(label != null ? label : type.toUpperCase());
-			conf.setCssClass(cssClass != null ? new StringBuffer(cssClass) : new StringBuffer());
-			conf.setCssStyle(cssStyle != null ? new StringBuffer(cssStyle) : new StringBuffer());
-			conf.setPosition(position != null ? position : ExportLinkPosition.TOP_MIDDLE);
-			conf.setIncludeHeader(includeHeader != null ? includeHeader : true);
-			conf.setArea(area != null ? area : "ALL");
-			conf.setAutoSize(autoSize != null ? autoSize : false);
-			conf.setUrl(parent.getTable().getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_TYPE
-					+ "=" + exportType.getUrlParameter() + "&" + ExportConstants.DT4J_EXPORT_ID
-					+ "=" + parent.getTable().getId());
+			ExportConf conf = new ExportConf(exportType, url);
+
+			// Other fields
+			if(StringUtils.isNotBlank(fileName)){
+				conf.setFileName(fileName);				
+			}
+			if(StringUtils.isNotBlank(label)){
+				conf.setLabel(label);				
+			}
+			if(StringUtils.isNotBlank(cssClass)){
+				conf.setCssClass(new StringBuffer(cssClass));				
+			}
+			if(StringUtils.isNotBlank(cssStyle)){
+				conf.setCssStyle(new StringBuffer(cssStyle));				
+			}
+			if(includeHeader != null){
+				conf.setIncludeHeader(includeHeader != null ? includeHeader : true);				
+			}
+			if(StringUtils.isNotBlank(area)){
+				conf.setArea(area);				
+			}
+			if(autoSize != null){
+				conf.setAutoSize(autoSize);				
+			}
 
 			parent.getTable().getExportConfMap().put(exportType, conf);
 

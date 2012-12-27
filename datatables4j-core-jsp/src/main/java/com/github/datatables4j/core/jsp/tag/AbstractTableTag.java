@@ -121,7 +121,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean colReorder = false;
 
 	// Export
-	protected Boolean export;
+	protected String export;
 	protected String exportLinks;
 
 	// Theme
@@ -311,9 +311,45 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	protected void registerExportConfiguration() throws JspException {
 
-		if (this.export != null && this.export) {
+		if (StringUtils.isNotBlank(this.export)) {
 
+			// Init the exportable flag in order to add export links
 			table.setIsExportable(true);
+
+			// Allowed export types
+			String[] exportTypes = this.export.trim().toUpperCase().split(",");
+			System.out.println("== exportTypes = " + exportTypes);
+			for (String exportTypeString : exportTypes) {
+				ExportType type = null;
+
+				try {
+					type = ExportType.valueOf(exportTypeString);
+				} catch (IllegalArgumentException e) {
+					logger.error("The export cannot be activated for the table {}. ", table.getId());
+					logger.error("{} is not a valid value among {}", exportTypeString,
+							ExportType.values());
+					throw new JspException(e);
+				}
+
+				// ExportConf eventuellement deja charges par le tag ExportTag
+				// Du coup, on va completer ici avec la liste des autres exports
+				// actives par la balise export=""
+				if (!table.getExportConfMap().containsKey(type)) {
+
+					String url = this.table.getCurrentUrl() + "?"
+							+ ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
+							+ type.getUrlParameter() + "&"
+							+ ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
+							+ this.table.getId();
+
+					ExportConf conf = new ExportConf(type, url);
+					table.getExportConfMap().put(type, conf);
+				}
+
+				// TODO ne pas prendre ne compte le tag ExportTag s'il permet de
+				// customizer un export qui n'est pas specifie dans
+				// export="XXXX"
+			}
 
 			// Export links position
 			List<ExportLinkPosition> positionList = new ArrayList<ExportLinkPosition>();
@@ -335,27 +371,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				positionList.add(ExportLinkPosition.TOP_RIGHT);
 			}
 			this.table.setExportLinkPositions(positionList);
-
-			// If the exportConfMap hasn't been filled by ExportTag
-			// So we use the default configuration
-			if (table.getExportConfMap().size() == 0) {
-
-				for (ExportType exportType : table.getTableProperties().getExportTypes()) {
-					ExportConf conf = new ExportConf();
-
-					conf.setFileName("export");
-					conf.setType(exportType.toString());
-					conf.setLabel(exportType.toString());
-					conf.setPosition(ExportLinkPosition.TOP_RIGHT);
-					conf.setIncludeHeader(true);
-					conf.setArea("ALL");
-					conf.setUrl(table.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_ID + "="
-							+ table.getId() + "&" + ExportConstants.DT4J_EXPORT_TYPE + "="
-							+ ExportType.valueOf(conf.getType()).getUrlParameter());
-
-					table.getExportConfMap().put(exportType, conf);
-				}
-			}
 		}
 	}
 
@@ -403,7 +418,8 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
 		// Get the URL parameter used to identify the export type
-		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
+		String exportTypeString = request.getParameter(
+				ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE).toString();
 
 		// Convert it to the corresponding enum
 		ExportType exportType = ExportType.findByUrlParameter(Integer.parseInt(exportTypeString));
@@ -417,7 +433,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 * @return true if the table can be exported, false otherwise.
 	 */
 	protected Boolean canBeExported() {
-		return this.export != null ? this.export : false;
+		return StringUtils.isNotBlank(this.export);
 	}
 
 	/**
@@ -670,11 +686,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.cdn = cdn;
 	}
 
-	public Boolean getExport() {
+	public String getExport() {
 		return export;
 	}
 
-	public void setExport(Boolean export) {
+	public void setExport(String export) {
 		this.export = export;
 	}
 
