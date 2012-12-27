@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.export.ExportConf;
 import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.export.ExportType;
@@ -137,7 +138,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	/**
 	 * Register all common configuration with the table.
 	 */
-	protected void registerBasicConfiguration() throws JspException {
+	protected void registerBasicConfiguration() throws BadConfigurationException {
 
 		if (StringUtils.isNotBlank(this.cssClass)) {
 			this.table.setCssClass(new StringBuffer(this.cssClass));
@@ -170,7 +171,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			} catch (IllegalArgumentException e) {
 				logger.error("{} is not a valid value among {}", this.paginationType,
 						PaginationType.values());
-				throw new JspException(e);
+				throw new BadConfigurationException(e);
 			}
 
 			this.table.setPaginationType(paginationType);
@@ -305,11 +306,16 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	}
 
 	/**
+	 * <p>
 	 * Register export configuration.
+	 * 
+	 * <p>
+	 * Depending on the export configuration, export links are generated and
+	 * customized around the table.
 	 * 
 	 * @throws BadExportConfigurationException
 	 */
-	protected void registerExportConfiguration() throws JspException {
+	protected void registerExportConfiguration() throws BadConfigurationException {
 
 		if (StringUtils.isNotBlank(this.export)) {
 
@@ -318,7 +324,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 			// Allowed export types
 			String[] exportTypes = this.export.trim().toUpperCase().split(",");
-			System.out.println("== exportTypes = " + exportTypes);
+			
 			for (String exportTypeString : exportTypes) {
 				ExportType type = null;
 
@@ -328,7 +334,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 					logger.error("The export cannot be activated for the table {}. ", table.getId());
 					logger.error("{} is not a valid value among {}", exportTypeString,
 							ExportType.values());
-					throw new JspException(e);
+					throw new BadConfigurationException(e);
 				}
 
 				// ExportConf eventuellement deja charges par le tag ExportTag
@@ -364,7 +370,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 								table.getId());
 						logger.error("{} is not a valid value among {}", position,
 								ExportLinkPosition.values());
-						throw new JspException(e);
+						throw new BadConfigurationException(e);
 					}
 				}
 			} else {

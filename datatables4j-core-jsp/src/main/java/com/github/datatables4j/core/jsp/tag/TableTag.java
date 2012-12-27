@@ -128,11 +128,16 @@ public class TableTag extends AbstractTableTag {
 	 */
 	public int doEndTag() throws JspException {
 
-		// Update the HtmlTable object configuration with the attributes
-		registerBasicConfiguration();
+		try{
+			// Update the HtmlTable POJO configuration with the attributes
+			registerBasicConfiguration();			
 
-		// Update the HtmlTable object with the export configuration
-		registerExportConfiguration();
+			// Update the HtmlTable POJO with the export configuration
+			registerExportConfiguration();			
+		}
+		catch (BadConfigurationException e){
+			throw new JspException(e);
+		}
 
 		// The table is being exported
 		if (RequestHelper.isTableBeingExported(pageContext.getRequest(), table)) {
