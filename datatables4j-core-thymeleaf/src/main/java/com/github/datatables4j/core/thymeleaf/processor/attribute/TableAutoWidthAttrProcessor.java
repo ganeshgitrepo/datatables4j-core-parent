@@ -38,11 +38,13 @@ import org.thymeleaf.processor.ProcessorResult;
 
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor applied to the <code>table</code> tag for the
- * <code>autoWidth</code> attribute.
+ * Attribute processor applied to the <tt>table</tt> tag for the
+ * <tt>autoWidth</tt> attribute.
  * 
+ * @see <a href="http://datatables.net/ref#autowidth">DataTables reference</a>
  * @author Thibault Duchateau
  */
 public class TableAutoWidthAttrProcessor extends AbstractDatatableAttrProcessor {
@@ -64,8 +66,8 @@ public class TableAutoWidthAttrProcessor extends AbstractDatatableAttrProcessor 
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
 		
-		// Get HtmlTable POJO from local variables
-		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
 
 		// Get attribute value
 		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));

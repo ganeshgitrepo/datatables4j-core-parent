@@ -36,8 +36,8 @@ import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
 /**
- * Custom abstract attribute processor that just provides the utility
- * nonLenientOK method.
+ * Custom abstract attribute processor that just provides the nonLenientOK
+ * utility method.
  * 
  * @author Thibault Duchateau
  */
@@ -54,13 +54,11 @@ public class AbstractDatatableAttrProcessor extends AbstractAttrProcessor {
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getPrecedence() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

@@ -39,6 +39,7 @@ import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * 
@@ -64,9 +65,9 @@ public class TheadScrollerAttrProcessor extends AbstractAttrProcessor {
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
 
-		// Get HtmlTable POJO from local variables
-		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
-
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
+		
 		// Get attribute value
 		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
 		logger.debug("Extracted value : {}", attrValue);

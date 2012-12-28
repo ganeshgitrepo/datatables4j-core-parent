@@ -14,6 +14,7 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
 
 import com.github.datatables4j.core.api.model.HtmlColumn;
 import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * TODO
@@ -38,8 +39,8 @@ public class ColumnUpdaterElProcessor extends AbstractElementProcessor {
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
 		logger.debug("{} element found", element.getNormalizedName());
 
-		// Get HtmlTable POJO from local variables
-		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);		
 				
 		// Get the TH content
 		String content = element.getFirstChild() != null ? ((Text) element.getFirstChild()).getContent().trim() : "";

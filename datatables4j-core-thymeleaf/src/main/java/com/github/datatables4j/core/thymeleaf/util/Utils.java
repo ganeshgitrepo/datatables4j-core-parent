@@ -2,7 +2,11 @@ package com.github.datatables4j.core.thymeleaf.util;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.thymeleaf.Arguments;
+import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
+
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 public class Utils {
 
@@ -116,5 +120,9 @@ public class Utils {
 		else{
 			return element;
 		}
+	}
+	
+	public static HtmlTable getTable(Arguments arguments){
+		return (HtmlTable)((IWebContext) arguments.getContext()).getHttpServletRequest().getAttribute("htmlTable");
 	}
 }

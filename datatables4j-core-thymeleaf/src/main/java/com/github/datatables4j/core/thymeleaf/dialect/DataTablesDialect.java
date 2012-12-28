@@ -29,19 +29,16 @@
  */
 package com.github.datatables4j.core.thymeleaf.dialect;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.AttributeNameProcessorMatcher;
 import org.thymeleaf.processor.IProcessor;
 
-import com.github.datatables4j.core.thymeleaf.processor.CustomEachAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.attribute.EnablingDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TableAutoWidthAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TableCdnAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.attribute.EnablingDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TableExportAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TableFilterAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TableInfoAttrProcessor;
@@ -52,26 +49,32 @@ import com.github.datatables4j.core.thymeleaf.processor.attribute.ThFilterTypeAt
 import com.github.datatables4j.core.thymeleaf.processor.attribute.ThFilterableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.ThSortableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.attribute.TheadScrollerAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.ColumnInitializerElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.DivElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.element.TableFinalizerElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.element.TableInitializerElProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.element.ColumnInitializerElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.TbodyElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.TdElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.element.TrElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.matcher.ElementNameWithoutPrefixProcessorMatcher;
 
 /**
- * TODO
+ * DataTables4j dialect.
  * 
  * @author Thibault Duchateau
  */
 public class DataTablesDialect extends AbstractDialect {
 
+	public static final String DIALECT_PREFIX = "dt";
 	public static final String LAYOUT_NAMESPACE = "http://github.com/datatables4j/thymeleaf/dt4j";
-
+	public static final int DT_HIGHEST_PRECEDENCE = 3500;
+	
 	/**
 	 * DataTablesDialect has no prefix, in order to be able to match native HTML
 	 * tags as <code>table</code> or <code>tbody</code>.
 	 */
 	public String getPrefix() {
-		return "dt";
+		return DIALECT_PREFIX;
 	}
 
 	public boolean isLenient() {
@@ -85,10 +88,17 @@ public class DataTablesDialect extends AbstractDialect {
 	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
 		
-		processors.add(new TableInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("table", "dt:table", "true")));
-		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
+		processors.add(new TableInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("table", DIALECT_PREFIX + ":table", "true")));
+//		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
+		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("div", DIALECT_PREFIX + ":tmp", "internalUse")));
 		processors.add(new ColumnInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("th")));
 
+//		processors.add(new DivElProcessor(new ElementNameWithoutPrefixProcessorMatcher("div", DIALECT_PREFIX + ":tmp", "internalUse")));
+		
+		processors.add(new TbodyElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
+		processors.add(new TrElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tr", DIALECT_PREFIX + ":data", "internalUse")));
+		processors.add(new TdElProcessor(new ElementNameWithoutPrefixProcessorMatcher("td", DIALECT_PREFIX + ":data", "internalUse")));
+		
 //		processors.add(new CustomEachAttrProcessor(new AttributeNameProcessorMatcher("tr", "each")));
 		
 		processors.add(new EnablingDatatableAttrProcessor(new AttributeNameProcessorMatcher("table", "table")));
@@ -102,7 +112,7 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TableSortAttrProcessor(new AttributeNameProcessorMatcher("sort", "table")));
 		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));
 
-		//		processors.add(new TableExportAttrProcessor(new AttributeNameProcessorMatcher("export", "table")));
+		processors.add(new TableExportAttrProcessor(new AttributeNameProcessorMatcher("export", "table")));
 
 		// Plugins attributes
 		processors.add(new TheadScrollerAttrProcessor(new AttributeNameProcessorMatcher("scroller", "thead")));

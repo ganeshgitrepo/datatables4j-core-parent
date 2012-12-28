@@ -29,6 +29,7 @@
  */
 package com.github.datatables4j.core.thymeleaf.processor.attribute;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
@@ -36,11 +37,21 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
+import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.export.ExportConf;
+import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor for the <code>export</code> attribute.
+ * <p>
+ * Attribute processor applied to the <tt>table</tt> tag for the <tt>export</tt>
+ * attribute.
+ * 
+ * <p>
+ * When the <tt>export</tt> attribute is set to <code>true</code>, HTML link
+ * will be generated around the table for each enabled export.
  * 
  * @author Thibault Duchateau
  */
@@ -54,9 +65,9 @@ public class TableExportAttrProcessor extends AbstractDatatableAttrProcessor {
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(TableExportAttrProcessor.class);
 
-//	public TableExportAttrProcessor(IAttributeNameProcessorMatcher matcher) {
-//		super(matcher);
-//	}
+	// public TableExportAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	// super(matcher);
+	// }
 
 	@Override
 	public int getPrecedence() {
@@ -68,18 +79,76 @@ public class TableExportAttrProcessor extends AbstractDatatableAttrProcessor {
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
 
-		System.out.println(((Element)element.getParent()).getNormalizedName());
-		System.out.println(((Element)element.getParent()).getNormalizedPrefix());
-		// Get HtmlTable POJO from local variables
-		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+		System.out.println(((Element) element.getParent()).getNormalizedName());
+		System.out.println(((Element) element.getParent()).getNormalizedPrefix());
+		
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
 
 		// Get attribute value
-		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		String attrValue = element.getAttributeValue(attributeName);
 		logger.debug("Extracted value : {}", attrValue);
+				
+		if (StringUtils.isNotBlank(attrValue) && htmlTable != null) {
 
-		// HtmlTable update
-		if (htmlTable != null) {
-			htmlTable.setIsExportable(attrValue);
+			// Init the exportable flag in order to add export links
+			htmlTable.setIsExportable(true);
+
+			// Allowed export types
+			String[] exportTypes = attrValue.trim().toUpperCase().split(",");
+			
+			for (String exportTypeString : exportTypes) {
+				ExportType type = null;
+
+				try {
+					type = ExportType.valueOf(exportTypeString);
+				} catch (IllegalArgumentException e) {
+					logger.error("The export cannot be activated for the table {}. ", htmlTable.getId());
+					logger.error("{} is not a valid value among {}", exportTypeString,
+							ExportType.values());
+//					throw new BadConfigurationException(e);
+				}
+
+				// ExportConf eventuellement deja charges par le tag ExportTag
+				// Du coup, on va completer ici avec la liste des autres exports
+				// actives par la balise export=""
+				if (!htmlTable.getExportConfMap().containsKey(type)) {
+
+					String url = htmlTable.getCurrentUrl() + "?"
+							+ ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
+							+ type.getUrlParameter() + "&"
+							+ ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
+							+ htmlTable.getId();
+
+					ExportConf conf = new ExportConf(type, url);
+					htmlTable.getExportConfMap().put(type, conf);
+				}
+
+				// TODO ne pas prendre ne compte le tag ExportTag s'il permet de
+				// customizer un export qui n'est pas specifie dans
+				// export="XXXX"
+			}
+
+//			// Export links position
+//			List<ExportLinkPosition> positionList = new ArrayList<ExportLinkPosition>();
+//			if (StringUtils.isNotBlank(this.exportLinks)) {
+//				String[] positions = this.exportLinks.trim().toUpperCase().split(",");
+//
+//				for (String position : positions) {
+//					try {
+//						positionList.add(ExportLinkPosition.valueOf(position));
+//					} catch (IllegalArgumentException e) {
+//						logger.error("The export cannot be activated for the table {}. ",
+//								table.getId());
+//						logger.error("{} is not a valid value among {}", position,
+//								ExportLinkPosition.values());
+//						throw new BadConfigurationException(e);
+//					}
+//				}
+//			} else {
+//				positionList.add(ExportLinkPosition.TOP_RIGHT);
+//			}
+//			this.table.setExportLinkPositions(positionList);
 		}
 
 		return nonLenientOK(element, attributeName);

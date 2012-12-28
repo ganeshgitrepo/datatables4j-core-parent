@@ -59,12 +59,12 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 
 	@Override
 	public int getPrecedence() {
-		return 8000;
+		return 50000;
 	}
 
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		System.out.println("=====> TBODY ELEMENT !!!");
+		System.out.println("***** TABLE FINALIZER");
 
 		System.out.println("arguments = " + arguments.toString());
 		System.out.println("element = " + element.getNormalizedName());
@@ -72,31 +72,37 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 				+ Utils.getParentAsElement(element).getNormalizedName());
 		HttpServletRequest request = ((IWebContext) arguments.getContext()).getHttpServletRequest();
 
-		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+//		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+		HtmlTable htmlTable = Utils.getTable(arguments);
 		this.htmlTable = htmlTable;
 		System.out.println("table = " + this.htmlTable);
+		System.out.println("nb row = " + this.htmlTable.getBodyRows().size());
 
-		// // Export links
-		// The exportConfMap hasn't been filled by ExportTag
-		// So we use the default configuration
-		if (this.htmlTable != null && this.htmlTable.getExportConfMap().size() == 0) {
-
-			for (ExportType exportType : this.htmlTable.getTableProperties().getExportTypes()) {
-				ExportConf conf = new ExportConf();
-
-				conf.setFileName("export");
-				conf.setType(exportType.toString());
-				conf.setLabel(exportType.toString());
-				conf.setPosition(ExportLinkPosition.TOP_RIGHT);
-				conf.setIncludeHeader(true);
-				conf.setArea("ALL");
-				conf.setUrl(htmlTable.getCurrentUrl() + "?" + ExportConstants.DT4J_EXPORT_ID + "="
-						+ htmlTable.getId() + "&" + ExportConstants.DT4J_EXPORT_TYPE + "="
-						+ ExportType.valueOf(conf.getType()).getUrlParameter());
-
-				this.htmlTable.getExportConfMap().put(exportType, conf);
-			}
-		}
+//		// // Export links
+//		// The exportConfMap hasn't been filled by ExportTag
+//		// So we use the default configuration
+//		if (this.htmlTable != null && this.htmlTable.getExportConfMap().size() == 0) {
+//
+//			for (ExportType exportType : this.htmlTable.getTableProperties().getExportTypes()) {
+//				String url = htmlTable.getCurrentUrl() + "?" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
+//						+ htmlTable.getId() + "&" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
+//						+ ExportType.valueOf(conf.getType()).getUrlParameter();
+//				
+//				ExportConf conf = new ExportConf();
+//
+//				conf.setFileName("export");
+//				conf.setType(exportType.toString());
+//				conf.setLabel(exportType.toString());
+//				conf.setPosition(ExportLinkPosition.TOP_RIGHT);
+//				conf.setIncludeHeader(true);
+//				conf.setArea("ALL");
+//				conf.setUrl(htmlTable.getCurrentUrl() + "?" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
+//						+ htmlTable.getId() + "&" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
+//						+ ExportType.valueOf(conf.getType()).getUrlParameter());
+//
+//				this.htmlTable.getExportConfMap().put(exportType, conf);
+//			}
+//		}
 		
 		if (this.htmlTable != null) {
 
@@ -111,6 +117,9 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 			}
 		}
 
+		// The "finalizing div" can now be removed
+		element.getParent().removeChild(element);
+		
 		return ProcessorResult.OK;
 	}
 
@@ -262,7 +271,7 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 	private ExportType getCurrentExportType(HttpServletRequest request) {
 
 		// Get the URL parameter used to identify the export type
-		String exportTypeString = request.getParameter(ExportConstants.DT4J_EXPORT_TYPE).toString();
+		String exportTypeString = request.getParameter(ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE).toString();
 
 		// Convert it to the corresponding enum
 		ExportType exportType = ExportType.findByUrlParameter(Integer.parseInt(exportTypeString));
