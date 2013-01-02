@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import com.github.datatables4j.core.base.theme.JQueryUITheme;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -212,8 +213,10 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (StringUtils.isNotBlank(this.theme)) {
 			if (this.theme.trim().toLowerCase().equals("bootstrap2")) {
 				this.table.setTheme(new Bootstrap2Theme());
-			} else {
-				logger.warn("Theme {} is not recognized. Only 'bootstrap' exists for now.",
+			} else if (this.theme.trim().toLowerCase().equals("jqueryui")) {
+                this.table.setTheme(new JQueryUITheme());
+            } else {
+				logger.warn("Theme {} is not recognized. Only 'bootstrap2 and jQueryUI' exists for now.",
 						this.theme);
 			}
 		}
