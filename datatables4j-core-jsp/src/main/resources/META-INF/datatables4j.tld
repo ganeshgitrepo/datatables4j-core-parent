@@ -11,14 +11,18 @@
    <display-name>DataTables4j</display-name>
    <description>Set of tags for manipulating HTML table with
       DataTables.</description>
-
+   <validator>
+      <validator-class>com.github.datatables4j.core.jsp.tlv.DataTables4jTlv</validator-class>
+      <description>DataTables4j taglib validator</description>
+   </validator>
+   
    <!-- ====================================== -->
    <!-- Table -->
    <!-- ====================================== -->
    <tag>
       <name>table</name>
       <tag-class>com.github.datatables4j.core.jsp.tag.TableTag</tag-class>
-      <tei-class>com.github.datatables4j.core.jsp.tag.TableTagExtraInfo</tei-class>
+      <tei-class>com.github.datatables4j.core.jsp.tei.TableTagExtraInfo</tei-class>
       <body-content>JSP</body-content>
       <description>Generate a HTML table thanks to the awesome
          DataTables jQuery plugin.</description>
@@ -220,7 +224,8 @@
       </attribute>
       <attribute>
          <name>footer</name>
-         <description>(header) Choose if you want to have the footer appear.
+         <description>(header) Choose if you want to have the footer
+            appear.
             (Default : none)</description>
       </attribute>
       <attribute>
@@ -278,10 +283,26 @@
    <!-- Extra features -->
    <!-- ====================================== -->
    <tag>
+      <name>columnHead</name>
+      <tag-class>com.github.datatables4j.core.jsp.tag.ColumnHeadTag</tag-class>
+      <body-content>JSP</body-content>
+      <description>Describe a column of the HTML table.</description>
+      <attribute>
+         <name>uid</name>
+         <rtexprvalue>true</rtexprvalue>
+         <description>TODO</description>
+      </attribute>
+   </tag>
+   <tag>
       <name>column</name>
       <tag-class>com.github.datatables4j.core.jsp.tag.ColumnTag</tag-class>
       <body-content>JSP</body-content>
       <description>Describe a column of the HTML table.</description>
+      <attribute>
+         <name>uid</name>
+         <rtexprvalue>true</rtexprvalue>
+         <description>TODO</description>
+      </attribute>
       <attribute>
          <name>title</name>
          <rtexprvalue>true</rtexprvalue>

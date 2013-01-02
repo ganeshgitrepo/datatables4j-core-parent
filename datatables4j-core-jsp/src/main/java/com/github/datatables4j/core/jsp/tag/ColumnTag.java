@@ -101,6 +101,20 @@ public class ColumnTag extends AbstractColumnTag {
 	/**
 	 * TODO
 	 */
+	public int doAfterBody() throws JspException {
+
+		TableTag parent = (TableTag) getParent();
+		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {
+			String bodyString = getBodyContent().getString().trim().replaceAll("[\n\r]", "");
+			this.addColumn(false, bodyString);
+		}
+
+		return EVAL_PAGE;
+	}
+
+	/**
+	 * TODO
+	 */
 	public int doEndTag() throws JspException {
 		TableTag parent = (TableTag) getParent();
 
@@ -127,19 +141,5 @@ public class ColumnTag extends AbstractColumnTag {
 		}
 
 		return SKIP_PAGE;
-	}
-
-	/**
-	 * TODO
-	 */
-	public int doAfterBody() throws JspException {
-
-		TableTag parent = (TableTag) getParent();
-		if ("DOM".equals(parent.getLoadingType()) && getBodyContent() != null) {
-			String bodyString = getBodyContent().getString().trim().replaceAll("[\n\r]", "");
-			this.addColumn(false, bodyString);
-		}
-
-		return EVAL_PAGE;
 	}
 }

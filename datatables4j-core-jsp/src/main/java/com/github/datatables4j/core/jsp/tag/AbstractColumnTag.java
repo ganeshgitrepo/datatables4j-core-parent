@@ -63,6 +63,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 	private static Logger logger = LoggerFactory.getLogger(AbstractColumnTag.class);
 
 	// Tag attributes
+	protected String uid;
 	protected String title;
 	protected String property;
 	protected String cssStyle;
@@ -91,7 +92,10 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 		// Init the column
 		HtmlColumn column = new HtmlColumn(isHeader, content);
-
+		if(StringUtils.isNotBlank(this.uid)){
+			column.setUid(this.uid);
+		}
+		
 		// Sortable
 		if(this.sortable != null){
 			column.setSortable(this.sortable);			
@@ -161,10 +165,13 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 	/** Getters and setters */
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
+	public String getUid(String uid){
+		return this.uid;
+	}
 	public void setProperty(String property) {
 		this.property = property;
 	}

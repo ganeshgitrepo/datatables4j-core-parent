@@ -42,6 +42,7 @@ import com.github.datatables4j.core.api.constants.FilterType;
  */
 public class HtmlColumn extends HtmlTag {
 
+	private String uid;
 	private Boolean isHeaderColumn;
 	private String cssCellClass;
 	private String cssCellStyle;
@@ -156,6 +157,10 @@ public class HtmlColumn extends HtmlTag {
 	public String getContent() {
 		return content;
 	}
+	
+	public void setContent(String content){
+		this.content = content;
+	}
 
 	public String getCssCellClass() {
 		return this.cssCellClass;
@@ -241,5 +246,13 @@ public class HtmlColumn extends HtmlTag {
 
 	public void setEnabledDisplayTypes(List<DisplayType> enabledDisplayTypes) {
 		this.enabledDisplayTypes = enabledDisplayTypes;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 }

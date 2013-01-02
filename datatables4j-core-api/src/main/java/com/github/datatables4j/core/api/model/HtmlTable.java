@@ -269,6 +269,18 @@ public class HtmlTable extends HtmlTag {
 		return retval;
 	}
 
+	public HtmlColumn getColumnHeadByUid(String uid) {
+		for(HtmlRow row : this.head){
+			for(HtmlColumn column : row.getColumns()){
+				if(column.isHeaderColumn() != null && column.isHeaderColumn() && column.getUid() != null && column.getUid().equals(uid)){
+					return column;
+				}
+			}
+			
+		}
+		return null;
+	}
+	
 	public Boolean getAutoWidth() {
 		return autoWidth;
 	}
