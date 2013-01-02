@@ -29,73 +29,17 @@
  */
 package com.github.datatables4j.core.api.model;
 
+import com.github.datatables4j.core.api.exception.BadConfigurationException;
+import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
-
 /**
- * <p>
- * Abstract superclass for all extensions. An extension can be a plugin (e.g.
- * Scroller, ColReorder), a feature (e.g. Bootstrap pagination type, filtering
- * add-on) or a theme (e.g. Bootstrap 2 theme).
- * <p>
- * An extension can be composed of :
- * <ul>
- * <li>one or more JsResource, i.e. Javascript code externalized in a file</li>
- * <li>one or more CssResource, i.e. CSS code externalized in a file</li>
- * <li>one or more Configuration, i.e. one or more specific DataTables
- * parameters that will be used during the DataTables initialization</li>
- * <li>an AbstractConfigurationGenerator if the extension needs its proper
- * configuration generator. The one used for the main DataTables configuration
- * is the {@link MainGenerator}. You can also take a look at the
- * {@link ColumnFilteringGenerator} to see the configuration generated for the
- * Column Filtering add-on.</li>
- * <li>a potential Javascript function name that will be called after DataTables
- * initialization. <br>
- * Example : columnFilter <blockquote>
- * 
- * <pre>
- * oTable_myTableId = $('#myTableId').dataTable(oTable_myTableId_params).columnFilter({...});
- * </pre>
- * 
- * </blockquote></li>
- * <li>specific Javascript snippets to add in the main JS resource, i.e. the
- * resource that contains the DataTables initilization Javascript code. You can
- * add snippet at multiple locations in this file thanks to the following
- * attributes :
- * <ul>
- * <li>beforeAll</li>
- * <li>beforeStartDocumentReady</li>
- * <li>afterStartDocumentReady</li>
- * <li>beforeEndDocumentReady</li>
- * <li>afterAll</li>
- * </ul>
- * These attributes can be visualized in the following Javascript snippet :
- * <blockquote>
- * 
- * <pre>
- * => <b>BEFOREALL</b>
- * var oTable_tableId;
- * var oTable_tableId_params = {...};
- * => <b>BEFORESTARTDOCUMENTREADY</b>
- * $(document).ready(function(){
- *    => <b>AFTERSTARTDOCUMENTREADY</b>
- *    oTable_myTableId = $('#myTableId').dataTable(oTable_myTableId_params);
- *    => <b>BEFOREENDDOCUMENTREADY</b>
- * });
- * => <b>AFTERALL</b>
- * </pre>
- * 
- * </blockquote></li>
- * </ul>
- * 
- * @author Thibault Duchateau
- * @since 0.7.1
+ * {@inheritDoc}
  */
-public abstract class AbstractExtension {
+abstract class AbstractExtension implements Extension {
 
 	protected StringBuffer beforeAll;
 	protected StringBuffer afterAll;
@@ -110,24 +54,17 @@ public abstract class AbstractExtension {
 	protected String function;
 
 	/**
-	 * Returns the extension's name.
+	 * {@inheritDoc}
 	 */
 	public abstract String getName();
 
 	/**
-	 * Returns the extension's version.
+     * {@inheritDoc}
 	 */
 	public abstract String getVersion();
 
 	/**
-	 * Set the extension up.
-	 * <p>
-	 * The HtmlTable object is available if a particular configuration is
-	 * needed.
-	 * </p>
-	 * 
-	 * @param table
-	 *            The HTML table.
+     * {@inheritDoc}
 	 */
 	public abstract void setup(HtmlTable table) throws BadConfigurationException;
 

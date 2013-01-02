@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.model.AbstractExtension;
+import com.github.datatables4j.core.api.model.Extension;
 import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -101,13 +101,13 @@ public class ExtensionLoader {
 	 * @throws BadConfigurationException
 	 * @throws IOException
 	 */
-	public void load(List<? extends AbstractExtension> extensions)
+	public void load(List<? extends Extension> extensions)
 			throws BadConfigurationException, IOException {
 
 		if (extensions != null && !extensions.isEmpty()) {
 
 			// TODO tester s'il faut appender un random number
-			for (AbstractExtension extension : extensions) {
+			for (Extension extension : extensions) {
 
 				// Extension initialization
 				extension.setup(table);
@@ -134,7 +134,7 @@ public class ExtensionLoader {
 	 *            The extension to load.
 	 * @throws BadConfigurationException
 	 */
-	private void loadJsResources(AbstractExtension extension) throws BadConfigurationException {
+	private void loadJsResources(Extension extension) throws BadConfigurationException {
 
 		JsResource extensionJsFile = null;
 		String resourceName = null;
@@ -168,7 +168,7 @@ public class ExtensionLoader {
 	 *            The extension to load.
 	 * @throws BadConfigurationException
 	 */
-	private void loadCssResources(AbstractExtension extension) throws BadConfigurationException {
+	private void loadCssResources(Extension extension) throws BadConfigurationException {
 
 		CssResource pluginsSourceCssFile = null;
 		String resourceName = null;
@@ -200,7 +200,7 @@ public class ExtensionLoader {
 	 * @param extension
 	 * @throws IOException
 	 */
-	private void injectIntoMainJsFile(AbstractExtension extension) throws IOException {
+	private void injectIntoMainJsFile(Extension extension) throws IOException {
 
 		// Extension configuration loading
 		if (extension.getBeforeAll() != null) {
@@ -242,7 +242,7 @@ public class ExtensionLoader {
 	 * 
 	 * @param extension
 	 */
-	private void injectIntoMainConfiguration(AbstractExtension extension) {
+	private void injectIntoMainConfiguration(Extension extension) {
 
 		// Extra configuration setting
 		if (extension.getConfs() != null) {
