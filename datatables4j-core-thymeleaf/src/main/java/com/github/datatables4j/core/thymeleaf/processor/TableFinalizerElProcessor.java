@@ -1,4 +1,4 @@
-package com.github.datatables4j.core.thymeleaf.processor.element;
+package com.github.datatables4j.core.thymeleaf.processor;
 
 import java.io.IOException;
 import java.util.Map.Entry;

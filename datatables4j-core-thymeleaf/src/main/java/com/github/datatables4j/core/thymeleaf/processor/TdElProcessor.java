@@ -1,14 +1,14 @@
-package com.github.datatables4j.core.thymeleaf.processor.element;
+package com.github.datatables4j.core.thymeleaf.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Text;
 import org.thymeleaf.processor.IElementNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
 
-import com.github.datatables4j.core.api.model.HtmlRow;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
@@ -17,18 +17,18 @@ import com.github.datatables4j.core.thymeleaf.util.Utils;
  *
  * @author Thibault Duchateau
  */
-public class TrElProcessor extends AbstractElementProcessor {
+public class TdElProcessor extends AbstractElementProcessor {
 	
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TrElProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(TdElProcessor.class);
 		
-	public TrElProcessor(IElementNameProcessorMatcher matcher) {
+	public TdElProcessor(IElementNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 4001;
+		return 4002;
 	}
 
 	@Override
@@ -38,13 +38,13 @@ public class TrElProcessor extends AbstractElementProcessor {
 		HtmlTable htmlTable = Utils.getTable(arguments);
 		
 		if(htmlTable != null){
-			htmlTable.getBodyRows().add(new HtmlRow());
+			htmlTable.getLastBodyRow().addColumn(((Text)element.getFirstChild()).getContent().trim());
 		}
 		
 		if(element.hasAttribute("dt:data")){
 			element.removeAttribute("dt:data");
 		}
-		
+				
 		return ProcessorResult.OK;
 	}
 }

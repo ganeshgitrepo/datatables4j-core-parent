@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.theme;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,23 +37,22 @@ import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
 import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.base.theme.Bootstrap2Theme;
+import com.github.datatables4j.core.base.theme.JQueryUITheme;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * <p>
- * Attribute processor applied to the <tt>table</tt> tag for the <tt>info</tt>
- * attribute.
+ * Attribute processor for the <code>theme</code> attribute.
  * 
- * @see <a href="http://datatables.net/ref#bInfo">DataTables reference</a>
  * @author Thibault Duchateau
  */
-public class TableInfoAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TableThemeAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TableInfoAttrProcessor.class);
-		
-	public TableInfoAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	private static Logger logger = LoggerFactory.getLogger(TableThemeAttrProcessor.class);
+
+	public TableThemeAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -61,24 +60,31 @@ public class TableInfoAttrProcessor extends AbstractDatatableAttrProcessor {
 	public int getPrecedence() {
 		return 8000;
 	}
-	
+
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
-		
+
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-				
+
 		// Get attribute value
-		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		String attrValue = element.getAttributeValue(attributeName);
 		logger.debug("Extracted value : {}", attrValue);
 
 		// HtmlTable update
-		if(htmlTable != null){
-			htmlTable.setInfo(attrValue);			
+		if (htmlTable != null) {
+			if (attrValue.trim().toLowerCase().equals("bootstrap2")) {
+				htmlTable.setTheme(new Bootstrap2Theme());
+			} else if (attrValue.trim().toLowerCase().equals("jqueryui")) {
+                htmlTable.setTheme(new JQueryUITheme());
+            } else {
+                logger.warn("Theme {} is not recognized. Only 'bootstrap2 and jQueryUI' exists for now.",
+                        attrValue);
+            }
 		}
-		
-        return nonLenientOK(element, attributeName);
+
+		return nonLenientOK(element, attributeName);
 	}
 }

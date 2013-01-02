@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,29 +41,36 @@ import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrPro
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor for the <code>sort</code> attribute.
+ * <p>
+ * Attribute processor applied to the <tt>table</tt> tag for the
+ * <tt>cdn</tt> attribute.
+ * 
+ * <p>
+ * When the <tt>cdn</tt> is set to <code>true</code>, <tt>link</tt> and
+ * <tt>script</tt> HTML tag are generated and point to the Microsoft's CDN
+ * to include DataTables resources in the page.
  * 
  * @author Thibault Duchateau
  */
-public class TableSortAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TableCdnAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TableSortAttrProcessor.class);
-		
-	public TableSortAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	private static Logger logger = LoggerFactory.getLogger(TableCdnAttrProcessor.class);
+
+	public TableCdnAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 8000;
+		return 11000;
 	}
-	
+
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
-		
+
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
 
@@ -72,8 +79,10 @@ public class TableSortAttrProcessor extends AbstractDatatableAttrProcessor {
 		logger.debug("Extracted value : {}", attrValue);
 
 		// HtmlTable update
-		htmlTable.setSort(attrValue);
-		
-        return nonLenientOK(element, attributeName);
+		if (htmlTable != null) {
+			htmlTable.setCdn(attrValue);
+		}
+
+		return nonLenientOK(element, attributeName);
 	}
 }

@@ -27,23 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
+import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor for the <code>datatable</code> attribute.
+ * Attribute processor for the <code>paginate</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class EnablingDatatableAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TablePaginateAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public EnablingDatatableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TablePaginateAttrProcessor.class);
+		
+	public TablePaginateAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -54,7 +61,22 @@ public class EnablingDatatableAttrProcessor extends AbstractDatatableAttrProcess
 	
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {		
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+		
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		htmlTable.setPaginate(attrValue);
+		
+		// Housekeeping
+        element.removeAttribute(attributeName);
+        
         return nonLenientOK(element, attributeName);
 	}
 }

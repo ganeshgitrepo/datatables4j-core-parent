@@ -1,4 +1,4 @@
-package com.github.datatables4j.core.thymeleaf.processor.element;
+package com.github.datatables4j.core.thymeleaf.processor;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,6 +79,9 @@ public class TableInitializerElProcessor extends AbstractElementProcessor {
 			((IWebContext) arguments.getContext()).getHttpServletRequest().setAttribute(
 					"htmlTable", htmlTable);
 
+			// Don't forget to remove the attribute
+			element.removeAttribute(DataTablesDialect.DIALECT_PREFIX + ":table");
+			
 			return ProcessorResult.OK;
 		}
 	}

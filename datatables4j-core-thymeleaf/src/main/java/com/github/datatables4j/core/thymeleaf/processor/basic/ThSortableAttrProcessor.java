@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +42,16 @@ import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * Attribute processor applied to the <code>th</code> tag for the
- * <code>filterable</code> attribute.
+ * <code>sortable</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
+public class ThSortableAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ThFilterableAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(ThSortableAttrProcessor.class);
 
-	public ThFilterableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public ThSortableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -67,15 +67,18 @@ public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
 
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-
+				
 		// Get attribute value
 		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
 		logger.debug("Extracted value : {}", attrValue);
 
 		// Override default value with the attribute's one
 		if (htmlTable != null) {
-			htmlTable.getLastHeaderRow().getLastColumn().setFilterable(attrValue);
+			htmlTable.getLastHeaderRow().getLastColumn().setSortable(attrValue);
 		}
+
+		// Housekeeping
+		element.removeAttribute(attributeName);
 
 		return nonLenientOK(element, attributeName);
 	}

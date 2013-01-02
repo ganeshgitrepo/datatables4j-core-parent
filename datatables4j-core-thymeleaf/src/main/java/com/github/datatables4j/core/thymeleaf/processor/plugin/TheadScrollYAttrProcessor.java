@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.plugin;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -41,10 +41,10 @@ import com.github.datatables4j.core.thymeleaf.util.Constants;
  *
  * @author Thibault Duchateau
  */
-public class TheadOffsetTopAttrProcessor extends AbstractAttrProcessor {
+public class TheadScrollYAttrProcessor extends AbstractAttrProcessor {
 
-	public TheadOffsetTopAttrProcessor(){
-		super(Constants.ATTR_OFFSETTOP);
+	public TheadScrollYAttrProcessor(){
+		super(Constants.ATTR_SCROLLY);
 	}
 	
 	@Override

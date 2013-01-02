@@ -27,62 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.plugin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
+import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.api.constants.FilterType;
-import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.util.Utils;
+import com.github.datatables4j.core.thymeleaf.util.Constants;
 
 /**
- * Attribute processor applied to the <code>th</code> tag for the
- * <code>filterType</code> attribute.
  * 
+ *
  * @author Thibault Duchateau
  */
-public class ThFilterTypeAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TheadFixedPositionAttrProcessor extends AbstractAttrProcessor {
 
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ThFilterTypeAttrProcessor.class);
-
-	public ThFilterTypeAttrProcessor(IAttributeNameProcessorMatcher matcher) {
-		super(matcher);
+	public TheadFixedPositionAttrProcessor(){
+		super(Constants.ATTR_FIXEDPOSITION);
+	}
+	
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 8000;
+		return 9000;
 	}
 
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		logger.debug("{} attribute found", attributeName);
-
-		// Get HtmlTable POJO from the HttpServletRequest
-		HtmlTable htmlTable = Utils.getTable(arguments);
-				
-		// Override default value with the attribute's one
-		if (htmlTable != null) {
-
-			FilterType filterType = null;
-			try {
-				filterType = FilterType.valueOf(element.getAttributeValue(attributeName));
-			} catch (IllegalArgumentException e) {
-				logger.error("{} is not a valid value among {}. Please choose a valid one.",
-						filterType, FilterType.values());
-			}
-			logger.debug("Extracted value : {}", filterType);
-			htmlTable.getLastHeaderRow().getLastColumn().setFilterType(filterType);
-		}
-
-		return nonLenientOK(element, attributeName);
-	}
 }

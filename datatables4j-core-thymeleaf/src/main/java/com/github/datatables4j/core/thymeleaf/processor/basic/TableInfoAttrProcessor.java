@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,18 +41,19 @@ import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrPro
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor applied to the <tt>table</tt> tag for the
- * <tt>autoWidth</tt> attribute.
+ * <p>
+ * Attribute processor applied to the <tt>table</tt> tag for the <tt>info</tt>
+ * attribute.
  * 
- * @see <a href="http://datatables.net/ref#autowidth">DataTables reference</a>
+ * @see <a href="http://datatables.net/ref#bInfo">DataTables reference</a>
  * @author Thibault Duchateau
  */
-public class TableAutoWidthAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TableInfoAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TableAutoWidthAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(TableInfoAttrProcessor.class);
 		
-	public TableAutoWidthAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public TableInfoAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -68,14 +69,14 @@ public class TableAutoWidthAttrProcessor extends AbstractDatatableAttrProcessor 
 		
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-
+				
 		// Get attribute value
 		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
 		logger.debug("Extracted value : {}", attrValue);
 
 		// HtmlTable update
 		if(htmlTable != null){
-			htmlTable.setAutoWidth(attrValue);
+			htmlTable.setInfo(attrValue);			
 		}
 		
         return nonLenientOK(element, attributeName);

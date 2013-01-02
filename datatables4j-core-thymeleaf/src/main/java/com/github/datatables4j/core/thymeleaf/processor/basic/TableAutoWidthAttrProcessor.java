@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +41,18 @@ import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrPro
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * Attribute processor for the <code>paginate</code> attribute.
+ * Attribute processor applied to the <tt>table</tt> tag for the
+ * <tt>autoWidth</tt> attribute.
  * 
+ * @see <a href="http://datatables.net/ref#autowidth">DataTables reference</a>
  * @author Thibault Duchateau
  */
-public class TablePaginateAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TableAutoWidthAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TablePaginateAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(TableAutoWidthAttrProcessor.class);
 		
-	public TablePaginateAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public TableAutoWidthAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -72,11 +74,10 @@ public class TablePaginateAttrProcessor extends AbstractDatatableAttrProcessor {
 		logger.debug("Extracted value : {}", attrValue);
 
 		// HtmlTable update
-		htmlTable.setPaginate(attrValue);
+		if(htmlTable != null){
+			htmlTable.setAutoWidth(attrValue);
+		}
 		
-		// Housekeeping
-        element.removeAttribute(attributeName);
-        
         return nonLenientOK(element, attributeName);
 	}
 }

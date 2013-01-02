@@ -1,4 +1,4 @@
-package com.github.datatables4j.core.thymeleaf.processor.element;
+package com.github.datatables4j.core.thymeleaf.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

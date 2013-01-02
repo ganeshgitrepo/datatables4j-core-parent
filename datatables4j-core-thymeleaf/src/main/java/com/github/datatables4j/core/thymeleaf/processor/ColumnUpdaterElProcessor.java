@@ -1,4 +1,4 @@
-package com.github.datatables4j.core.thymeleaf.processor.element;
+package com.github.datatables4j.core.thymeleaf.processor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +21,12 @@ import com.github.datatables4j.core.thymeleaf.util.Utils;
  * 
  * @author Thibault Duchateau
  */
-public class ColumnInitializerElProcessor extends AbstractElementProcessor {
+public class ColumnUpdaterElProcessor extends AbstractElementProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ColumnInitializerElProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(ColumnUpdaterElProcessor.class);
 		
-	public ColumnInitializerElProcessor(IElementNameProcessorMatcher matcher) {
+	public ColumnUpdaterElProcessor(IElementNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 

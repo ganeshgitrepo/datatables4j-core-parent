@@ -27,36 +27,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
+ * <p>
+ * Attribute processor applied to the <tt>table</tt> tag for the <tt>filter</tt>
+ * attribute.
  * 
- *
+ * <p>
+ * The <tt>filter</tt> attribute allows you to enable filtering in the whole
+ * table.
+ * 
+ * @see <a href="http://datatables.net/ref#bFilter">DataTables reference</a>
  * @author Thibault Duchateau
  */
-public class TheadScrollYAttrProcessor extends AbstractAttrProcessor {
+public class TableFilterAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TheadScrollYAttrProcessor(){
-		super(Constants.ATTR_SCROLLY);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TableFilterAttrProcessor.class);
+
+	public TableFilterAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 9000;
+		return 8000;
 	}
 
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
+				
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		if (htmlTable != null) {
+			htmlTable.setFilterable(attrValue);
+		}
+
+		return nonLenientOK(element, attributeName);
+	}
 }

@@ -27,36 +27,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.attribute;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
+ * Attribute processor for the <code>sort</code> attribute.
  * 
- *
  * @author Thibault Duchateau
  */
-public class TheadColReorderAttrProcessor extends AbstractAttrProcessor {
+public class TableSortAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TheadColReorderAttrProcessor(){
-		super(Constants.ATTR_COLREORDER);
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TableSortAttrProcessor.class);
+		
+	public TableSortAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
+	}
+
+	@Override
+	public int getPrecedence() {
+		return 8000;
 	}
 	
 	@Override
 	protected ProcessorResult processAttribute(Arguments arguments, Element element,
 			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		logger.debug("{} attribute found", attributeName);
+		
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
 
-	@Override
-	public int getPrecedence() {
-		return 9000;
-	}
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
 
+		// HtmlTable update
+		htmlTable.setSort(attrValue);
+		
+        return nonLenientOK(element, attributeName);
+	}
 }
