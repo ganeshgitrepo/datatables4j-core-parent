@@ -29,15 +29,20 @@
  */
 package com.github.datatables4j.core.base.generator;
 
-import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.model.DisplayType;
-import com.github.datatables4j.core.api.model.HtmlColumn;
-import com.github.datatables4j.core.api.model.HtmlTable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.github.datatables4j.core.api.constants.DTConstants;
+import com.github.datatables4j.core.api.model.DisplayType;
+import com.github.datatables4j.core.api.model.HtmlColumn;
+import com.github.datatables4j.core.api.model.HtmlTable;
 
 /**
  * Class in charge of DataTables configuration generation.

@@ -88,7 +88,6 @@ public class DataTablesDialect extends AbstractDialect {
 		
 		// Core processors
 		processors.add(new TableInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("table", DIALECT_PREFIX + ":table", "true")));
-//		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
 		processors.add(new TableFinalizerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("div", DIALECT_PREFIX + ":tmp", "internalUse")));
 		processors.add(new ColumnInitializerElProcessor(new ElementNameWithoutPrefixProcessorMatcher("th")));
 		processors.add(new TbodyElProcessor(new ElementNameWithoutPrefixProcessorMatcher("tbody")));
@@ -101,7 +100,6 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TableFilterAttrProcessor(new AttributeNameProcessorMatcher("filter", "table")));
 		processors.add(new TableInfoAttrProcessor(new AttributeNameProcessorMatcher("info", "table")));
 		processors.add(new TablePaginateAttrProcessor(new AttributeNameProcessorMatcher("paginate", "table")));
-//		processors.add(new TablePaginationTypeAttrProcessor(new AttributeNameProcessorMatcher("paginationType", "table")));
 		processors.add(new TableSortAttrProcessor(new AttributeNameProcessorMatcher("sort", "table")));
 		processors.add(new ThSortableAttrProcessor(new AttributeNameProcessorMatcher("sortable", "th")));
 		
