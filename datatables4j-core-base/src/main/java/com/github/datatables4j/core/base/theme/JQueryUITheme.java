@@ -62,6 +62,8 @@ public class JQueryUITheme extends AbstractTheme {
         appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/themes/jqueryui/jqueryui.js"));
 
         // Specific theme css
-        addCssResource(new CssResource(ResourceType.THEME, "JQueryUITheme", "datatables/themes/jqueryui/jqueryui.css"));        
+        addCssResource(new CssResource(ResourceType.THEME, "JQueryUITheme", "datatables/themes/jqueryui/jqueryui.css"));
+
+        table.addCssClass("display");
     }
 }
