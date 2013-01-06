@@ -38,6 +38,7 @@ import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.exception.DataTableProcessingException;
 import com.github.datatables4j.core.api.export.ExportConf;
 import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.HtmlTable;
@@ -106,7 +107,7 @@ public class TableExportAttrProcessor extends AbstractDatatableAttrProcessor {
 					logger.error("The export cannot be activated for the table {}. ", htmlTable.getId());
 					logger.error("{} is not a valid value among {}", exportTypeString,
 							ExportType.values());
-//					throw new BadConfigurationException(e);
+					throw new DataTableProcessingException(e);
 				}
 
 				// ExportConf eventuellement deja charges par le tag ExportTag
