@@ -5,7 +5,7 @@
    <parent>
       <groupId>com.github.datatables4j</groupId>
       <artifactId>datatables4j-parent</artifactId>
-      <version>0.8.0</version>
+      <version>0.8.1-SNAPSHOT</version>
    </parent>
 
    <!-- Main configuration -->
