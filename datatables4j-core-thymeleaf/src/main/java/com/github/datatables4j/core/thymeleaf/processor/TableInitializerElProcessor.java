@@ -50,8 +50,6 @@ public class TableInitializerElProcessor extends AbstractElementProcessor {
 			throw new IllegalArgumentException();
 		} else {
 			HtmlTable htmlTable = new HtmlTable(tableId, ResourceHelper.getRamdomNumber());
-			System.out.println("RequestHelper.getCurrentUrl(request) = "
-					+ RequestHelper.getCurrentUrl(request));
 			htmlTable.setCurrentUrl(RequestHelper.getCurrentUrl(request));
 
 			try {

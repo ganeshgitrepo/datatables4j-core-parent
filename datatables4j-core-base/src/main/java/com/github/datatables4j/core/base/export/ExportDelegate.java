@@ -172,7 +172,6 @@ public class ExportDelegate {
 
 		}
 
-		// System.out.println("stream = " + stream.toString());
 		// Fill the request so that the filter will intercept it and
 		// override the response with the export configuration
 		if (exportProperties.isBinaryExport()) {

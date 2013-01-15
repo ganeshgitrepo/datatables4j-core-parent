@@ -51,8 +51,6 @@ public class RequestHelper {
 	 */
 	public static String getCurrentUrl(HttpServletRequest request) {
 		String currentUrl = null;
-		System.out.println("requestURI = " + request.getRequestURI());
-		System.out.println("requestURL = " + request.getRequestURL());
 		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
 			currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
 		}

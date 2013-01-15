@@ -40,10 +40,10 @@ import com.github.datatables4j.core.api.model.HtmlColumn;
 
 /**
  * <p>
- * Tag used to generate a HTML table's column.
+ * Tag used to custom the header of a table's column.
  * 
  * @author Thibault Duchateau
- * @since 0.1.0
+ * @since 0.8.1
  */
 public class ColumnHeadTag extends BodyTagSupport {
 
@@ -59,7 +59,6 @@ public class ColumnHeadTag extends BodyTagSupport {
 	 */
 	public int doStartTag() throws JspException {
 		
-
 		// Never reached
 		return EVAL_BODY_BUFFERED;
 	}
@@ -95,7 +94,6 @@ public class ColumnHeadTag extends BodyTagSupport {
 			if(column != null){
 				// Recuperer la colonne et mettre a jour le contenu avec le corps
 				column.setContent(getBodyContent().getString());
-				System.out.println("column = " + column.toString());
 			}
 			else{
 				// Ajouter la colonne

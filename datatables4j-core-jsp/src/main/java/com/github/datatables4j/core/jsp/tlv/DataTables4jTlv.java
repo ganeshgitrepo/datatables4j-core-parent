@@ -8,12 +8,6 @@ public class DataTables4jTlv extends TagLibraryValidator {
 
 	@Override
 	public ValidationMessage[] validate(String prefix, String uri, PageData page) {
-		
-//		System.out.println("=========================== VALIDATION ===========================");
-//		System.out.println("prefix = " + prefix);
-//		System.out.println("uri = " + uri);
-//		System.out.println("pageData = " + page.toString());
-		
 		return null;
 	}
 }

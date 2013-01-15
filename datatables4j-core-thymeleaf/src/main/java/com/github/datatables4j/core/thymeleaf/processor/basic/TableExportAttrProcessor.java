@@ -80,9 +80,6 @@ public class TableExportAttrProcessor extends AbstractDatatableAttrProcessor {
 			String attributeName) {
 		logger.debug("{} attribute found", attributeName);
 
-		System.out.println(((Element) element.getParent()).getNormalizedName());
-		System.out.println(((Element) element.getParent()).getNormalizedPrefix());
-		
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
 
