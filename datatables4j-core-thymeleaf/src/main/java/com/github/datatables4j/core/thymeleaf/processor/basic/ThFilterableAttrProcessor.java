@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.plugin;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,26 +37,27 @@ import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
+ * Attribute processor applied to the <code>th</code> tag for the
+ * <code>filterable</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class TheadScrollerAttrProcessor extends AbstractDatatableAttrProcessor {
+public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TheadScrollerAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(ThFilterableAttrProcessor.class);
 
-	public TheadScrollerAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public ThFilterableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 9000;
+		return 8000;
 	}
 
 	@Override
@@ -66,14 +67,14 @@ public class TheadScrollerAttrProcessor extends AbstractDatatableAttrProcessor {
 
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-		
+
 		// Get attribute value
 		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
 		logger.debug("Extracted value : {}", attrValue);
 
-		// HtmlTable update
-		if(attrValue && htmlTable != null){
-			htmlTable.registerPlugin(new ScrollerPlugin());
+		// Override default value with the attribute's one
+		if (htmlTable != null) {
+			htmlTable.getLastHeaderRow().getLastColumn().setFilterable(attrValue);
 		}
 
 		return nonLenientOK(element, attributeName);

@@ -29,29 +29,30 @@
  */
 package com.github.datatables4j.core.thymeleaf.processor.plugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
-import com.github.datatables4j.core.thymeleaf.util.Constants;
+import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.base.plugin.FixedHeaderPlugin;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * 
- *
+ * 
  * @author Thibault Duchateau
  */
-public class TheadFixedHeaderAttrProcessor extends AbstractAttrProcessor {
+public class TheadFixedHeaderAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	public TheadFixedHeaderAttrProcessor(){
-		super(Constants.ATTR_FIXEDHEADER);
-	}
-	
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element,
-			String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TheadColReorderAttrProcessor.class);
+
+	public TheadFixedHeaderAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
 	}
 
 	@Override
@@ -59,4 +60,23 @@ public class TheadFixedHeaderAttrProcessor extends AbstractAttrProcessor {
 		return 9000;
 	}
 
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
+		// HtmlTable update
+		if (attrValue && htmlTable != null) {
+			htmlTable.registerPlugin(new FixedHeaderPlugin());
+		}
+
+		return nonLenientOK(element, attributeName);
+	}
 }

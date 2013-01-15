@@ -19,7 +19,8 @@ import com.github.datatables4j.core.base.util.ResourceHelper;
 import com.github.datatables4j.core.thymeleaf.dialect.DataTablesDialect;
 
 /**
- * TODO
+ * <p>
+ * Element processor applied to the HTML <tt>table</tt> tag.
  * 
  * @author Thibault Duchateau
  */
@@ -45,9 +46,8 @@ public class TableInitializerElProcessor extends AbstractElementProcessor {
 		HttpServletRequest request = ((IWebContext) arguments.getContext()).getHttpServletRequest();
 
 		if (tableId == null) {
-			// TODO throw an exception
-			System.out.println("ERREUR, table id obligatoire");
-			return null;
+			logger.error("The 'id' attribute is required.");
+			throw new IllegalArgumentException();
 		} else {
 			HtmlTable htmlTable = new HtmlTable(tableId, ResourceHelper.getRamdomNumber());
 			System.out.println("RequestHelper.getCurrentUrl(request) = "
@@ -79,9 +79,13 @@ public class TableInitializerElProcessor extends AbstractElementProcessor {
 			((IWebContext) arguments.getContext()).getHttpServletRequest().setAttribute(
 					"htmlTable", htmlTable);
 
+			// The table node is also saved in the request, to be easily accessed later
+			((IWebContext) arguments.getContext()).getHttpServletRequest().setAttribute(
+					"tableNode", element);
+			
 			// Don't forget to remove the attribute
 			element.removeAttribute(DataTablesDialect.DIALECT_PREFIX + ":table");
-			
+
 			return ProcessorResult.OK;
 		}
 	}

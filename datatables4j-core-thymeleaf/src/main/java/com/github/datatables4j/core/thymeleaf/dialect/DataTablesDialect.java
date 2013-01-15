@@ -50,9 +50,12 @@ import com.github.datatables4j.core.thymeleaf.processor.basic.TableFilterAttrPro
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableInfoAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TablePaginateAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableSortAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.basic.ThFilterTypeAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.basic.ThFilterableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.ThSortableAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.feature.ThFilterTypeAttrProcessor;
-import com.github.datatables4j.core.thymeleaf.processor.feature.ThFilterableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.feature.ThExportFilenameAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadColReorderAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadFixedHeaderAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadScrollerAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.theme.TableThemeAttrProcessor;
 
@@ -102,14 +105,17 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TablePaginateAttrProcessor(new AttributeNameProcessorMatcher("paginate", "table")));
 		processors.add(new TableSortAttrProcessor(new AttributeNameProcessorMatcher("sort", "table")));
 		processors.add(new ThSortableAttrProcessor(new AttributeNameProcessorMatcher("sortable", "th")));
+		processors.add(new ThFilterableAttrProcessor(new AttributeNameProcessorMatcher("filterable", "th")));
+		processors.add(new ThFilterTypeAttrProcessor(new AttributeNameProcessorMatcher("filterType", "th")));
 		
 		// Plugin processors
 		processors.add(new TheadScrollerAttrProcessor(new AttributeNameProcessorMatcher("scroller", "thead")));
+		processors.add(new TheadColReorderAttrProcessor(new AttributeNameProcessorMatcher("colreorder", "thead")));
+		processors.add(new TheadFixedHeaderAttrProcessor(new AttributeNameProcessorMatcher("fixedheader", "thead")));
 		
 		// Feature processor
 		processors.add(new TableExportAttrProcessor(new AttributeNameProcessorMatcher("export", "table")));
-		processors.add(new ThFilterableAttrProcessor(new AttributeNameProcessorMatcher("filterable", "th")));
-		processors.add(new ThFilterTypeAttrProcessor(new AttributeNameProcessorMatcher("filterType", "th")));
+		processors.add(new ThExportFilenameAttrProcessor(new AttributeNameProcessorMatcher("filename", "th")));
 		
 		// Theme processors
 		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));

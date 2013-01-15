@@ -12,7 +12,13 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
 import com.github.datatables4j.core.thymeleaf.dialect.DataTablesDialect;
 
 /**
- * TODO
+ * <p>
+ * Element processor applied to the HTML <tt>tbody</tt> tag.
+ * <p>
+ * This processor adds the <code>dt:data</code> attribute to HTML <tt>tr</tt>
+ * and <tt>td</tt> tags which will be duplicated (by <tt>th:each</tt> attribute)
+ * and internally processed by other attributes to fill the
+ * <code>HtmlTable</code> bean.
  * 
  * @author Thibault Duchateau
  */
@@ -32,15 +38,16 @@ public class TbodyElProcessor extends AbstractElementProcessor {
 
 	/**
 	 * 
-	 * Parler de ça : 
-	 * Ability to precompute the processors to be applied to nodes, so that the
-	 * sequence of operations to be performed at each node during template
-	 * processing can be cached along with the DOM tree itself in many
-	 * scenarios, significantly reducing processing time.
+	 * Parler de ça : Ability to precompute the processors to be applied to
+	 * nodes, so that the sequence of operations to be performed at each node
+	 * during template processing can be cached along with the DOM tree itself
+	 * in many scenarios, significantly reducing processing time.
 	 */
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
+		logger.debug("{} element found", element.getNormalizedName());
 
+		// All the tbody tag are iterated over
 		for (Node child : element.getChildren()) {
 
 			if (child != null && child instanceof Element) {
@@ -48,6 +55,7 @@ public class TbodyElProcessor extends AbstractElementProcessor {
 				Element trChildTag = (Element) child;
 				String trChildTagName = trChildTag.getNormalizedName();
 
+				// The tr nodes must be processed (for HtmlRow creation)
 				trChildTag.setProcessable(true);
 
 				if (trChildTagName != null && trChildTagName.equals("tr")) {
@@ -56,7 +64,7 @@ public class TbodyElProcessor extends AbstractElementProcessor {
 
 						trChildTag.setAttribute(DataTablesDialect.DIALECT_PREFIX + ":data",
 								"internalUse");
-						trChildTag.setRecomputeProcessorsImmediately(true);
+						// trChildTag.setRecomputeProcessorsImmediately(true);
 
 						for (Node grandchild : trChildTag.getChildren()) {
 
@@ -65,13 +73,14 @@ public class TbodyElProcessor extends AbstractElementProcessor {
 								Element tdChildTag = (Element) grandchild;
 								tdChildTag.setAttribute(DataTablesDialect.DIALECT_PREFIX + ":data",
 										"internalUse");
-								tdChildTag.setRecomputeProcessorsImmediately(true);
 
+								// The td nodes must be processed too (for
+								// HtmlColumn creation)
+								tdChildTag.setProcessable(true);
+								// tdChildTag.setRecomputeProcessorsImmediately(true);
 							}
 						}
-
 					}
-
 				}
 			}
 		}

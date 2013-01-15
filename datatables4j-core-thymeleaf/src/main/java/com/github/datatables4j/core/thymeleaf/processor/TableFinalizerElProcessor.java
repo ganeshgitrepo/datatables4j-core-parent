@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Node;
 import org.thymeleaf.dom.Text;
 import org.thymeleaf.processor.IElementNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
@@ -22,9 +23,8 @@ import com.github.datatables4j.core.api.constants.ExportConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
+import com.github.datatables4j.core.api.exception.DataTables4jException;
 import com.github.datatables4j.core.api.exception.ExportException;
-import com.github.datatables4j.core.api.export.ExportConf;
-import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.export.ExportProperties;
 import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.CssResource;
@@ -42,7 +42,11 @@ import com.github.datatables4j.core.thymeleaf.util.DomUtils;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * TODO
+ * <p>
+ * Element processor applied to the internal HTML <code>div</code> tag.
+ * <p>
+ * The <code>div</code> is added by the TableInitializerProcessor after the
+ * <code>table</code> in order to be processed after all the "table" processors.
  * 
  * @author Thibault Duchateau
  */
@@ -64,51 +68,19 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		System.out.println("***** TABLE FINALIZER");
 
-		System.out.println("arguments = " + arguments.toString());
-		System.out.println("element = " + element.getNormalizedName());
-		System.out.println("getParentAsElement = "
-				+ Utils.getParentAsElement(element).getNormalizedName());
+		// Get the HTTP request
 		HttpServletRequest request = ((IWebContext) arguments.getContext()).getHttpServletRequest();
 
-//		HtmlTable htmlTable = (HtmlTable) arguments.getLocalVariable("htmlTable");
+		// HtmlTable htmlTable = (HtmlTable)
+		// arguments.getLocalVariable("htmlTable");
 		HtmlTable htmlTable = Utils.getTable(arguments);
 		this.htmlTable = htmlTable;
-		System.out.println("table = " + this.htmlTable);
-		System.out.println("nb row = " + this.htmlTable.getBodyRows().size());
 
-//		// // Export links
-//		// The exportConfMap hasn't been filled by ExportTag
-//		// So we use the default configuration
-//		if (this.htmlTable != null && this.htmlTable.getExportConfMap().size() == 0) {
-//
-//			for (ExportType exportType : this.htmlTable.getTableProperties().getExportTypes()) {
-//				String url = htmlTable.getCurrentUrl() + "?" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
-//						+ htmlTable.getId() + "&" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
-//						+ ExportType.valueOf(conf.getType()).getUrlParameter();
-//				
-//				ExportConf conf = new ExportConf();
-//
-//				conf.setFileName("export");
-//				conf.setType(exportType.toString());
-//				conf.setLabel(exportType.toString());
-//				conf.setPosition(ExportLinkPosition.TOP_RIGHT);
-//				conf.setIncludeHeader(true);
-//				conf.setArea("ALL");
-//				conf.setUrl(htmlTable.getCurrentUrl() + "?" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_ID + "="
-//						+ htmlTable.getId() + "&" + ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE + "="
-//						+ ExportType.valueOf(conf.getType()).getUrlParameter());
-//
-//				this.htmlTable.getExportConfMap().put(exportType, conf);
-//			}
-//		}
-		
 		if (this.htmlTable != null) {
 
 			// The table is being exported
 			if (RequestHelper.isTableBeingExported(request, this.htmlTable)) {
-				System.out.println("===============================================================");
 				setupExport(arguments);
 			}
 			// The table must be generated and displayed
@@ -119,21 +91,16 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 
 		// The "finalizing div" can now be removed
 		element.getParent().removeChild(element);
-		
+
 		return ProcessorResult.OK;
 	}
 
-	private void registerFeatures(Element element, HtmlTable htmlTable) {
+	private void registerFeatures(Element element, Arguments arguments, HtmlTable htmlTable) {
 		if (htmlTable.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
-			// this.table.registerFeature(new InputFilteringFeature());
-			// this.table.registerFeature(new SelectFilteringFeature());
 
 			// Duplicate header row in the footer
-			duplicateHeaderInFooter(element);
-//			for (HtmlColumn column : htmlTable.getLastHeaderRow().getColumns()) {
-//				htmlTable.getLastFooterRow().addColumn(column);
-//			}
+			generateFooter(element, arguments);
 
 			htmlTable.registerFeature(new FilteringFeature());
 		}
@@ -149,9 +116,10 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 	 */
 	private void setupExport(Arguments arguments) {
 		logger.debug("Setting export up ...");
-		
+
 		HttpServletRequest request = ((IWebContext) arguments.getContext()).getHttpServletRequest();
-		HttpServletResponse response = ((IWebContext) arguments.getContext()).getHttpServletResponse();
+		HttpServletResponse response = ((IWebContext) arguments.getContext())
+				.getHttpServletResponse();
 
 		// Init the export properties
 		ExportProperties exportProperties = new ExportProperties();
@@ -160,19 +128,21 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 
 		exportProperties.setCurrentExportType(currentExportType);
 		exportProperties.setExportConf(this.htmlTable.getExportConfMap().get(currentExportType));
-		exportProperties.setFileName(this.htmlTable.getExportConfMap().get(currentExportType).getFileName());
+		exportProperties.setFileName(this.htmlTable.getExportConfMap().get(currentExportType)
+				.getFileName());
 
 		this.htmlTable.setExportProperties(exportProperties);
 		this.htmlTable.setExporting(true);
 
 		try {
 			// Call the export delegate
-			ExportDelegate exportDelegate = new ExportDelegate(this.htmlTable, exportProperties, request);
+			ExportDelegate exportDelegate = new ExportDelegate(this.htmlTable, exportProperties,
+					request);
 			exportDelegate.setupExport();
 
 		} catch (ExportException e) {
 			logger.error("Something went wront with the DataTables4j export configuration.");
-//			throw new JspException(e);
+			// throw new JspException(e);
 			e.printStackTrace();
 		}
 
@@ -196,7 +166,7 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 		// processor
 
 		// Register all activated features
-		registerFeatures(element, this.htmlTable);
+		registerFeatures(element, arguments, this.htmlTable);
 
 		try {
 
@@ -222,47 +192,46 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 
 			// <link> HTML tag generation
 			if (htmlTable.getCdn() != null && htmlTable.getCdn()) {
-				DomUtils.addLinkTag(Utils.getParentAsElement(element), request, CdnConstants.CDN_CSS,
-						arguments.getDocument());
+				DomUtils.addLinkTag(DomUtils.getParentAsElement(element), request,
+						CdnConstants.CDN_DATATABLES_CSS);
 			}
 			for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
 				servletContext.setAttribute(entry.getKey(), entry.getValue());
-				DomUtils.addLinkTag(Utils.getParentAsElement(element), request, Utils.getBaseUrl(request)
-						+ "/datatablesController/" + entry.getKey(), arguments.getDocument());
+				DomUtils.addLinkTag(element, request, Utils.getBaseUrl(request)
+						+ "/datatablesController/" + entry.getKey());
 			}
 
 			// <script> HTML tag generation
 			if (htmlTable.getCdn() != null && htmlTable.getCdn()) {
-				DomUtils.addScriptTag(Utils.getParentAsElement(element), request, CdnConstants.CDN_JS_MIN,
-						arguments.getDocument());
+				DomUtils.addScriptTag(DomUtils.getParentAsElement(element), request,
+						CdnConstants.CDN_DATATABLES_JS_MIN);
 			}
 			for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
 				servletContext.setAttribute(entry.getKey(), entry.getValue());
-				DomUtils.addScriptTag(Utils.getParentAsElement(element), request, Utils.getBaseUrl(request)
-						+ "/datatablesController/" + entry.getKey(), arguments.getDocument());
+				DomUtils.addScriptTag(DomUtils.getParentAsElement(element), request,
+						Utils.getBaseUrl(request) + "/datatablesController/" + entry.getKey());
 			}
 			servletContext.setAttribute(webResources.getMainJsFile().getName(),
 					webResources.getMainJsFile());
-			DomUtils.addScriptTag(Utils.getParentAsElement(element), request, Utils.getBaseUrl(request)
-					+ "/datatablesController/" + webResources.getMainJsFile().getName(),
-					arguments.getDocument());
+			DomUtils.addScriptTag(DomUtils.getParentAsElement(element), request,
+					Utils.getBaseUrl(request) + "/datatablesController/"
+							+ webResources.getMainJsFile().getName());
 
 			logger.debug("Web content generated successfully");
 		} catch (CompressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Something went wront with the compressor.");
+			throw new DataTables4jException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataTables4jException(e);
 		} catch (BadConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Something went wront with the DataTables4j configuration.");
+			throw new DataTables4jException(e);
 		} catch (DataNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Something went wront with the data provider.");
+			throw new DataTables4jException(e);
 		}
 	}
-	
+
 	/**
 	 * Return the current export type asked by the user on export link click.
 	 * 
@@ -271,26 +240,31 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 	private ExportType getCurrentExportType(HttpServletRequest request) {
 
 		// Get the URL parameter used to identify the export type
-		String exportTypeString = request.getParameter(ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE).toString();
+		String exportTypeString = request.getParameter(
+				ExportConstants.DT4J_REQUESTPARAM_EXPORT_TYPE).toString();
 
 		// Convert it to the corresponding enum
 		ExportType exportType = ExportType.findByUrlParameter(Integer.parseInt(exportTypeString));
 
 		return exportType;
 	}
-	
+
 	/**
 	 * TODO
+	 * 
 	 * @param element
 	 */
-	private void duplicateHeaderInFooter(Element element){
+	private void generateFooter(Element element, Arguments arguments) {
 		Element tfoot = new Element("tfoot");
+
+		Node tableNode = (Node)((IWebContext) arguments.getContext()).getHttpServletRequest().getAttribute("tableNode");
 		
-		for (HtmlColumn column : htmlTable.getLastHeaderRow().getColumns()) {
+		for(HtmlColumn column : htmlTable.getLastHeaderRow().getColumns()){
 			Element th = new Element("th");
-			th.addChild(new Text(""));
+			th.addChild(new Text(column.getContent()));
 			tfoot.addChild(th);
 		}
-		element.getParent().insertAfter(element, tfoot);
+
+		((Element) tableNode).addChild(tfoot);
 	}
 }

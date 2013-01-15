@@ -36,23 +36,22 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
-import com.github.datatables4j.core.api.constants.FilterType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * Attribute processor applied to the <code>th</code> tag for the
- * <code>filterType</code> attribute.
+ * <code>fileName</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class ThFilterTypeAttrProcessor extends AbstractDatatableAttrProcessor {
+public class ThExportFilenameAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ThFilterTypeAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(ThExportFilenameAttrProcessor.class);
 
-	public ThFilterTypeAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public ThExportFilenameAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -68,19 +67,14 @@ public class ThFilterTypeAttrProcessor extends AbstractDatatableAttrProcessor {
 
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-				
+
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+
 		// Override default value with the attribute's one
 		if (htmlTable != null) {
-
-			FilterType filterType = null;
-			try {
-				filterType = FilterType.valueOf(element.getAttributeValue(attributeName));
-			} catch (IllegalArgumentException e) {
-				logger.error("{} is not a valid value among {}. Please choose a valid one.",
-						filterType, FilterType.values());
-			}
-			logger.debug("Extracted value : {}", filterType);
-			htmlTable.getLastHeaderRow().getLastColumn().setFilterType(filterType);
+			htmlTable.getLastHeaderRow().getLastColumn().setFilterable(attrValue);
 		}
 
 		return nonLenientOK(element, attributeName);

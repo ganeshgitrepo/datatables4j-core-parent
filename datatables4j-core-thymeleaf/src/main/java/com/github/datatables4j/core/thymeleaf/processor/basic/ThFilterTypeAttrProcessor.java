@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.feature;
+package com.github.datatables4j.core.thymeleaf.processor.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,22 +36,23 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
+import com.github.datatables4j.core.api.constants.FilterType;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
  * Attribute processor applied to the <code>th</code> tag for the
- * <code>filterable</code> attribute.
+ * <code>filterType</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
+public class ThFilterTypeAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ThFilterableAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(ThFilterTypeAttrProcessor.class);
 
-	public ThFilterableAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public ThFilterTypeAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
@@ -68,13 +69,28 @@ public class ThFilterableAttrProcessor extends AbstractDatatableAttrProcessor {
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
 
-		// Get attribute value
-		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
-		logger.debug("Extracted value : {}", attrValue);
-
 		// Override default value with the attribute's one
 		if (htmlTable != null) {
-			htmlTable.getLastHeaderRow().getLastColumn().setFilterable(attrValue);
+
+			FilterType filterType = null;
+
+			String attrValue = element.getAttributeValue(attributeName);
+			
+			if(attrValue != null){
+				try {
+					filterType = FilterType.valueOf(attrValue.toUpperCase().trim());
+				} catch (IllegalArgumentException e) {
+					logger.error("{} is not a valid value among {}. Please choose a valid one.",
+							filterType, FilterType.values());
+					throw new IllegalArgumentException("Wrong value for FilterType");
+				}
+				
+				logger.debug("Extracted value : {}", filterType);
+			}
+			
+			if(filterType != null){
+				htmlTable.getLastHeaderRow().getLastColumn().setFilterType(filterType);				
+			}
 		}
 
 		return nonLenientOK(element, attributeName);

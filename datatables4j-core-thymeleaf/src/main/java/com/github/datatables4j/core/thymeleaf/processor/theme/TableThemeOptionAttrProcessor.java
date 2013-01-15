@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.thymeleaf.processor.plugin;
+package com.github.datatables4j.core.thymeleaf.processor.theme;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,27 +36,29 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
 import org.thymeleaf.processor.ProcessorResult;
 
+import com.github.datatables4j.core.api.constants.ThemeOption;
+import com.github.datatables4j.core.api.exception.DataTableProcessingException;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
 import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
+ * Attribute processor for the <code>theme</code> attribute.
  * 
  * @author Thibault Duchateau
  */
-public class TheadScrollerAttrProcessor extends AbstractDatatableAttrProcessor {
+public class TableThemeOptionAttrProcessor extends AbstractDatatableAttrProcessor {
 
 	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TheadScrollerAttrProcessor.class);
+	private static Logger logger = LoggerFactory.getLogger(TableThemeOptionAttrProcessor.class);
 
-	public TheadScrollerAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+	public TableThemeOptionAttrProcessor(IAttributeNameProcessorMatcher matcher) {
 		super(matcher);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return 9000;
+		return 8000;
 	}
 
 	@Override
@@ -66,14 +68,24 @@ public class TheadScrollerAttrProcessor extends AbstractDatatableAttrProcessor {
 
 		// Get HtmlTable POJO from the HttpServletRequest
 		HtmlTable htmlTable = Utils.getTable(arguments);
-		
+
 		// Get attribute value
-		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		String attrValue = element.getAttributeValue(attributeName);
 		logger.debug("Extracted value : {}", attrValue);
 
 		// HtmlTable update
-		if(attrValue && htmlTable != null){
-			htmlTable.registerPlugin(new ScrollerPlugin());
+		if (htmlTable != null) {
+			
+			ThemeOption themeOption = null;
+
+			try {
+				themeOption = ThemeOption.valueOf(attrValue);
+			} catch (IllegalArgumentException e) {
+				logger.error("{} is not a valid value among {}", attrValue, ThemeOption.values());
+				throw new DataTableProcessingException(e);
+			}
+			
+			htmlTable.setThemeOption(themeOption);
 		}
 
 		return nonLenientOK(element, attributeName);

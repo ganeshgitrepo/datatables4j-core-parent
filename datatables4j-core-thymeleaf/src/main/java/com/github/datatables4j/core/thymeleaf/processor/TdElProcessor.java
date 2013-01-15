@@ -10,18 +10,19 @@ import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
 
 import com.github.datatables4j.core.api.model.HtmlTable;
+import com.github.datatables4j.core.thymeleaf.dialect.DataTablesDialect;
 import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * TODO
- *
+ * Element processor applied to the <tt>td</tt> HTML tag. Whenever Thymeleaf
+ * meets a <tt>td</tt> tag, a HtmlColumn is added to the last added HtmlRow.
+ * 
  * @author Thibault Duchateau
  */
 public class TdElProcessor extends AbstractElementProcessor {
-	
+
 	// Logger
 	private static Logger logger = LoggerFactory.getLogger(TdElProcessor.class);
-		
 	public TdElProcessor(IElementNameProcessorMatcher matcher) {
 		super(matcher);
 	}
@@ -33,18 +34,32 @@ public class TdElProcessor extends AbstractElementProcessor {
 
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		
+		logger.debug("{} element found", element.getNormalizedName());
+
 		// Get HtmlTable POJO from local variables
 		HtmlTable htmlTable = Utils.getTable(arguments);
-		
-		if(htmlTable != null){
-			htmlTable.getLastBodyRow().addColumn(((Text)element.getFirstChild()).getContent().trim());
+
+		if (htmlTable != null) {
+			// If the first child of the td node is a Text, we get this Text to
+			// fill in the td
+			if (element.getFirstChild() instanceof Text) {
+				htmlTable.getLastBodyRow().addColumn(
+						((Text) element.getFirstChild()).getContent().trim());
+			} 
+			// Else we look for the first Text node
+			else {
+				// TODO				
+				// Node tdText = DomUtils.getNodeByType(element, Text.class);
+
+				logger.warn("Only cells containing plain text are supported, those containing HTML code are still not !");
+				htmlTable.getLastBodyRow().addColumn("");
+			}
 		}
-		
-		if(element.hasAttribute("dt:data")){
-			element.removeAttribute("dt:data");
+
+		if (element.hasAttribute(DataTablesDialect.DIALECT_PREFIX + ":data")) {
+			element.removeAttribute(DataTablesDialect.DIALECT_PREFIX + ":data");
 		}
-				
+
 		return ProcessorResult.OK;
 	}
 }
