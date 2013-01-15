@@ -29,6 +29,7 @@
  */
 package com.github.datatables4j.core.jsp.tag;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,18 +40,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import com.github.datatables4j.core.base.theme.JQueryUITheme;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ExportConstants;
+import com.github.datatables4j.core.api.constants.ThemeOption;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.export.ExportConf;
 import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.export.ExportType;
 import com.github.datatables4j.core.api.model.HtmlColumn;
+import com.github.datatables4j.core.api.model.HtmlLink;
+import com.github.datatables4j.core.api.model.HtmlScript;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
 import com.github.datatables4j.core.base.feature.FilteringFeature;
@@ -63,6 +66,7 @@ import com.github.datatables4j.core.base.plugin.ColReorderPlugin;
 import com.github.datatables4j.core.base.plugin.FixedHeaderPlugin;
 import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
 import com.github.datatables4j.core.base.theme.Bootstrap2Theme;
+import com.github.datatables4j.core.base.theme.JQueryUITheme;
 import com.github.datatables4j.core.base.util.RequestHelper;
 
 /**
@@ -128,6 +132,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	// Theme
 	protected String theme;
+	protected String themeOption;
 
 	// Internal common attributes
 	protected int rowNumber;
@@ -208,17 +213,31 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	/**
 	 * Register the theme if activated in the table tag.
 	 */
-	protected void registerTheme() {
+	protected void registerTheme() throws JspException {
 
 		if (StringUtils.isNotBlank(this.theme)) {
 			if (this.theme.trim().toLowerCase().equals("bootstrap2")) {
 				this.table.setTheme(new Bootstrap2Theme());
 			} else if (this.theme.trim().toLowerCase().equals("jqueryui")) {
-                this.table.setTheme(new JQueryUITheme());
-            } else {
-				logger.warn("Theme {} is not recognized. Only 'bootstrap2 and jQueryUI' exists for now.",
+				this.table.setTheme(new JQueryUITheme());
+			} else {
+				logger.warn(
+						"Theme {} is not recognized. Only 'bootstrap2 and jQueryUI' exists for now.",
 						this.theme);
 			}
+		}
+
+		if (StringUtils.isNotBlank(this.themeOption)) {
+			ThemeOption themeOption = null;
+			try {
+				themeOption = ThemeOption.valueOf(this.themeOption.trim().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				logger.error("{} is not a valid value among {}", this.themeOption,
+						ThemeOption.values());
+				throw new JspException(e);
+			}
+
+			this.table.setThemeOption(themeOption);
 		}
 	}
 
@@ -327,7 +346,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 			// Allowed export types
 			String[] exportTypes = this.export.trim().toUpperCase().split(",");
-			
+
 			for (String exportTypeString : exportTypes) {
 				ExportType type = null;
 
@@ -363,11 +382,11 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			// Export links position
 			List<ExportLinkPosition> positionList = new ArrayList<ExportLinkPosition>();
 			if (StringUtils.isNotBlank(this.exportLinks)) {
-				String[] positions = this.exportLinks.trim().toUpperCase().split(",");
+				String[] positions = this.exportLinks.trim().split(",");
 
 				for (String position : positions) {
 					try {
-						positionList.add(ExportLinkPosition.valueOf(position));
+						positionList.add(ExportLinkPosition.valueOf(position.toUpperCase().trim()));
 					} catch (IllegalArgumentException e) {
 						logger.error("The export cannot be activated for the table {}. ",
 								table.getId());
@@ -483,6 +502,26 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 
 		return rowId.toString();
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @param href
+	 * @throws IOException
+	 */
+	protected void generateLinkTag(String href) throws IOException {
+		pageContext.getOut().println(new HtmlLink(href).toHtml().toString());
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @param href
+	 * @throws IOException
+	 */
+	protected void generateScriptTag(String src) throws IOException {
+		pageContext.getOut().println(new HtmlScript(src).toHtml().toString());
 	}
 
 	/** Getters and setters for all attributes */
@@ -738,6 +777,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setTheme(String theme) {
 		this.theme = theme;
+	}
+
+	public String getThemeOption() {
+		return themeOption;
+	}
+
+	public void setThemeOption(String themeOption) {
+		this.themeOption = themeOption;
 	}
 
 	public String getFooter() {

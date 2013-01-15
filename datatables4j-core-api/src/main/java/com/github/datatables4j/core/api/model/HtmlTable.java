@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.datatables4j.core.api.constants.ThemeOption;
 import com.github.datatables4j.core.api.export.ExportConf;
 import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.export.ExportProperties;
@@ -93,6 +94,7 @@ public class HtmlTable extends HtmlTag {
 
 	// Theme
 	private AbstractTheme theme;
+	private ThemeOption themeOption;
 
 	public HtmlTable(String id, String randomId) {
 		init();
@@ -258,7 +260,6 @@ public class HtmlTable extends HtmlTag {
 
 		for (HtmlRow headerRow : this.head) {
 			for (HtmlColumn headerColumn : headerRow.getHeaderColumns()) {
-				System.out.println("headerColumn = " + headerColumn.toString());
 				if (headerColumn.isFilterable() != null && headerColumn.isFilterable()) {
 					retval = true;
 					break;
@@ -551,5 +552,13 @@ public class HtmlTable extends HtmlTag {
 
 	public void setTheme(AbstractTheme theme) {
 		this.theme = theme;
+	}
+
+	public ThemeOption getThemeOption() {
+		return themeOption;
+	}
+
+	public void setThemeOption(ThemeOption themeOption) {
+		this.themeOption = themeOption;
 	}
 }

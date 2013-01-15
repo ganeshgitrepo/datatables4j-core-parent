@@ -233,6 +233,10 @@
          <description>Name of a theme to activate for the current table.
             (Default : none)</description>
       </attribute>
+      <attribute>
+         <name>themeOption</name>
+         <description>TODO</description>
+      </attribute>
 
       <!-- ====================================== -->
       <!-- Extra features -->

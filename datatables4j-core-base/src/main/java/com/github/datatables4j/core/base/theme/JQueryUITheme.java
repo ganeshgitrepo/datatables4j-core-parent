@@ -29,41 +29,46 @@
  */
 package com.github.datatables4j.core.base.theme;
 
+import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.model.AbstractTheme;
+import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.CssResource;
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.base.util.ResourceHelper;
 
 /**
  * JQueryUI DataTables theme.
- *
+ * 
  * @since 0.7.1
  */
 public class JQueryUITheme extends AbstractTheme {
 
-    @Override
-    public String getName() {
-        return "jQueryUI";
-    }
+	@Override
+	public String getName() {
+		return "jQueryUI";
+	}
 
-    @Override
-    public String getVersion() {
-        return "1.0.0";
-    }
+	@Override
+	public String getVersion() {
+		return "1.0.0";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setup(HtmlTable table) throws BadConfigurationException {
-        // Specific theme javascript
-        appendToBeforeAll(ResourceHelper.getFileContentFromClasspath("datatables/themes/jqueryui/jqueryui.js"));
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setup(HtmlTable table) throws BadConfigurationException {
 
-        // Specific theme css
-        addCssResource(new CssResource(ResourceType.THEME, "JQueryUITheme", "datatables/themes/jqueryui/jqueryui.css"));
+		addConfiguration(new Configuration(DTConstants.DT_JQUERYUI, true));
+		addCssResource(new CssResource(ResourceType.THEME, "JQueryUITheme",
+				"datatables/themes/jqueryui/jqueryui.css"));
 
-        table.addCssClass("display");
-    }
+		if (table.getThemeOption() != null) {
+			addCssResource(new CssResource(ResourceType.EXTERNAL,
+					table.getThemeOption().toString(), table.getThemeOption().getCssSource()));
+		}
+
+		table.addCssClass("display");
+	}
 }
