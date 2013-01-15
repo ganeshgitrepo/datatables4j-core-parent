@@ -88,7 +88,7 @@ public class ExportTag extends TagSupport {
 
 			ExportType exportType = null;
 			try {
-				exportType = ExportType.valueOf(type);
+				exportType = ExportType.valueOf(type.toUpperCase().trim());
 			} catch (IllegalArgumentException e) {
 				logger.error("The export cannot be activated for the table {}. ", parent.getTable()
 						.getId());

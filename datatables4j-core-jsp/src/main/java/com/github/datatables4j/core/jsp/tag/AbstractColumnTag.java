@@ -147,7 +147,7 @@ public abstract class AbstractColumnTag extends BodyTagSupport {
 
 				FilterType filterType = null;
 				try {
-					filterType = FilterType.valueOf(this.filterType);
+					filterType = FilterType.valueOf(this.filterType.toUpperCase().trim());
 				} catch (IllegalArgumentException e) {
 					logger.error("{} is not a valid value among {}. Please choose a valid one.",
 							filterType, FilterType.values());
