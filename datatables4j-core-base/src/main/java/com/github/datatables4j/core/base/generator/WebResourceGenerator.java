@@ -48,7 +48,7 @@ import com.github.datatables4j.core.api.export.ExportLinkPosition;
 import com.github.datatables4j.core.api.model.ExtraConf;
 import com.github.datatables4j.core.api.model.ExtraFile;
 import com.github.datatables4j.core.api.model.HtmlDiv;
-import com.github.datatables4j.core.api.model.HtmlLink;
+import com.github.datatables4j.core.api.model.HtmlHyperlink;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
@@ -198,12 +198,12 @@ public class WebResourceGenerator {
 		if (table.getExportConfMap() != null && table.getExportConfMap().size() > 0) {
 			logger.debug("Generating export links");
 
-			HtmlLink link = null;
+			HtmlHyperlink link = null;
 
 			// A HTML link is generated for each ExportConf bean
 			for (ExportConf conf : table.getExportConfMap().values()) {
 
-				link = new HtmlLink();
+				link = new HtmlHyperlink();
 
 				if (conf.getCssClass() != null) {
 					link.setCssClass(conf.getCssClass());

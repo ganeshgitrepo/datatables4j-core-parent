@@ -30,23 +30,29 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * Plain old HTML <code>link</code> tag.
+ * Plain old HTML <code>a</code> tag (link).
  * 
  * @author Thibault Duchateau
- * @since 0.8.1
+ * @since 0.7.0
  */
-public class HtmlLink extends HtmlTag {
+public class HtmlHyperlink extends HtmlTag {
 
 	/**
 	 * Plain old HTML <code>href</code> attribute.
 	 */
 	private String href;
 	
-	public HtmlLink(){
+	/**
+	 * Link's label.
+	 */
+	private String label;
+	
+	public HtmlHyperlink(){
 	}
 	
-	public HtmlLink(String href){
+	public HtmlHyperlink(String href, String label){
 		this.href = href;
+		this.label = label;
 	}
 	
 	/**
@@ -55,15 +61,35 @@ public class HtmlLink extends HtmlTag {
 	@Override
 	public StringBuffer toHtml(){
 		StringBuffer html = new StringBuffer();
-		html.append("<link rel=\"stylesheet\"");
+		html.append("<a");
+		
+		if(this.id != null){
+			html.append(" id=\"");
+			html.append(this.id);
+			html.append("\"");			
+		}
+		
+		if(this.cssClass != null){
+			html.append(" class=\"");
+			html.append(this.cssClass);
+			html.append("\"");			
+		}
+		
+		if(this.cssStyle != null){
+			html.append(" style=\"");
+			html.append(this.cssStyle);
+			html.append("\"");			
+		}
 		
 		if(this.href != null){
 			html.append(" href=\"");
 			html.append(this.href);
-			html.append(" \"");
+			html.append("\"");
 		}
 		
-		html.append("/>");
+		html.append(">");
+		html.append(this.label);
+		html.append("</a>");
 		
 		return html;
 	}
@@ -73,5 +99,11 @@ public class HtmlLink extends HtmlTag {
 	}
 	public void setHref(String href) {
 		this.href = href;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

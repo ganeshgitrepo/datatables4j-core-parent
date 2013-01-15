@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.CdnConstants;
+import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
 import com.github.datatables4j.core.api.exception.DataNotFoundException;
@@ -233,14 +234,18 @@ public class TableTag extends AbstractTableTag {
 
 			// <link> HTML tag generation
 			if (this.table.getCdn()) {
-				pageContext.getOut().println(
-						"<link rel=\"stylesheet\" href=\"" + CdnConstants.CDN_CSS + "\">");
+				generateLinkTag(CdnConstants.CDN_DATATABLES_CSS);
 			}
 			for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
-				servletContext.setAttribute(entry.getKey(), entry.getValue());
-				pageContext.getOut().println(
-						"<link href=\"" + baseUrl + "/datatablesController/" + entry.getKey()
-								+ "\" rel=\"stylesheet\">");
+				System.out.println(entry.getKey() + "/" + entry.getValue().getLocation());
+				if(entry.getValue().getType().equals(ResourceType.EXTERNAL)){
+					generateLinkTag(entry.getValue().getLocation());
+				}
+				else{
+					servletContext.setAttribute(entry.getKey(), entry.getValue());
+					generateLinkTag(baseUrl + "/datatablesController/" + entry.getKey());
+					
+				}
 			}
 
 			// HTML generation
@@ -248,20 +253,15 @@ public class TableTag extends AbstractTableTag {
 
 			// <script> HTML tag generation
 			if (this.table.getCdn()) {
-				pageContext.getOut().println(
-						"<script src=\"" + CdnConstants.CDN_JS_MIN + "\"></script>");
+				generateScriptTag(CdnConstants.CDN_DATATABLES_JS_MIN);
 			}
 			for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
 				servletContext.setAttribute(entry.getKey(), entry.getValue());
-				pageContext.getOut().println(
-						"<script src=\"" + baseUrl + "/datatablesController/" + entry.getKey()
-								+ "\"></script>");
+				generateScriptTag(baseUrl + "/datatablesController/" + entry.getKey());
 			}
 			servletContext.setAttribute(webResources.getMainJsFile().getName(),
 					webResources.getMainJsFile());
-			pageContext.getOut().println(
-					"<script src=\"" + baseUrl + "/datatablesController/"
-							+ webResources.getMainJsFile().getName() + "\"></script>");
+			generateScriptTag(baseUrl + "/datatablesController/" + webResources.getMainJsFile().getName());
 
 			logger.debug("Web content generated successfully");
 		} catch (IOException e) {

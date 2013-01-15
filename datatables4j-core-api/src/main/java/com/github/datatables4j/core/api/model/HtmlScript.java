@@ -30,23 +30,23 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * Plain old HTML <code>link</code> tag.
+ * Plain old HTML <code>script</code> tag.
  * 
  * @author Thibault Duchateau
  * @since 0.8.1
  */
-public class HtmlLink extends HtmlTag {
+public class HtmlScript extends HtmlTag {
 
 	/**
-	 * Plain old HTML <code>href</code> attribute.
+	 * Plain old HTML <code>src</code> attribute.
 	 */
-	private String href;
+	private String src;
 	
-	public HtmlLink(){
+	public HtmlScript(){
 	}
 	
-	public HtmlLink(String href){
-		this.href = href;
+	public HtmlScript(String src){
+		this.src = src;
 	}
 	
 	/**
@@ -55,23 +55,23 @@ public class HtmlLink extends HtmlTag {
 	@Override
 	public StringBuffer toHtml(){
 		StringBuffer html = new StringBuffer();
-		html.append("<link rel=\"stylesheet\"");
+		html.append("<script");
 		
-		if(this.href != null){
-			html.append(" href=\"");
-			html.append(this.href);
+		if(this.src != null){
+			html.append(" src=\"");
+			html.append(this.src);
 			html.append(" \"");
 		}
 		
-		html.append("/>");
+		html.append("></script>");
 		
 		return html;
 	}
 	
-	public String getHref() {
-		return href;
+	public String getSrc() {
+		return src;
 	}
-	public void setHref(String href) {
-		this.href = href;
+	public void setSrc(String src) {
+		this.src = src;
 	}
 }
