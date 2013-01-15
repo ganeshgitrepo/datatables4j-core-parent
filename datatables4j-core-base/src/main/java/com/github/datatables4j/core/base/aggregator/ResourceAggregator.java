@@ -95,7 +95,7 @@ public class ResourceAggregator {
 	public static void aggregateAll(WebResources webResources) {
 
 		// Only aggregate if there's more than 1 JS file
-		if (webResources.getJavascripts().size() > 1) {
+		if (webResources.getJavascripts().size() > 0) {
 
 			String jsResourceName = NameConstants.DT_AGG_ALL_JS + ResourceHelper.getRamdomNumber()
 					+ ".js";
@@ -106,13 +106,15 @@ public class ResourceAggregator {
 			for (Entry<String, JsResource> entry : webResources.getJavascripts().entrySet()) {
 				aggregatedJsContent += entry.getValue().getContent();
 			}
+			aggregatedJsContent += webResources.getMainJsFile().getContent();
 			aggregateJsFile.setContent(aggregatedJsContent);
 
 			// All existing Javascript resources are removed
 			webResources.getJavascripts().clear();
 
-			// Add aggregated Javascript resource
-			webResources.getJavascripts().put(aggregateJsFile.getName(), aggregateJsFile);
+			webResources.setMainJsFile(aggregateJsFile);
+//			 Add aggregated Javascript resource
+//			webResources.getJavascripts().put(aggregateJsFile.getName(), aggregateJsFile);
 		}
 
 		// Only aggregate if there's more than 1 CSS file
