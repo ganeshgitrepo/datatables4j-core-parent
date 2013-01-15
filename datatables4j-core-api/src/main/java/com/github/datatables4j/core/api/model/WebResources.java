@@ -29,15 +29,15 @@
  */
 package com.github.datatables4j.core.api.model;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 public class WebResources {
 
 	private JsResource mainJsFile;
-	private Map<String, JsResource> javascripts = new TreeMap<String, JsResource>();
-	private Map<String, CssResource> stylesheets = new TreeMap<String, CssResource>();
+	private Map<String, JsResource> javascripts = new LinkedHashMap<String, JsResource>();
+	private Map<String, CssResource> stylesheets = new LinkedHashMap<String, CssResource>();
 
 	public Map<String, JsResource> getJavascripts() {
 		return javascripts;
