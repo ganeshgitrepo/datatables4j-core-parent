@@ -62,7 +62,7 @@ public class Configuration {
 	/**
 	 * DataTables parameter's value
 	 */
-	private String value;
+	private Object value;
 
 	/**
 	 * DataTables parameter's updating mode
@@ -86,13 +86,13 @@ public class Configuration {
 		PREPEND_WITH_SPACE
 	}
 
-	public Configuration(String name, String value) {
+	public Configuration(String name, Object value) {
 		this.name = name;
 		this.value = value;
 		this.mode = Mode.OVERRIDE;
 	}
 
-	public Configuration(String name, String value, Configuration.Mode mode) {
+	public Configuration(String name, Object value, Configuration.Mode mode) {
 		this.name = name;
 		this.value = value;
 		this.setMode(mode);
@@ -106,11 +106,11 @@ public class Configuration {
 		this.name = name;
 	}
 
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 
