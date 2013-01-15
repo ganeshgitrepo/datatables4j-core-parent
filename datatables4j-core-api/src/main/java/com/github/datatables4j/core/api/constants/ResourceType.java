@@ -52,5 +52,7 @@ public enum ResourceType {
 	AGGREGATE, 
 	
 	// DataTables4j javascript minimified file
-	MINIMIFIED
+	MINIMIFIED,
+	
+	EXTERNAL
 }

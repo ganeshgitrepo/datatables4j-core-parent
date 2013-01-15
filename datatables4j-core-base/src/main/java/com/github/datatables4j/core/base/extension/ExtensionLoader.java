@@ -40,14 +40,16 @@ import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.model.Extension;
 import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.CssResource;
+import com.github.datatables4j.core.api.model.Extension;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
+import com.github.datatables4j.core.base.util.CollectionUtils;
 import com.github.datatables4j.core.base.util.JsonIndentingWriter;
 import com.github.datatables4j.core.base.util.NameConstants;
+import com.github.datatables4j.core.base.util.Predicate;
 import com.github.datatables4j.core.base.util.ResourceHelper;
 
 /**
@@ -116,8 +118,11 @@ public class ExtensionLoader {
 				loadJsResources(extension);
 
 				// TODO
-				loadCssResources(extension);
-
+				loadCssResources(table, extension);
+				
+				// TODO
+				loadExternalCssResources(extension);
+				
 				// TODO
 				injectIntoMainJsFile(extension);
 
@@ -161,6 +166,31 @@ public class ExtensionLoader {
 		}
 	}
 
+	
+	/**
+	 * TODO
+	 * @param extension
+	 */
+	private void loadExternalCssResources(Extension extension){
+		
+		Predicate<CssResource> isExternalCss = new Predicate<CssResource>() {
+		    public boolean apply(CssResource cssResource) {
+		        return cssResource.getType().equals(ResourceType.EXTERNAL);
+		    }
+		};
+
+		if(extension.getCssResources() != null){
+			
+			List<CssResource> externalCssResources = (List<CssResource>) CollectionUtils.filter(extension.getCssResources(), isExternalCss);
+			
+			if(externalCssResources != null && !externalCssResources.isEmpty()){
+				for(CssResource cssResource : externalCssResources){
+					webResources.getStylesheets().put(cssResource.getName(), cssResource);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Load potential CSS resource of the current extension.
 	 * 
@@ -168,7 +198,7 @@ public class ExtensionLoader {
 	 *            The extension to load.
 	 * @throws BadConfigurationException
 	 */
-	private void loadCssResources(Extension extension) throws BadConfigurationException {
+	private void loadCssResources(HtmlTable table, Extension extension) throws BadConfigurationException {
 
 		CssResource pluginsSourceCssFile = null;
 		String resourceName = null;
@@ -186,8 +216,11 @@ public class ExtensionLoader {
 
 			// Module source loading (stylesheets)
 			for (CssResource cssResource : extension.getCssResources()) {
-				cssContent.append(ResourceHelper.getFileContentFromClasspath(cssResource
-						.getLocation()));
+				// Most of CSS resource have a type different from EXTERNAL, which is theme-specific
+				if(!cssResource.getType().equals(ResourceType.EXTERNAL)){
+					cssContent.append(ResourceHelper.getFileContentFromClasspath(cssResource
+							.getLocation()));					
+				}
 			}
 
 			pluginsSourceCssFile.setContent(cssContent.toString());

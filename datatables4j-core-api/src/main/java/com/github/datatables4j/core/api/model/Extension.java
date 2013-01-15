@@ -1,11 +1,9 @@
 package com.github.datatables4j.core.api.model;
 
+import java.util.List;
+
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.generator.AbstractConfigurationGenerator;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * <p>
