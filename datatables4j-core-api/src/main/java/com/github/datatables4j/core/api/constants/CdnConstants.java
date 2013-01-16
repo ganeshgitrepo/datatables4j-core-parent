@@ -36,7 +36,39 @@ package com.github.datatables4j.core.api.constants;
  */
 public class CdnConstants {
 
-	public static final String CDN_JS = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js";
-	public static final String CDN_JS_MIN = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js";
-	public static final String CDN_CSS = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css";
+	// DataTables (Microsoft CDN)
+	public static final String CDN_DATATABLES_JS = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js";
+	public static final String CDN_DATATABLES_JS_MIN = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js";
+	public static final String CDN_DATATABLES_CSS = "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css";
+	
+	// jQueryUI (Microsoft CDN)
+	public static final String CDN_JQUERYUI_JS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.js";
+	public static final String CDN_JQUERYUI_JS_MIN = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js";
+	
+	// jQueryUI themes (Microsoft CND)
+	public static final String CDN_JQUERYUI_THEME_BASE_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/base/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_BLACKTIE_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/black-tie/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_BLITZER_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_CUPERTINO_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/cupertino/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_DARKHIVE_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/dark-hive/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_DOTLUV_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/dot-luv/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_EGGPLANT_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/eggplant/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_EXCITEBIKE_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/excite-bike/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_FLICK_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/flick/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_HOTSNEAKS_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/hot-sneaks/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_HUMANITY_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/humanity/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_LEFROG_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/le-frog/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_MINTCHOC_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/mint-choc/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_OVERCAST_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/overcast/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_PEPPERGRINDER_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/pepper-grinder/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_REDMOND_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/redmond/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_SMOOTHNESS_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/smoothness/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_SOUTHSTREET_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/south-street/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_START_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/start/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_SUNNY_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/sunny/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_SWANKYPURSE_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/swanky-purse/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_TRONTASTIC_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/trontastic/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_UIDARKNESS_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/ui-darkness/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_UILIGHTNESS_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/ui-ligthness/jquery-ui.css";
+	public static final String CDN_JQUERYUI_THEME_VADER_CSS = "//ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/vader/jquery-ui.css";
 }
