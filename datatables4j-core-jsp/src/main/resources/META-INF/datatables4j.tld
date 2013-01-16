@@ -15,7 +15,7 @@
       <validator-class>com.github.datatables4j.core.jsp.tlv.DataTables4jTlv</validator-class>
       <description>DataTables4j taglib validator</description>
    </validator>
-   
+
    <!-- ====================================== -->
    <!-- Table -->
    <!-- ====================================== -->
@@ -235,7 +235,8 @@
       </attribute>
       <attribute>
          <name>themeOption</name>
-         <description>TODO</description>
+         <description>Name of an option to activate in relation to the
+            current activated theme.</description>
       </attribute>
 
       <!-- ====================================== -->
@@ -290,11 +291,12 @@
       <name>columnHead</name>
       <tag-class>com.github.datatables4j.core.jsp.tag.ColumnHeadTag</tag-class>
       <body-content>JSP</body-content>
-      <description>Describe a column of the HTML table.</description>
+      <description>Allows to fill a column header with more complex content than a usual title.</description>
       <attribute>
          <name>uid</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>TODO</description>
+         <description>Unique arbitrary id of the column, used in
+            relation to the column tag.</description>
       </attribute>
    </tag>
    <tag>
@@ -305,7 +307,8 @@
       <attribute>
          <name>uid</name>
          <rtexprvalue>true</rtexprvalue>
-         <description>TODO</description>
+         <description>Unique arbitrary id of the column, used in
+            relation to the columnHead tag</description>
       </attribute>
       <attribute>
          <name>title</name>
@@ -385,7 +388,7 @@
       <attribute>
          <name>display</name>
          <description>(ALL[,HTML|,XML|,CSV]) Comma-separated list of
-            string which indicates in which case(s) the column's body
+            string which indicates in which view(s) the column's body
             will be displayed. (Default : ALL)</description>
       </attribute>
    </tag>
@@ -492,6 +495,7 @@
          <name>cssClass</name>
          <description>CSS class applied to the HTML link</description>
       </attribute>
+      <!-- 
       <attribute>
          <name>area</name>
          <description>(list|current) Indicates how much data should
@@ -501,7 +505,7 @@
             export the data that is currently being shown
             (Default :
             list)</description>
-      </attribute>
+      </attribute> -->
       <attribute>
          <name>includeHeader</name>
          <description>(true|false) Indicated whether headers should
