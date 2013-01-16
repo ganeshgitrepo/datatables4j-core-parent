@@ -99,7 +99,7 @@ public class TableExportAttrProcessor extends AbstractDatatableAttrProcessor {
 				ExportType type = null;
 
 				try {
-					type = ExportType.valueOf(exportTypeString);
+					type = ExportType.valueOf(exportTypeString.trim().toUpperCase());
 				} catch (IllegalArgumentException e) {
 					logger.error("The export cannot be activated for the table {}. ", htmlTable.getId());
 					logger.error("{} is not a valid value among {}", exportTypeString,

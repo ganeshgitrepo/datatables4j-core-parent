@@ -74,7 +74,7 @@ public class ThFilterTypeAttrProcessor extends AbstractDatatableAttrProcessor {
 
 			FilterType filterType = null;
 
-			String attrValue = element.getAttributeValue(attributeName);
+			String attrValue = element.getAttributeValue(attributeName.trim().toUpperCase());
 			
 			if(attrValue != null){
 				try {

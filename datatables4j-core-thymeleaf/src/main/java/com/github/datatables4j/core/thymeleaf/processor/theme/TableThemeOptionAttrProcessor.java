@@ -79,7 +79,7 @@ public class TableThemeOptionAttrProcessor extends AbstractDatatableAttrProcesso
 			ThemeOption themeOption = null;
 
 			try {
-				themeOption = ThemeOption.valueOf(attrValue);
+				themeOption = ThemeOption.valueOf(attrValue.trim().toUpperCase());
 			} catch (IllegalArgumentException e) {
 				logger.error("{} is not a valid value among {}", attrValue, ThemeOption.values());
 				throw new DataTableProcessingException(e);
