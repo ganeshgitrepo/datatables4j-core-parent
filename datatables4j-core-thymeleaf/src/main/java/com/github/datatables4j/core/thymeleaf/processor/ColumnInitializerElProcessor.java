@@ -43,7 +43,13 @@ public class ColumnInitializerElProcessor extends AbstractElementProcessor {
 		HtmlTable htmlTable = Utils.getTable(arguments);		
 				
 		// Get the TH content
-		String content = element.getFirstChild() != null ? ((Text) element.getFirstChild()).getContent().trim() : "";
+		String content = null;
+		if(element.getFirstChild() instanceof Text){
+			content = ((Text) element.getFirstChild()).getContent().trim();
+		}
+		else{
+			content = element.getChildren().toString();
+		}
 
 		// Init a new column
 		HtmlColumn htmlColumn = new HtmlColumn(true, content);

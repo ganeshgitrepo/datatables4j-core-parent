@@ -58,6 +58,7 @@ import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadColReorderAt
 import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadFixedHeaderAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.plugin.TheadScrollerAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.theme.TableThemeAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.theme.TableThemeOptionAttrProcessor;
 
 /**
  * DataTables4j dialect.
@@ -98,7 +99,7 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TdElProcessor(new ElementNameWithoutPrefixProcessorMatcher("td", DIALECT_PREFIX + ":data", "internalUse")));
 
 		// Basic processors
-		processors.add(new TableAutoWidthAttrProcessor(new AttributeNameProcessorMatcher("autoWidth", "table")));
+		processors.add(new TableAutoWidthAttrProcessor(new AttributeNameProcessorMatcher("autowidth", "table")));
 		processors.add(new TableCdnAttrProcessor(new AttributeNameProcessorMatcher("cdn", "table")));
 		processors.add(new TableFilterAttrProcessor(new AttributeNameProcessorMatcher("filter", "table")));
 		processors.add(new TableInfoAttrProcessor(new AttributeNameProcessorMatcher("info", "table")));
@@ -119,6 +120,7 @@ public class DataTablesDialect extends AbstractDialect {
 		
 		// Theme processors
 		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));
+		processors.add(new TableThemeOptionAttrProcessor(new AttributeNameProcessorMatcher("themeOption", "table")));
 
 		return processors;
 	}
