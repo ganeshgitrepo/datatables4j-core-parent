@@ -178,7 +178,7 @@ public class TableTag extends AbstractTableTag {
 		try {
 			// Call the export delegate
 			ExportDelegate exportDelegate = new ExportDelegate(table, exportProperties, request);
-			exportDelegate.setupExport();
+			exportDelegate.launchExport();
 
 		} catch (ExportException e) {
 			logger.error("Something went wront with the DataTables4j export configuration.");

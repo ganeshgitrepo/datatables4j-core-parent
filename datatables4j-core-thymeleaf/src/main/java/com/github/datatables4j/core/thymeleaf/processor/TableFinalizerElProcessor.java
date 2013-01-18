@@ -138,7 +138,7 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 			// Call the export delegate
 			ExportDelegate exportDelegate = new ExportDelegate(this.htmlTable, exportProperties,
 					request);
-			exportDelegate.setupExport();
+			exportDelegate.launchExport();
 
 		} catch (ExportException e) {
 			logger.error("Something went wront with the DataTables4j export configuration.");

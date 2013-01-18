@@ -46,9 +46,15 @@ public class ConfConstants {
 	public static final String DT_COMPRESSOR_PRESERVE_SEMI = "compressor.preserveSemiColons";
 	public static final String DT_COMPRESSOR_DISABLE_OPTI = "compressor.disableOptimizations";
 	public static final String DT_EXPORT_TYPES = "export.types";
+	public static final String DT_EXPORT_CSV_DEFAULT_CLASS = "export.csv.default.class";
+	public static final String DT_EXPORT_XML_DEFAULT_CLASS = "export.xml.default.class";
 	public static final String DT_EXPORT_XLS_DEFAULT_CLASS = "export.xls.default.class";
 	public static final String DT_EXPORT_XLSX_DEFAULT_CLASS = "export.xlsx.default.class";
 	public static final String DT_EXPORT_PDF_DEFAULT_CLASS_1 = "export.pdf.default.class.1";
 	public static final String DT_EXPORT_PDF_DEFAULT_CLASS_2 = "export.pdf.default.class.2";
-	
+	public static final String DT_EXPORT_CSV_CLASS = "export.csv.class";
+	public static final String DT_EXPORT_XML_CLASS = "export.xml.class";
+	public static final String DT_EXPORT_XLS_CLASS = "export.xls.class";
+	public static final String DT_EXPORT_XLSX_CLASS = "export.xlsx.class";
+	public static final String DT_EXPORT_PDF_CLASS = "export.pdf.class";
 }

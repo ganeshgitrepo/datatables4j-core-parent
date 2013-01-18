@@ -100,8 +100,14 @@ public class TableProperties {
 				|| property.equals(ConfConstants.DT_DATASOURCE_CLASS)
 				|| property.equals(ConfConstants.DT_EXPORT_TYPES)
 				|| property.equals(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_XLSX_DEFAULT_CLASS)
 				|| property.equals(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_1)
-				|| property.equals(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_2);
+				|| property.equals(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_2)
+				|| property.equals(ConfConstants.DT_EXPORT_CSV_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_XML_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_XLS_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_XLSX_CLASS)
+				|| property.equals(ConfConstants.DT_EXPORT_PDF_CLASS);
 	}
 
 	/**
@@ -198,32 +204,51 @@ public class TableProperties {
 
 		return exportTypes;
 	}
-	
+
 	/**
-	 * @return the default xls export class name.
+	 * TODO
+	 * @param exportType
+	 * @return
 	 */
-	public String getDefaultXlsExportClassName() {
-		return getProperty(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
-	}
+	public String getExportClass(ExportType exportType){
 	
-	/**
-	 * @return the default xlsx export class name.
-	 */
-	public String getDefaultXlsxExportClassName() {
-		return getProperty(ConfConstants.DT_EXPORT_XLSX_DEFAULT_CLASS);
-	}
-	
-	/**
-	 * @return the first default pdf export class name.
-	 */
-	public String getDefaultPdfExportClassName1() {
-		return getProperty(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_1);
-	}
-	
-	/**
-	 * @return the second default pdf export class name.
-	 */
-	public String getDefaultPdfExportClassName2() {
-		return getProperty(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_2);
+		String exportClass = null;
+		
+		switch(exportType){
+		case CSV:
+			exportClass = getProperty(ConfConstants.DT_EXPORT_CSV_CLASS);
+			if (exportClass == null) {
+				exportClass = getProperty(ConfConstants.DT_EXPORT_CSV_DEFAULT_CLASS);
+			}
+			break;
+		case PDF:
+			exportClass = getProperty(ConfConstants.DT_EXPORT_PDF_CLASS);
+			if (exportClass == null) {
+				exportClass = getProperty(ConfConstants.DT_EXPORT_PDF_DEFAULT_CLASS_1);
+			}
+			break;
+		case XLS:
+			exportClass = getProperty(ConfConstants.DT_EXPORT_XLS_CLASS);
+			if (exportClass == null) {
+				exportClass = getProperty(ConfConstants.DT_EXPORT_XLS_DEFAULT_CLASS);
+			}
+			break;
+		case XLSX:
+			exportClass = getProperty(ConfConstants.DT_EXPORT_XLSX_CLASS);
+			if (exportClass == null) {
+				exportClass = getProperty(ConfConstants.DT_EXPORT_XLSX_DEFAULT_CLASS);
+			}
+			break;
+		case XML:
+			exportClass = getProperty(ConfConstants.DT_EXPORT_XML_CLASS);
+			if (exportClass == null) {
+				exportClass = getProperty(ConfConstants.DT_EXPORT_XML_DEFAULT_CLASS);
+			}
+			break;
+		default:
+			break;
+		}
+		
+		return exportClass;
 	}
 }
