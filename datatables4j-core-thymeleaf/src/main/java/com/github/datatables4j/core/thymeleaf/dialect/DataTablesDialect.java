@@ -68,13 +68,9 @@ import com.github.datatables4j.core.thymeleaf.processor.theme.TableThemeOptionAt
 public class DataTablesDialect extends AbstractDialect {
 
 	public static final String DIALECT_PREFIX = "dt";
-	public static final String LAYOUT_NAMESPACE = "http://github.com/datatables4j/thymeleaf/dt4j";
+	public static final String LAYOUT_NAMESPACE = "http://github.com/datatables4j/thymeleaf";
 	public static final int DT_HIGHEST_PRECEDENCE = 3500;
 	
-	/**
-	 * DataTablesDialect has no prefix, in order to be able to match native HTML
-	 * tags as <code>table</code> or <code>tbody</code>.
-	 */
 	public String getPrefix() {
 		return DIALECT_PREFIX;
 	}
