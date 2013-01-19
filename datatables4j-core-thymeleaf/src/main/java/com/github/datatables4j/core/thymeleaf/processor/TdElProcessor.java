@@ -34,7 +34,6 @@ public class TdElProcessor extends AbstractElementProcessor {
 
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		logger.debug("{} element found", element.getNormalizedName());
 
 		// Get HtmlTable POJO from local variables
 		HtmlTable htmlTable = Utils.getTable(arguments);

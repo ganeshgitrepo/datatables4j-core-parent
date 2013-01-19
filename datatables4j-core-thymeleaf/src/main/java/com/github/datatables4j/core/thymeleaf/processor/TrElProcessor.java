@@ -1,7 +1,5 @@
 package com.github.datatables4j.core.thymeleaf.processor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.IElementNameProcessorMatcher;
@@ -22,9 +20,6 @@ import com.github.datatables4j.core.thymeleaf.util.Utils;
  */
 public class TrElProcessor extends AbstractElementProcessor {
 
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(TrElProcessor.class);
-
 	public TrElProcessor(IElementNameProcessorMatcher matcher) {
 		super(matcher);
 	}
@@ -36,7 +31,6 @@ public class TrElProcessor extends AbstractElementProcessor {
 
 	@Override
 	protected ProcessorResult processElement(Arguments arguments, Element element) {
-		logger.debug("{} element found", element.getNormalizedName());
 
 		// Get HtmlTable POJO from local variables
 		HtmlTable htmlTable = Utils.getTable(arguments);
