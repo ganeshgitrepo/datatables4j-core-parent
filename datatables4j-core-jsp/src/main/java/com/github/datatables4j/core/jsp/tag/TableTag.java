@@ -237,7 +237,6 @@ public class TableTag extends AbstractTableTag {
 				generateLinkTag(CdnConstants.CDN_DATATABLES_CSS);
 			}
 			for (Entry<String, CssResource> entry : webResources.getStylesheets().entrySet()) {
-				System.out.println(entry.getKey() + "/" + entry.getValue().getLocation());
 				if(entry.getValue().getType().equals(ResourceType.EXTERNAL)){
 					generateLinkTag(entry.getValue().getLocation());
 				}
