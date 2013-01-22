@@ -43,6 +43,7 @@ import com.github.datatables4j.core.thymeleaf.processor.TableInitializerElProces
 import com.github.datatables4j.core.thymeleaf.processor.TbodyElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TdElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TrElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.basic.TableAppearAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableAutoWidthAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableCdnAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableExportAttrProcessor;
@@ -101,6 +102,7 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TableInfoAttrProcessor(new AttributeNameProcessorMatcher("info", "table")));
 		processors.add(new TablePaginateAttrProcessor(new AttributeNameProcessorMatcher("paginate", "table")));
 		processors.add(new TableSortAttrProcessor(new AttributeNameProcessorMatcher("sort", "table")));
+		processors.add(new TableAppearAttrProcessor(new AttributeNameProcessorMatcher("appear", "table")));
 		processors.add(new ThSortableAttrProcessor(new AttributeNameProcessorMatcher("sortable", "th")));
 		processors.add(new ThFilterableAttrProcessor(new AttributeNameProcessorMatcher("filterable", "th")));
 		processors.add(new ThFilterTypeAttrProcessor(new AttributeNameProcessorMatcher("filterType", "th")));

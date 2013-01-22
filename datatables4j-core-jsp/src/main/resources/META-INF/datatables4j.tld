@@ -56,6 +56,13 @@
             attribute on column tag.</description>
       </attribute>
       <attribute>
+         <name>appear</name>
+         <description>(block|fadein[,duration]) Display mode used when
+            the table has finished loading and must appear in the page. A duration
+            can be set (in milliseconds) if the display mode is set to
+            "fadein". (Default : "fadein")</description>
+      </attribute>
+      <attribute>
          <name>cdn</name>
          <description>(true|false) Enable the DataTables source files
             to
@@ -291,7 +298,8 @@
       <name>columnHead</name>
       <tag-class>com.github.datatables4j.core.jsp.tag.ColumnHeadTag</tag-class>
       <body-content>JSP</body-content>
-      <description>Allows to fill a column header with more complex content than a usual title.</description>
+      <description>Allows to fill a column header with more complex
+         content than a usual title.</description>
       <attribute>
          <name>uid</name>
          <rtexprvalue>true</rtexprvalue>
@@ -495,17 +503,10 @@
          <name>cssClass</name>
          <description>CSS class applied to the HTML link</description>
       </attribute>
-      <!-- 
-      <attribute>
-         <name>area</name>
-         <description>(list|current) Indicates how much data should
-            be
-            exported. Choose list for the full list or current to
-            only
-            export the data that is currently being shown
-            (Default :
-            list)</description>
-      </attribute> -->
+      <!-- <attribute> <name>area</name> <description>(list|current) Indicates 
+         how much data should be exported. Choose list for the full list or current 
+         to only export the data that is currently being shown (Default : list)</description> 
+         </attribute> -->
       <attribute>
          <name>includeHeader</name>
          <description>(true|false) Indicated whether headers should

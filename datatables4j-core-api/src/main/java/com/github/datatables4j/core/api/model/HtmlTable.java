@@ -63,7 +63,9 @@ public class HtmlTable extends HtmlTag {
 	private String labels;
 	private Boolean cdn;
 	private Boolean jqueryUI;
-
+	private String appear;
+	private String appearDuration;
+	
 	// Extra features
 	private String scrollY;
 	private String fixedPosition;
@@ -108,7 +110,8 @@ public class HtmlTable extends HtmlTag {
 	private void init(){
 		// Basic attributes
 		this.cdn = false;
-
+		this.appear = "fadein";
+		
 		// Export
 		this.isExportable = false;
 		
@@ -125,7 +128,7 @@ public class HtmlTable extends HtmlTag {
 	public StringBuffer toHtml() {
 		StringBuffer html = new StringBuffer();
 
-		html.append("<table id=\"");
+		html.append("<table style=\"display:none;\" id=\"");
 		html.append(this.id);
 		html.append("\"");
 
@@ -560,5 +563,21 @@ public class HtmlTable extends HtmlTag {
 
 	public void setThemeOption(ThemeOption themeOption) {
 		this.themeOption = themeOption;
+	}
+	
+	public String getAppear() {
+		return appear;
+	}
+
+	public void setAppear(String appear) {
+		this.appear = appear;
+	}
+
+	public String getAppearDuration() {
+		return appearDuration;
+	}
+
+	public void setAppearDuration(String appearDuration) {
+		this.appearDuration = appearDuration;
 	}
 }

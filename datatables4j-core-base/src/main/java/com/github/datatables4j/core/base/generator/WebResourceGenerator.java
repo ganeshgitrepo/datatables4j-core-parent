@@ -34,6 +34,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,6 +164,17 @@ public class WebResourceGenerator {
 			exportManagement(table, mainJsFile);
 		}
 
+		if("block".equals(table.getAppear())){
+			mainJsFile.appendToBeforeEndDocumentReady("$('#" + table.getId() + "').show();");			
+		}
+		else{
+			if(StringUtils.isNotBlank(table.getAppearDuration())){
+				mainJsFile.appendToBeforeEndDocumentReady("$('#" + table.getId() + "').fadeIn(" + table.getAppearDuration() + ");");
+			}
+			else{
+				mainJsFile.appendToBeforeEndDocumentReady("$('#" + table.getId() + "').fadeIn();");
+			}
+		}
 		webResources.setMainJsFile(mainJsFile);
 //		webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
 

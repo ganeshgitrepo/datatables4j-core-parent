@@ -109,6 +109,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected String paginationType;
 	protected Boolean sort;
 	protected Boolean cdn;
+	protected String appear;
 	protected String footer;
 
 	// Advanced features
@@ -200,7 +201,19 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		if (this.jqueryUI != null) {
 			this.table.setJqueryUI(this.jqueryUI);
 		}
-
+		if(StringUtils.isNotBlank(this.appear)){
+			if(this.appear.contains(",") || "fadein".equals(this.appear.toLowerCase().trim())){
+				String[] tmp = this.appear.toLowerCase().trim().split(",");
+				this.table.setAppear("fadein");
+				if(tmp.length > 1){
+					this.table.setAppearDuration(tmp[1]);
+				}
+			}
+			else{
+				this.table.setAppear("block");
+			}
+		}
+		
 		// TODO tester si la valeur vaut "header"
 		if (StringUtils.isNotBlank(this.footer)) {
 
@@ -795,6 +808,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.footer = footer;
 	}
 
+	public String getAppear() {
+		return appear;
+	}
+
+	public void setAppear(String appear) {
+		this.appear = appear;
+	}
+	
 	public void setData(Collection<Object> data) {
 		this.loadingType = "DOM";
 		this.data = data;
