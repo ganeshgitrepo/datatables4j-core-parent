@@ -51,7 +51,8 @@ public class DTConstants {
 	public static final String DT_PROCESSING = "bProcessing";
 	public static final String DT_SERVER_SIDE = "bServerSide";
 	public static final String DT_AJAX_SOURCE = "sAjaxSource";
-	
+	public static final String DT_FN_SERVERDATA = "fnServerData";
+	 
 	// AJAX URL parameters
 	public static final String DT_S_ECHO = "sEcho";
 	public static final String DT_I_COLUMNS = "iColumns";
