@@ -79,33 +79,33 @@ public class ExportDelegate {
 		OutputStream stream = null;
 		StringWriter writer = null;
 		String exportClass = null;
-		
+
 		// Get the current export type
 		ExportType exportType = htmlTable.getExportProperties().getCurrentExportType();
-		
-		// Get as a string the class to use for the export, either using a custom class
+
+		// Get as a string the class to use for the export, either using a
+		// custom class
 		// or using the default one
 		exportClass = htmlTable.getTableProperties().getExportClass(exportType);
 		logger.debug("Export class selected : {}", exportClass);
-		
+
 		// Check that the class can be instanciated
-		if (!ReflectHelper.canBeUsed(exportClass)){
+		if (!ReflectHelper.canBeUsed(exportClass)) {
 			logger.error("Did you forget to add a dependency ?");
 			throw new ExportException("Unable to export in " + exportType.toString() + " format");
 		}
-					
+
 		// Text export
-		if(exportType.equals(ExportType.CSV) || exportType.equals(ExportType.XML)){
-			
+		if (exportType.equals(ExportType.CSV) || exportType.equals(ExportType.XML)) {
+
 			// Init the export properties
 			exportProperties.setIsBinaryExport(false);
 			writer = new StringWriter();
-						
+
 			try {
 
 				// Get the class
-				Class<?> klass = ReflectHelper
-						.getClass(exportClass);
+				Class<?> klass = ReflectHelper.getClass(exportClass);
 
 				// Get new instance of this class
 				Object obj = ReflectHelper.getNewInstance(klass);
@@ -116,16 +116,17 @@ public class ExportDelegate {
 
 				// Fill the request so that the filter will intercept it and
 				// override the response with the export configuration
-				request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_CONTENT, writer.toString());
-				
+				request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_CONTENT,
+						writer.toString());
+
 			} catch (BadConfigurationException e) {
 				throw new ExportException(e);
 			}
 
 		}
 		// Binary export
-		else{
-		
+		else {
+
 			// Init the export properties
 			exportProperties.setIsBinaryExport(true);
 			stream = new ByteArrayOutputStream();
@@ -133,8 +134,7 @@ public class ExportDelegate {
 			try {
 
 				// Get the class
-				Class<?> klass = ReflectHelper
-						.getClass("com.github.datatables4j.plugins.export.itext.PdfExport");
+				Class<?> klass = ReflectHelper.getClass(exportClass);
 
 				// Get new instance of this class
 				Object obj = ReflectHelper.getNewInstance(klass);
@@ -147,12 +147,12 @@ public class ExportDelegate {
 				// override the response with the export configuration
 				request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_CONTENT,
 						((ByteArrayOutputStream) stream).toByteArray());
-				
+
 			} catch (BadConfigurationException e) {
 				throw new ExportException(e);
 			}
 		}
-		
+
 		request.setAttribute(ExportConstants.DT4J_REQUESTATTR_EXPORT_PROPERTIES, exportProperties);
 	}
 }
