@@ -44,7 +44,7 @@ public enum ExportType {
 	XML("xml", "text/xml", 3), 
 	RTF("rtf", "text/rtf", 4),
 	PDF("pdf", "application/pdf", 5), 
-	XLS("xls", "application/vnd.ms-exce", 6),
+	XLS("xls", "application/vnd.ms-excel", 6),
 	JSON("json", "", 7),
 	XLSX("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 8);
 	
