@@ -30,7 +30,7 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * Abstract theme.
+ * Abstract theme. It's just a marker abstract class.
  *
  * @author Thibault Duchateau
  */

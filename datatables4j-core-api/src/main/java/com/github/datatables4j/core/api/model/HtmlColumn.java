@@ -68,11 +68,12 @@ public class HtmlColumn extends HtmlTag {
 
 	public HtmlColumn() {
 		init();
+		this.isHeaderColumn = false;
 	};
 
-	public HtmlColumn(Boolean isHeaderColumn) {
+	public HtmlColumn(Boolean isHeader) {
 		init();
-		this.isHeaderColumn = isHeaderColumn;
+		this.isHeaderColumn = isHeader;
 	};
 
 	public HtmlColumn(Boolean isHeader, String content) {

@@ -30,7 +30,7 @@
 package com.github.datatables4j.core.api.model;
 
 /**
- * Abstract UI feature.
+ * Abstract UI feature. It's just a marker abstract class.
  * 
  * @author Thibault Duchateau
  */
