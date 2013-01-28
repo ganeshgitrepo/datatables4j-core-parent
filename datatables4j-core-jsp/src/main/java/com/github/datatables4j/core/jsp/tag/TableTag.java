@@ -96,8 +96,17 @@ public class TableTag extends AbstractTableTag {
 		if ("AJAX".equals(this.loadingType)) {
 
 			this.table.addFooterRow();
-			this.table.setDatasourceUrl(RequestHelper.getBaseUrl(pageContext.getRequest()) + url);
 			this.table.addHeaderRow();
+			
+			// Same domain AJAX request
+			if(url.startsWith("/")){
+				this.table.setDatasourceUrl(RequestHelper.getBaseUrl(pageContext.getRequest()) + url);				
+			}
+			// Cross domain AJAX request
+			else{
+				this.table.setDatasourceUrl(url);
+			}
+						
 			this.table.addRow();
 
 			return EVAL_BODY_BUFFERED;

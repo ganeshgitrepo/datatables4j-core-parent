@@ -39,7 +39,6 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.constants.ResourceType;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.exception.CompressionException;
@@ -53,7 +52,6 @@ import com.github.datatables4j.core.api.model.HtmlHyperlink;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JsResource;
 import com.github.datatables4j.core.api.model.WebResources;
-import com.github.datatables4j.core.base.datasource.DataProvider;
 import com.github.datatables4j.core.base.extension.ExtensionLoader;
 import com.github.datatables4j.core.base.util.JsonIndentingWriter;
 import com.github.datatables4j.core.base.util.NameConstants;
@@ -111,7 +109,7 @@ public class WebResourceGenerator {
 		Map<String, Object> mainConf = configGenerator.generateConfig(table);
 
 		/**
-		 * Build the main file.
+		 * Main configuration file building
 		 */
 		// We need to append a randomUUID in case of multiple tables exists in
 		// the same JSP
@@ -119,12 +117,16 @@ public class WebResourceGenerator {
 				+ table.getRandomId() + ".js");
 		mainJsFile.setTableId(table.getId());
 
-		// Extra files management
+		/**
+		 * Extra files management
+		 */
 		if (table.getExtraFiles() != null && !table.getExtraFiles().isEmpty()) {
 			extraFileManagement(mainJsFile, table);
 		}
 
-		// Extension management
+		/**
+		 * Extension loading
+		 */
 		ExtensionLoader extensionLoader = new ExtensionLoader(table, mainJsFile, mainConf, webResources);		
 		extensionLoader.load(table.getPlugins());
 		extensionLoader.load(table.getFeatures());
@@ -132,34 +134,25 @@ public class WebResourceGenerator {
 			extensionLoader.load(Arrays.asList(table.getTheme()));			
 		}
 		
-		// Extra conf management
+		/**
+		 * Extra configuration management
+		 */
 		if(table.getExtraConfs() != null){
 			extraConfManagement(mainJsFile, mainConf, table);			
 		}
 
-		// AJAX datasource : data must be added in the configuration file
-		if (table.getDatasourceUrl() != null) {
-			String webServiceUrl = table.getDatasourceUrl();
+		/**
+		 * Main configuration generation
+		 */
 
-			DataProvider dataProvider = new DataProvider();
+		// Allways pretty prints the JSON
+		JSONValue.writeJSONString(mainConf, writer);
+					
+		mainJsFile.appendToDataTablesConf(writer.toString());
 
-			// TODO modifier le dataProvider : plus besoin du 2eme param
-			mainConf.put(DTConstants.DT_DS_DATA, dataProvider.getData(table, webServiceUrl));
-
-			// Allways pretty prints the JSON
-			JSONValue.writeJSONString(mainConf, writer);
-						
-			mainJsFile.appendToDataTablesConf(writer.toString());
-		}
-		// DOM datasource
-		else {
-			// Allways pretty prints the JSON
-			JSONValue.writeJSONString(mainConf, writer);
-			
-			// mainJsFile.appendToDataTablesConf(JSONValue.toJSONString(mainConf));
-			mainJsFile.appendToDataTablesConf(writer.toString());
-		}
-
+		/**
+		 * Export management
+		 */
 		if (table.isExportable()) {
 			exportManagement(table, mainJsFile);
 		}
@@ -176,7 +169,6 @@ public class WebResourceGenerator {
 			}
 		}
 		webResources.setMainJsFile(mainJsFile);
-//		webResources.getJavascripts().put(mainJsFile.getName(), mainJsFile);
 
 		return webResources;
 	}

@@ -143,9 +143,6 @@ public class MainGenerator {
         if (table.getPaginationType() != null) {
             mainConf.put(DTConstants.DT_PAGINATION_TYPE, table.getPaginationType().toString());
         }
-        if (table.getProcessing() != null) {
-            mainConf.put(DTConstants.DT_PROCESSING, table.getProcessing());
-        }
         if (table.getSort() != null) {
             mainConf.put(DTConstants.DT_SORT, table.getSort());
         }
@@ -156,6 +153,17 @@ public class MainGenerator {
             mainConf.put(DTConstants.DT_JQUERYUI, table.getJqueryUI());
         }
 
+        // AJAX
+        if (table.getProcessing() != null) {
+            mainConf.put(DTConstants.DT_B_PROCESSING, table.getProcessing());
+        }
+        if(table.isServerSideEnabled() != null){
+        	mainConf.put(DTConstants.DT_B_SERVER_SIDE, table.isServerSideEnabled());
+        }
+        if(StringUtils.isNotBlank(table.getDatasourceUrl())){
+        	mainConf.put(DTConstants.DT_S_AJAX_SOURCE, table.getDatasourceUrl());
+        }
+        
         mainConf.put(DTConstants.DT_DOM, "lfrtip");
 
         logger.debug("DataTables configuration generated");

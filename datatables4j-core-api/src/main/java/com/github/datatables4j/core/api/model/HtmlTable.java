@@ -57,7 +57,6 @@ public class HtmlTable extends HtmlTag {
 	private Boolean paginate;
 	private PaginationType paginationType;
 	private Boolean lengthChange;
-	private Boolean processing;
 	private Boolean sort;
 	private Boolean stateSave;
 	private String labels;
@@ -65,6 +64,13 @@ public class HtmlTable extends HtmlTag {
 	private Boolean jqueryUI;
 	private String appear;
 	private String appearDuration;
+	
+	// Ajax
+	private Boolean processing;
+	private Boolean serverSide;
+	private String ajaxSource;
+	private Boolean pipelining;
+	private int pipeSize;
 	
 	// Extra features
 	private String scrollY;
@@ -349,6 +355,22 @@ public class HtmlTable extends HtmlTag {
 		this.processing = processing;
 	}
 
+	public Boolean isServerSideEnabled() {
+		return serverSide;
+	}
+
+	public void setServerSideEnabled(Boolean serverSide) {
+		this.serverSide = serverSide;
+	}
+
+	public String getAjaxSource() {
+		return ajaxSource;
+	}
+
+	public void setAjaxSource(String ajaxSource) {
+		this.ajaxSource = ajaxSource;
+	}
+
 	public Boolean getSort() {
 		return sort;
 	}
@@ -579,5 +601,21 @@ public class HtmlTable extends HtmlTag {
 
 	public void setAppearDuration(String appearDuration) {
 		this.appearDuration = appearDuration;
+	}
+
+	public Boolean getPipelining() {
+		return pipelining;
+	}
+
+	public void setPipelining(Boolean pipelining) {
+		this.pipelining = pipelining;
+	}
+
+	public int getPipeSize() {
+		return pipeSize;
+	}
+
+	public void setPipeSize(int pipeSize) {
+		this.pipeSize = pipeSize;
 	}
 }

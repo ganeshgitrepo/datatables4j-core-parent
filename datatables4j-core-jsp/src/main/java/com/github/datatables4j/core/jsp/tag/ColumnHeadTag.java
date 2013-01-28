@@ -33,8 +33,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.datatables4j.core.api.model.HtmlColumn;
 
@@ -50,26 +48,14 @@ public class ColumnHeadTag extends BodyTagSupport {
 	private static final long serialVersionUID = -8928415196287387948L;
 
 	private String uid;
-	
-	// Logger
-	private static Logger logger = LoggerFactory.getLogger(ColumnHeadTag.class);
 
-	/**
-	 * TODO
-	 */
 	public int doStartTag() throws JspException {
-		
+
 		// Never reached
 		return EVAL_BODY_BUFFERED;
 	}
 
-	/**
-	 * TODO
-	 */
 	public int doAfterBody() throws JspException {
-
-		// TODO
-
 		return EVAL_PAGE;
 	}
 
@@ -80,27 +66,24 @@ public class ColumnHeadTag extends BodyTagSupport {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-	
-	/**
-	 * TODO
-	 */
+
 	public int doEndTag() throws JspException {
 
 		TableTag parent = (TableTag) getParent();
 
-		if(StringUtils.isNotBlank(this.uid)){
+		if (StringUtils.isNotBlank(this.uid)) {
 			HtmlColumn column = parent.getTable().getColumnHeadByUid(this.uid);
-			
-			if(column != null){
-				// Recuperer la colonne et mettre a jour le contenu avec le corps
+
+			if (column != null) {
+				// Recuperer la colonne et mettre a jour le contenu avec le
+				// corps
 				column.setContent(getBodyContent().getString());
-			}
-			else{
+			} else {
 				// Ajouter la colonne
 			}
-		}
-		else{
-			// ERROR
+		} else {
+			throw new JspException(
+					"The attribute 'uid' is required. Please read the documentation.");
 		}
 
 		return EVAL_PAGE;

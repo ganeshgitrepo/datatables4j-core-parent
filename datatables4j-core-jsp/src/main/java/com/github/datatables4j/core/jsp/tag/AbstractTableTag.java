@@ -56,12 +56,15 @@ import com.github.datatables4j.core.api.model.HtmlLink;
 import com.github.datatables4j.core.api.model.HtmlScript;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
+import com.github.datatables4j.core.base.feature.AjaxFeature;
 import com.github.datatables4j.core.base.feature.FilteringFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeBootstrapFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeFourButtonFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeInputFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeListboxFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeScrollingFeature;
+import com.github.datatables4j.core.base.feature.PipeliningFeature;
+import com.github.datatables4j.core.base.feature.ServerSideFeature;
 import com.github.datatables4j.core.base.plugin.ColReorderPlugin;
 import com.github.datatables4j.core.base.plugin.FixedHeaderPlugin;
 import com.github.datatables4j.core.base.plugin.ScrollerPlugin;
@@ -115,10 +118,15 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	// Advanced features
 	protected Boolean deferRender;
 	protected Boolean stateSave;
-	protected Boolean processing;
 	protected String labels;
 	protected Boolean jqueryUI;
 
+	// Ajax
+	protected Boolean processing;
+	protected Boolean serverSide;
+	protected Boolean pipelining;
+	protected Integer pipeSize;
+	
 	// Extra features
 	protected Boolean fixedHeader = false;
 	protected String fixedPosition;
@@ -185,6 +193,9 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		}
 		if (this.processing != null) {
 			this.table.setProcessing(this.processing);
+		}
+		if (this.serverSide != null) {
+			this.table.setServerSideEnabled(this.serverSide);
 		}
 		if (this.sort != null) {
 			this.table.setSort(this.sort);
@@ -294,6 +305,10 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	protected void registerFeatures() throws JspException {
 
+		if(StringUtils.isNotBlank(table.getDatasourceUrl())){
+			this.table.registerFeature(new AjaxFeature());
+		}
+		
 		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
 			// this.table.registerFeature(new InputFilteringFeature());
@@ -337,6 +352,21 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				break;
 
 			}
+		}
+		
+		if(this.serverSide != null && this.serverSide){
+			this.table.registerFeature(new ServerSideFeature());
+		}
+		
+		if(this.pipelining != null && this.pipelining){
+			this.table.setPipelining(pipelining);
+			if(pipeSize != null){
+				this.table.setPipeSize(pipeSize);
+			}
+			else{
+				this.table.setPipeSize(5);
+			}
+			this.table.registerFeature(new PipeliningFeature());
 		}
 	}
 
@@ -663,6 +693,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.processing = processing;
 	}
 
+	public Boolean getServerSide() {
+		return serverSide;
+	}
+
+	public void setServerSide(Boolean serverSide) {
+		this.serverSide = serverSide;
+	}
+	
 	public String getPaginationType() {
 		return paginationType;
 	}
@@ -776,6 +814,22 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 		this.jqueryUI = jqueryUI;
 	}
 
+	public Boolean getPipelining() {
+		return pipelining;
+	}
+
+	public void setPipelining(Boolean pipelining) {
+		this.pipelining = pipelining;
+	}
+	
+	public Integer getPipeSize(){
+		return pipeSize;
+	}
+	
+	public void setPipeSize(Integer pipeSize){
+		this.pipeSize = pipeSize;
+	}
+	
 	public String getExportLinks() {
 		return exportLinks;
 	}

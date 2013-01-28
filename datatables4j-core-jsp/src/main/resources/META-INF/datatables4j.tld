@@ -58,8 +58,10 @@
       <attribute>
          <name>appear</name>
          <description>(block|fadein[,duration]) Display mode used when
-            the table has finished loading and must appear in the page. A duration
-            can be set (in milliseconds) if the display mode is set to
+            the table has finished loading and must appear in the page.
+            A duration
+            can be set (in milliseconds) if the display mode
+            is set to
             "fadein". (Default : "fadein")</description>
       </attribute>
       <attribute>
@@ -195,6 +197,21 @@
             amount
             of time to sort the entries. (Default : false, see
             http://datatables.net/ref#bProcessing)</description>
+      </attribute>
+      <attribute>
+         <name>serverSide</name>
+         <description>Configure DataTables to use server-side processing</description>
+      </attribute>
+      <attribute>
+         <name>pipelining</name>
+         <description>Enable pipelining data for paging when server-side
+            processing is enabled</description>
+      </attribute>
+      <attribute>
+         <name>pipeSize</name>
+         <description>Pipe size used when pipelining is enabled, ie
+            times that the user can page before a request must be made
+            of the server. (Default : 5)</description>
       </attribute>
       <attribute>
          <name>stateSave</name>
