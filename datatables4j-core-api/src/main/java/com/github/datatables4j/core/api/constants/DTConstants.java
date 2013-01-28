@@ -48,9 +48,10 @@ public class DTConstants {
 	public static final String DT_STATE_SAVE = "bStateSave";
 
 	// AJAX related constants
-	public static final String DT_PROCESSING = "bProcessing";
-	public static final String DT_SERVER_SIDE = "bServerSide";
-	public static final String DT_AJAX_SOURCE = "sAjaxSource";
+	public static final String DT_B_DEFER_RENDER = "bDeferRender";
+	public static final String DT_B_PROCESSING = "bProcessing";
+	public static final String DT_B_SERVER_SIDE = "bServerSide";
+	public static final String DT_S_AJAX_SOURCE = "sAjaxSource";
 	public static final String DT_FN_SERVERDATA = "fnServerData";
 	 
 	// AJAX URL parameters
