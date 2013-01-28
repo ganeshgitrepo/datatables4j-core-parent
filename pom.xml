@@ -25,7 +25,7 @@
       <module>datatables4j-core-base</module>
       <module>datatables4j-core-jsp</module>
       <module>datatables4j-core-thymeleaf</module>
-      <module>datatables4j-core-wrapper-thymeleaf</module>
+      <module>datatables4j-spring3</module>
    </modules>
 
    <properties>
