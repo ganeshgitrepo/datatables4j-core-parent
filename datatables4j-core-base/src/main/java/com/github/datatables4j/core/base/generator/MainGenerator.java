@@ -157,11 +157,12 @@ public class MainGenerator {
         if (table.getProcessing() != null) {
             mainConf.put(DTConstants.DT_B_PROCESSING, table.getProcessing());
         }
-        if(table.isServerSideEnabled() != null){
-        	mainConf.put(DTConstants.DT_B_SERVER_SIDE, table.isServerSideEnabled());
-        }
-        if(StringUtils.isNotBlank(table.getDatasourceUrl())){
-        	mainConf.put(DTConstants.DT_S_AJAX_SOURCE, table.getDatasourceUrl());
+        if(table.getServerSide() != null){
+        	mainConf.put(DTConstants.DT_B_SERVER_SIDE, table.getServerSide());
+
+        	if(StringUtils.isNotBlank(table.getDatasourceUrl())){
+        		mainConf.put(DTConstants.DT_S_AJAX_SOURCE, table.getDatasourceUrl());
+        	}
         }
         
         mainConf.put(DTConstants.DT_DOM, "lfrtip");
