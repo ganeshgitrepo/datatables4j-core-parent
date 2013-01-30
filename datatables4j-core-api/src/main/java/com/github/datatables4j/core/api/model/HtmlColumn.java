@@ -256,4 +256,15 @@ public class HtmlColumn extends HtmlTag {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
+
+	@Override
+	public String toString() {
+		return "HtmlColumn [uid=" + uid + ", isHeaderColumn=" + isHeaderColumn + ", cssCellClass="
+				+ cssCellClass + ", cssCellStyle=" + cssCellStyle + ", content=" + content
+				+ ", sortable=" + sortable + ", sortDirection=" + sortDirection + ", sortInit="
+				+ sortInit + ", property=" + property + ", filterable=" + filterable
+				+ ", filterType=" + filterType + ", filterCssClass=" + filterCssClass
+				+ ", filterPlaceholder=" + filterPlaceholder + ", enabledDisplayTypes="
+				+ enabledDisplayTypes + "]";
+	}
 }

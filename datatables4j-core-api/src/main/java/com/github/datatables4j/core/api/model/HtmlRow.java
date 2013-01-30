@@ -136,4 +136,9 @@ public class HtmlRow extends HtmlTag {
 	public HtmlColumn getLastColumn() {
 		return ((LinkedList<HtmlColumn>) this.columns).getLast();
 	}
+
+	@Override
+	public String toString() {
+		return "HtmlRow [columns=" + columns + "]";
+	}
 }
