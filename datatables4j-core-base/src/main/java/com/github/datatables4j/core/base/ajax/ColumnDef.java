@@ -118,7 +118,7 @@ public class ColumnDef {
 
 	@Override
 	public String toString() {
-		return "DatatablesField [name=" + name + ", sortable=" + sortable + ", sorted=" + sorted
+		return "ColumnDef [name=" + name + ", sortable=" + sortable + ", sorted=" + sorted
 				+ ", filterable=" + filterable + ", filtered=" + filtered + ", regex=" + regex
 				+ ", search=" + search + ", sortDirection=" + sortDirection + "]";
 	}
