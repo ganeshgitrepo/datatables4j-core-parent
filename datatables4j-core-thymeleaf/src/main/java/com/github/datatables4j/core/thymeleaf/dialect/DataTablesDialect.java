@@ -53,6 +53,7 @@ import com.github.datatables4j.core.thymeleaf.processor.basic.TableCdnAttrProces
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableExportAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableFilterAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableInfoAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.basic.TableLabelsAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TablePaginateAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableSortAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.ThFilterTypeAttrProcessor;
@@ -110,6 +111,7 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new ThSortableAttrProcessor(new AttributeNameProcessorMatcher("sortable", "th")));
 		processors.add(new ThFilterableAttrProcessor(new AttributeNameProcessorMatcher("filterable", "th")));
 		processors.add(new ThFilterTypeAttrProcessor(new AttributeNameProcessorMatcher("filterType", "th")));
+		processors.add(new TableLabelsAttrProcessor(new AttributeNameProcessorMatcher("labels", "table")));
 		
 		// Plugin processors
 		processors.add(new TheadScrollerAttrProcessor(new AttributeNameProcessorMatcher("scroller", "thead")));
