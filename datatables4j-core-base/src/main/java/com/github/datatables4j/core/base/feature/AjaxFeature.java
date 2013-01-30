@@ -57,6 +57,7 @@ public class AjaxFeature extends AbstractFeature {
 	@Override
 	public void setup(HtmlTable table) throws BadConfigurationException {
 		addConfiguration(new Configuration(DTConstants.DT_B_DEFER_RENDER, true));
+		addConfiguration(new Configuration(DTConstants.DT_S_AJAXDATAPROP, ""));
 		addConfiguration(new Configuration(DTConstants.DT_S_AJAX_SOURCE, table.getDatasourceUrl()));
 		addConfiguration(new Configuration("fnInitComplete", new JavascriptSnippet("function() { oTable_" + table.getId() + ".fnAdjustColumnSizing(true);}")));
 	}
