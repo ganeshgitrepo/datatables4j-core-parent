@@ -43,6 +43,10 @@ import com.github.datatables4j.core.thymeleaf.processor.TableInitializerElProces
 import com.github.datatables4j.core.thymeleaf.processor.TbodyElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TdElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TrElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.ajax.TablePipeSizeAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.ajax.TablePipeliningAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.ajax.TableServerSideAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.ajax.TableUrlAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableAppearAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableAutoWidthAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.basic.TableCdnAttrProcessor;
@@ -112,9 +116,15 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TheadColReorderAttrProcessor(new AttributeNameProcessorMatcher("colreorder", "thead")));
 		processors.add(new TheadFixedHeaderAttrProcessor(new AttributeNameProcessorMatcher("fixedheader", "thead")));
 		
-		// Feature processor
+		// Feature processors
 		processors.add(new TableExportAttrProcessor(new AttributeNameProcessorMatcher("export", "table")));
 		processors.add(new ThExportFilenameAttrProcessor(new AttributeNameProcessorMatcher("filename", "th")));
+		
+		// AJAX processors
+		processors.add(new TableUrlAttrProcessor(new AttributeNameProcessorMatcher("url", "table")));
+		processors.add(new TableServerSideAttrProcessor(new AttributeNameProcessorMatcher("serverside", "table")));
+		processors.add(new TablePipeliningAttrProcessor(new AttributeNameProcessorMatcher("pipelining", "table")));
+		processors.add(new TablePipeSizeAttrProcessor(new AttributeNameProcessorMatcher("pipesize", "table")));
 		
 		// Theme processors
 		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));

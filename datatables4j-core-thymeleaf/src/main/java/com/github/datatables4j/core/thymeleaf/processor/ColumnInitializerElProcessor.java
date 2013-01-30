@@ -53,6 +53,13 @@ public class ColumnInitializerElProcessor extends AbstractElementProcessor {
 
 		// Init a new column
 		HtmlColumn htmlColumn = new HtmlColumn(true, content);
+		
+		// AJAX sources require to set dt:property attribute
+		// This attribute is processed here, before being removed
+		if(element.hasAttribute("dt:property")){
+			htmlColumn.setProperty(element.getAttributeValue("dt:property").trim());
+			element.removeAttribute("dt:property");
+		}
 
 		// Add it to the table
 		if(htmlTable != null){

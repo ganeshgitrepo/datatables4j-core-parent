@@ -96,6 +96,7 @@ public class TableFinalizerElProcessor extends AbstractElementProcessor {
 	}
 
 	private void registerFeatures(Element element, Arguments arguments, HtmlTable htmlTable) {
+		
 		if (htmlTable.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
 
