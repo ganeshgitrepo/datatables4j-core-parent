@@ -115,7 +115,7 @@ public class WebResourceGenerator {
 		// the same JSP
 		JsResource mainJsFile = new JsResource(ResourceType.MAIN, NameConstants.DT_MAIN_JS
 				+ table.getRandomId() + ".js");
-		mainJsFile.setTableId(table.getId());
+		mainJsFile.setTable(table);
 
 		/**
 		 * Extra files management
@@ -144,7 +144,6 @@ public class WebResourceGenerator {
 		/**
 		 * Main configuration generation
 		 */
-
 		// Allways pretty prints the JSON
 		JSONValue.writeJSONString(mainConf, writer);
 					
@@ -157,6 +156,9 @@ public class WebResourceGenerator {
 			exportManagement(table, mainJsFile);
 		}
 
+		/**
+		 * Table display
+		 */
 		if("block".equals(table.getAppear())){
 			mainJsFile.appendToBeforeEndDocumentReady("$('#" + table.getId() + "').show();");			
 		}
@@ -168,6 +170,8 @@ public class WebResourceGenerator {
 				mainJsFile.appendToBeforeEndDocumentReady("$('#" + table.getId() + "').fadeIn();");
 			}
 		}
+		
+		
 		webResources.setMainJsFile(mainJsFile);
 
 		return webResources;
