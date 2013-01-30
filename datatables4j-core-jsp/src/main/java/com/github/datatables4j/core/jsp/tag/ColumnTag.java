@@ -134,7 +134,11 @@ public class ColumnTag extends AbstractColumnTag {
 				column.getEnabledDisplayTypes().add(type);
 			}
 			column.setProperty(this.property);
-			column.setSortable(this.sortable);
+			
+			if(this.sortable != null){
+				column.setSortable(this.sortable);				
+			}
+			
 			parent.getTable().getLastHeaderRow().addColumn(column);
 			parent.getTable().getLastFooterRow().addColumn(new HtmlColumn());
 			return EVAL_PAGE;
