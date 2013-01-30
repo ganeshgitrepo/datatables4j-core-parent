@@ -88,10 +88,10 @@ public class JsResource {
 	private String location;
 
 	/**
-	 * Id of the table to initialize. Only used if the current JsResource has
-	 * the MAIN ResourceType.
+	 * Table to initialize. Only used if the current JsResource has the MAIN
+	 * ResourceType.
 	 */
-	private String tableId;
+	private HtmlTable table;
 
 	/**
 	 * Type of the JS resource.
@@ -144,11 +144,11 @@ public class JsResource {
 			}
 
 			retval.append("var oTable_");
-			retval.append(tableId);
+			retval.append(table.getId());
 			retval.append(";\n");
 
 			retval.append("var oTable_");
-			retval.append(tableId);
+			retval.append(table.getId());
 			retval.append("_params = ");
 			retval.append(this.dataTablesConf);
 			retval.append(";\n");
@@ -163,13 +163,15 @@ public class JsResource {
 				retval.append(INDENTATION);
 				retval.append(this.afterStartDocumentReady);
 			}
+			
+			// DataTables initialization
 			retval.append(INDENTATION);
 			retval.append("oTable_");
-			retval.append(this.tableId);
+			retval.append(this.table.getId());
 			retval.append(" = $('#");
-			retval.append(this.tableId);
+			retval.append(this.table.getId());
 			retval.append("').dataTable(oTable_");
-			retval.append(tableId);
+			retval.append(table.getId());
 			retval.append("_params)");
 			if (this.dataTablesExtra != null) {
 				retval.append(".");
@@ -181,6 +183,7 @@ public class JsResource {
 				retval.append(")");
 			}
 			retval.append(";");
+
 
 			if (this.beforeEndDocumentReady != null) {
 				retval.append("\n");
@@ -307,14 +310,6 @@ public class JsResource {
 		this.type = type;
 	}
 
-	public String getTableId() {
-		return tableId;
-	}
-
-	public void setTableId(String tableId) {
-		this.tableId = tableId;
-	}
-
 	public StringBuffer getDataTablesExtra() {
 		return dataTablesExtra;
 	}
@@ -344,4 +339,13 @@ public class JsResource {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+
+	public HtmlTable getTable() {
+		return table;
+	}
+
+	public void setTable(HtmlTable table) {
+		this.table = table;
+	}
+
 }
