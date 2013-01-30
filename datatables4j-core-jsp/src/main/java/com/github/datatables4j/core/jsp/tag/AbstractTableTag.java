@@ -195,7 +195,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			this.table.setProcessing(this.processing);
 		}
 		if (this.serverSide != null) {
-			this.table.setServerSideEnabled(this.serverSide);
+			this.table.setServerSide(this.serverSide);
 		}
 		if (this.sort != null) {
 			this.table.setSort(this.sort);
@@ -305,14 +305,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	 */
 	protected void registerFeatures() throws JspException {
 
-		if(StringUtils.isNotBlank(table.getDatasourceUrl())){
+		// Si AJAX sans server-side
+		if(StringUtils.isNotBlank(this.url) && (this.serverSide == null || !this.serverSide)){
 			this.table.registerFeature(new AjaxFeature());
 		}
 		
 		if (table.hasOneFilterableColumn()) {
 			logger.info("Feature detected : select with filter");
-			// this.table.registerFeature(new InputFilteringFeature());
-			// this.table.registerFeature(new SelectFilteringFeature());
 
 			for (HtmlColumn column : table.getLastHeaderRow().getColumns()) {
 				table.getLastFooterRow().addColumn(column);
@@ -362,9 +361,6 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 			this.table.setPipelining(pipelining);
 			if(pipeSize != null){
 				this.table.setPipeSize(pipeSize);
-			}
-			else{
-				this.table.setPipeSize(5);
 			}
 			this.table.registerFeature(new PipeliningFeature());
 		}
