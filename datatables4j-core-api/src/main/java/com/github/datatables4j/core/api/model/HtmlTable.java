@@ -125,6 +125,9 @@ public class HtmlTable extends HtmlTag {
 		List<ExportLinkPosition> exportLinkPositions = new ArrayList<ExportLinkPosition>();
 		exportLinkPositions.add(ExportLinkPosition.TOP_RIGHT);
 		this.exportLinkPositions = exportLinkPositions;
+		
+		// AJAX
+		this.pipeSize = 5;
 	}
 	
 	/**
@@ -355,11 +358,11 @@ public class HtmlTable extends HtmlTag {
 		this.processing = processing;
 	}
 
-	public Boolean isServerSideEnabled() {
+	public Boolean getServerSide() {
 		return serverSide;
 	}
 
-	public void setServerSideEnabled(Boolean serverSide) {
+	public void setServerSide(Boolean serverSide) {
 		this.serverSide = serverSide;
 	}
 
