@@ -43,7 +43,7 @@ import com.github.datatables4j.core.base.ajax.DatatablesCriterias;
  * MVC controllers.
  * <p>
  * The bean directly map the request parameters sent by DataTables when
- * server-side processing is enabled into a DatatablesCriterias bean.
+ * server-side processing is enabled into a {@link DatatablesCriterias} bean.
  * 
  * @author Thibault Duchateau
  * @since 0.8.2
