@@ -29,6 +29,7 @@
  */
 package com.github.datatables4j.core.base.feature;
 
+import com.github.datatables4j.core.api.constants.DTConstants;
 import com.github.datatables4j.core.api.exception.BadConfigurationException;
 import com.github.datatables4j.core.api.model.AbstractFeature;
 import com.github.datatables4j.core.api.model.Configuration;
@@ -60,7 +61,7 @@ public class ServerSideFeature extends AbstractFeature {
 
 	@Override
 	public void setup(HtmlTable table) throws BadConfigurationException {
-		addConfiguration(new Configuration("fnInitComplete", new JavascriptSnippet(
+		addConfiguration(new Configuration(DTConstants.DT_FN_INIT_COMPLETE, new JavascriptSnippet(
 				"function() { oTable_" + table.getId() + ".fnAdjustColumnSizing(true);}")));
 	}
 }

@@ -54,8 +54,8 @@ public class DTConstants {
 	public static final String DT_S_AJAX_SOURCE = "sAjaxSource";
 	public static final String DT_FN_SERVERDATA = "fnServerData";
 	public static final String DT_S_AJAXDATAPROP = "sAjaxDataProp";
-	
-	 
+	public static final String DT_FN_INIT_COMPLETE = "fnInitComplete";
+		 
 	// AJAX URL parameters
 	public static final String DT_S_ECHO = "sEcho";
 	public static final String DT_I_COLUMNS = "iColumns";
@@ -84,7 +84,6 @@ public class DTConstants {
 	public static final String DT_SCROLLY = "sScrollY";
 	public static final String DT_OFFSETTOP = "offsetTop";
 	public static final String DT_FILTER_TYPE = "type";
-	
 	
 	// Column configuration
 	public static final String DT_SORTABLE = "bSortable";
