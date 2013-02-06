@@ -53,8 +53,7 @@ public class RequestHelper {
 		String currentUrl = null;
 		if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
 			currentUrl = (String) request.getAttribute("javax.servlet.forward.request_uri");
-		}
-		else{
+		} else {
 			currentUrl = request.getRequestURL().toString();
 		}
 		if (currentUrl != null
@@ -63,8 +62,24 @@ public class RequestHelper {
 		}
 		return currentUrl;
 	}
-	
-	
+
+	/**
+	 * TODO
+	 * @param url
+	 * @param servletRequest
+	 * @return
+	 */
+	public static String getDatasourceUrl(String url, ServletRequest servletRequest) {
+		HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+		if (url.startsWith("/")) {
+			return RequestHelper.getBaseUrl(request) + url;
+		}
+		else {
+			return url;
+		}
+	}
+
 	/**
 	 * <p>
 	 * Return the base URL (context path included).
@@ -82,8 +97,7 @@ public class RequestHelper {
 		return request.getRequestURL().toString()
 				.replace(request.getRequestURI(), request.getContextPath());
 	}
-	
-	
+
 	/**
 	 * <p>
 	 * Test if the table if being exported using the request

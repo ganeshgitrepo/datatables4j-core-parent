@@ -99,14 +99,8 @@ public class TableTag extends AbstractTableTag {
 			this.table.addHeaderRow();
 			
 			// Same domain AJAX request
-			if(url.startsWith("/")){
-				this.table.setDatasourceUrl(RequestHelper.getBaseUrl(pageContext.getRequest()) + url);				
-			}
-			// Cross domain AJAX request
-			else{
-				this.table.setDatasourceUrl(url);
-			}
-						
+			this.table.setDatasourceUrl(RequestHelper.getDatasourceUrl(url, pageContext.getRequest()));				
+					
 			this.table.addRow();
 
 			return EVAL_BODY_BUFFERED;
@@ -209,7 +203,7 @@ public class TableTag extends AbstractTableTag {
 	private int setupHtmlGeneration() throws JspException {
 		String baseUrl = RequestHelper.getBaseUrl(pageContext.getRequest());
 		ServletContext servletContext = pageContext.getServletContext();
-
+		
 		this.table.setExporting(false);
 
 		// Register all activated modules
