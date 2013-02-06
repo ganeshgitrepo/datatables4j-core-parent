@@ -35,17 +35,19 @@ import com.github.datatables4j.core.api.model.AbstractFeature;
 import com.github.datatables4j.core.api.model.Configuration;
 import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.JavascriptSnippet;
-import com.github.datatables4j.core.base.util.ResourceHelper;
 
 /**
- * <p>Pipelining feature that may be used if server-side processing has been
- * enabled.
+ * <p>
+ * Feature that is always enabled when server-side processing has been
+ * activated.
+ * <p>
+ * Removing the fnAddjustColumnSizing will cause strange column's width at each
+ * interaction with the table (paging, sorting, filtering ...)
  * 
  * @author Thibault Duchateau
- * @since 0.8.2
- * @see ServerSideFeature
+ * @since 0.8.3
  */
-public class PipeliningFeature extends AbstractFeature {
+public class JsonpFeature extends AbstractFeature {
 
 	@Override
 	public String getName() {
@@ -59,21 +61,9 @@ public class PipeliningFeature extends AbstractFeature {
 
 	@Override
 	public void setup(HtmlTable table) throws BadConfigurationException {
-		String content = ResourceHelper
-				.getFileContentFromClasspath("datatables/ajax/pipelining.js");
-
-		// Add the table id to avoid conflict if several tables use pipelining
-		// in the same page
-		String adaptedContent = content.replace("oCache", "oCache_" + table.getId());
-		
-		// Adapt the pipe size if it has been overriden
-		if (table.getPipeSize() != 5) {
-			appendToBeforeAll(adaptedContent
-					.replace("var iPipe = 5", "var iPipe = " + table.getPipeSize()));
-		} else {
-			appendToBeforeAll(adaptedContent);
-		}
-
-		addConfiguration(new Configuration(DTConstants.DT_FN_SERVERDATA, new JavascriptSnippet("fnDataTablesPipeline")));
+		addConfiguration(new Configuration(
+				DTConstants.DT_FN_SERVERDATA,
+				new JavascriptSnippet(
+						"function( sUrl, aoData, fnCallback, oSettings ) { oSettings.jqXHR = $.ajax( {\"url\": sUrl,\"data\": aoData,\"success\": fnCallback,\"dataType\": \"jsonp\",\"cache\": false});}")));
 	}
 }

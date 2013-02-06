@@ -50,8 +50,6 @@ public class TableInitializerElProcessor extends AbstractElementProcessor {
 			throw new IllegalArgumentException();
 		} else {
 			HtmlTable htmlTable = new HtmlTable(tableId, ResourceHelper.getRamdomNumber());
-			// We hide the table to avoid ugly style during the processing
-			element.setAttribute("style", "display:none;");
 			htmlTable.setCurrentUrl(RequestHelper.getCurrentUrl(request));
 
 			try {

@@ -43,6 +43,7 @@ import com.github.datatables4j.core.thymeleaf.processor.TableInitializerElProces
 import com.github.datatables4j.core.thymeleaf.processor.TbodyElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TdElProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.TrElProcessor;
+import com.github.datatables4j.core.thymeleaf.processor.ajax.TableJsonpAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.ajax.TablePipeSizeAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.ajax.TablePipeliningAttrProcessor;
 import com.github.datatables4j.core.thymeleaf.processor.ajax.TableServerSideAttrProcessor;
@@ -127,6 +128,7 @@ public class DataTablesDialect extends AbstractDialect {
 		processors.add(new TableServerSideAttrProcessor(new AttributeNameProcessorMatcher("serverside", "table")));
 		processors.add(new TablePipeliningAttrProcessor(new AttributeNameProcessorMatcher("pipelining", "table")));
 		processors.add(new TablePipeSizeAttrProcessor(new AttributeNameProcessorMatcher("pipesize", "table")));
+		processors.add(new TableJsonpAttrProcessor(new AttributeNameProcessorMatcher("jsonp", "table")));
 		
 		// Theme processors
 		processors.add(new TableThemeAttrProcessor(new AttributeNameProcessorMatcher("theme", "table")));

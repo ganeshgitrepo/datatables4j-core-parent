@@ -65,6 +65,11 @@
             "fadein". (Default : "fadein")</description>
       </attribute>
       <attribute>
+         <name>jsonp</name>
+         <description>(true|false) Allows to retrieve JSON data from any
+            domain name, regardless of XSS protection.</description>
+      </attribute>
+      <attribute>
          <name>cdn</name>
          <description>(true|false) Enable the DataTables source files
             to

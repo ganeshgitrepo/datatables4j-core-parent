@@ -1,5 +1,4 @@
 /*
- * [The "BSD licence"]
  * Copyright (c) 2012 DataTables4j
  * All rights reserved.
  * 
@@ -58,6 +57,7 @@ import com.github.datatables4j.core.api.model.HtmlTable;
 import com.github.datatables4j.core.api.model.PaginationType;
 import com.github.datatables4j.core.base.feature.AjaxFeature;
 import com.github.datatables4j.core.base.feature.FilteringFeature;
+import com.github.datatables4j.core.base.feature.JsonpFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeBootstrapFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeFourButtonFeature;
 import com.github.datatables4j.core.base.feature.PaginationTypeInputFeature;
@@ -126,6 +126,7 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 	protected Boolean serverSide;
 	protected Boolean pipelining;
 	protected Integer pipeSize;
+	protected Boolean jsonp;
 	
 	// Extra features
 	protected Boolean fixedHeader = false;
@@ -363,6 +364,13 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 				this.table.setPipeSize(pipeSize);
 			}
 			this.table.registerFeature(new PipeliningFeature());
+		}
+		
+		if(this.jsonp != null){
+			this.table.setJsonp(jsonp);
+			if(this.jsonp){
+				this.table.registerFeature(new JsonpFeature());
+			}
 		}
 	}
 
@@ -864,6 +872,14 @@ public abstract class AbstractTableTag extends BodyTagSupport {
 
 	public void setAppear(String appear) {
 		this.appear = appear;
+	}
+	
+	public Boolean getJsonp(){
+		return jsonp;
+	}
+	
+	public void setJsonp(Boolean jsonp){
+		this.jsonp = jsonp;
 	}
 	
 	public void setData(Collection<Object> data) {

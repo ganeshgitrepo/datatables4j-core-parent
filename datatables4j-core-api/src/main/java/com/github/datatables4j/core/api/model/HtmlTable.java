@@ -71,6 +71,7 @@ public class HtmlTable extends HtmlTag {
 	private String ajaxSource;
 	private Boolean pipelining;
 	private int pipeSize;
+	private Boolean jsonp;
 	
 	// Extra features
 	private String scrollY;
@@ -137,7 +138,12 @@ public class HtmlTable extends HtmlTag {
 	public StringBuffer toHtml() {
 		StringBuffer html = new StringBuffer();
 
-		html.append("<table style=\"display:none;\" id=\"");
+		if(this.plugins == null || this.plugins.isEmpty()){
+			html.append("<table style=\"display:none;\" id=\"");
+		}
+		else{
+			html.append("<table id=\"");			
+		}
 		html.append(this.id);
 		html.append("\"");
 
@@ -177,7 +183,7 @@ public class HtmlTable extends HtmlTag {
 			html.append("</tfoot>");
 		}
 		html.append("</table>");
-
+		
 		return html;
 	}
 
@@ -620,5 +626,13 @@ public class HtmlTable extends HtmlTag {
 
 	public void setPipeSize(int pipeSize) {
 		this.pipeSize = pipeSize;
+	}
+	
+	public Boolean getJsonp() {
+		return jsonp;
+	}
+
+	public void setJsonp(Boolean jsonp) {
+		this.jsonp = jsonp;
 	}
 }

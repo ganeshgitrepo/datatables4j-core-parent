@@ -27,53 +27,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.datatables4j.core.base.feature;
+package com.github.datatables4j.core.thymeleaf.processor.ajax;
 
-import com.github.datatables4j.core.api.constants.DTConstants;
-import com.github.datatables4j.core.api.exception.BadConfigurationException;
-import com.github.datatables4j.core.api.model.AbstractFeature;
-import com.github.datatables4j.core.api.model.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.IAttributeNameProcessorMatcher;
+import org.thymeleaf.processor.ProcessorResult;
+
 import com.github.datatables4j.core.api.model.HtmlTable;
-import com.github.datatables4j.core.api.model.JavascriptSnippet;
-import com.github.datatables4j.core.base.util.ResourceHelper;
+import com.github.datatables4j.core.base.feature.JsonpFeature;
+import com.github.datatables4j.core.thymeleaf.processor.AbstractDatatableAttrProcessor;
+import com.github.datatables4j.core.thymeleaf.util.Utils;
 
 /**
- * <p>Pipelining feature that may be used if server-side processing has been
- * enabled.
+ * <p>
+ * Attribute processor applied to the <tt>table</tt> tag for the <tt>jsonp</tt>
+ * attribute.
  * 
  * @author Thibault Duchateau
- * @since 0.8.2
- * @see ServerSideFeature
  */
-public class PipeliningFeature extends AbstractFeature {
+public class TableJsonpAttrProcessor extends AbstractDatatableAttrProcessor {
 
-	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
-	public String getVersion() {
-		return null;
-	}
-
-	@Override
-	public void setup(HtmlTable table) throws BadConfigurationException {
-		String content = ResourceHelper
-				.getFileContentFromClasspath("datatables/ajax/pipelining.js");
-
-		// Add the table id to avoid conflict if several tables use pipelining
-		// in the same page
-		String adaptedContent = content.replace("oCache", "oCache_" + table.getId());
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(TableJsonpAttrProcessor.class);
 		
-		// Adapt the pipe size if it has been overriden
-		if (table.getPipeSize() != 5) {
-			appendToBeforeAll(adaptedContent
-					.replace("var iPipe = 5", "var iPipe = " + table.getPipeSize()));
-		} else {
-			appendToBeforeAll(adaptedContent);
-		}
+	public TableJsonpAttrProcessor(IAttributeNameProcessorMatcher matcher) {
+		super(matcher);
+	}
 
-		addConfiguration(new Configuration(DTConstants.DT_FN_SERVERDATA, new JavascriptSnippet("fnDataTablesPipeline")));
+	@Override
+	public int getPrecedence() {
+		return 8000;
+	}
+	
+	@Override
+	protected ProcessorResult processAttribute(Arguments arguments, Element element,
+			String attributeName) {
+		logger.debug("{} attribute found", attributeName);
+		
+		// Get HtmlTable POJO from the HttpServletRequest
+		HtmlTable htmlTable = Utils.getTable(arguments);
+				
+		// Get attribute value
+		Boolean attrValue = Boolean.parseBoolean(element.getAttributeValue(attributeName));
+		logger.debug("Extracted value : {}", attrValue);
+		
+		if(htmlTable != null){
+			htmlTable.setJsonp(attrValue);
+			if(attrValue){
+				htmlTable.registerFeature(new JsonpFeature());
+			}
+		}
+		
+        return nonLenientOK(element, attributeName);
 	}
 }
